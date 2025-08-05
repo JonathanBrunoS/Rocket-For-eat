@@ -101,7 +101,6 @@
             background-color: var(--white);
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: background-color 0.3s, box-shadow 0.3s;
         }
         
         .main-header .container {
@@ -135,7 +134,7 @@
         .main-nav a:hover, .main-nav a.active {
             border-color: var(--yellow);
         }
-        
+
         /* --- Hero Section --- */
         .hero {
             background-color: var(--dark-gray);
@@ -243,19 +242,38 @@
         .calculator-section h2 { margin-bottom: 2rem; }
         .calculator-form .input-group { margin-bottom: 1.5rem; text-align: left; }
         .calculator-form label { display: block; font-weight: 700; margin-bottom: 0.5rem; color: var(--dark-gray); }
-        .calculator-form input[type="number"], .calculator-form select { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
-        .calculator-form button { width: 100%; padding: 1rem; background-color: var(--yellow); color: var(--dark-gray); border: none; border-radius: 5px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s; }
+        .calculator-form input[type="number"], .calculator-form input[type="range"] { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
+        .calculator-form input[type="range"] { padding: 0; }
+        .calculator-form button { width: 100%; padding: 1rem; margin-top: 1rem; background-color: var(--yellow); color: var(--dark-gray); border: none; border-radius: 5px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s; }
         .calculator-form button:hover { background-color: #e6b800; }
         .calculator-results-display { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; text-align: left; }
         .calculator-results-display p { font-size: 1.1rem; margin-bottom: 0.8rem; max-width: 100%; }
         .calculator-results-display .result-value { font-weight: 700; color: var(--green); }
         .calculator-results-display .result-value.negative { color: var(--red); }
-        .tab-buttons { display: flex; justify-content: center; margin-bottom: 2rem; gap: 1rem; }
-        .tab-button { background-color: #eee; border: none; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: 700; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
+        .tab-buttons { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; gap: 1rem; }
+        .tab-button { background-color: #eee; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
         .tab-button.active { background-color: var(--yellow); color: var(--dark-gray); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
+        .radio-group { display: flex; gap: 1rem; justify-content: center; }
+        .radio-group label { flex: 1; padding: 1rem; border: 2px solid #ccc; border-radius: 5px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group input[type="radio"]:checked + label { border-color: var(--yellow); background-color: #fffbeb; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left; }
+        .results-column { padding: 1.5rem; border-radius: 8px; }
+        .results-column h3 { border-bottom: 2px solid; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+        .results-column ul { list-style: none; }
+        .results-column li { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1.1rem; }
+        .results-column .profit { font-weight: 900; font-size: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
+        #ifood-results-display #ifood-results { background-color: #fff5f5; border: 1px solid #ffe0e0; }
+        #ifood-results-display #ifood-results h3 { border-color: var(--red); }
+        #ifood-results-display #ifood-results .profit { color: var(--red); }
+        #ifood-results-display #direct-results { background-color: #f2fff5; border: 1px solid #d4f7e0; }
+        #ifood-results-display #direct-results h3 { border-color: var(--green); }
+        #ifood-results-display #direct-results .profit { color: var(--green); }
+        .punchline { margin-top: 2rem; font-size: 1.2rem; font-weight: 700; background-color: var(--light-gray); padding: 1.5rem; border-radius: 8px; }
+        .punchline .loss { color: var(--red); }
+        
         /* --- ICP Section --- */
         .icp-list { max-width: 800px; margin: 3rem auto 0; text-align: left; background: var(--white); padding: 2rem; border-radius: 8px; }
         .icp-list h3 { text-align: center; font-size: 1.5rem; }
@@ -293,7 +311,7 @@
         
         /* --- Media Queries --- */
         @media (max-width: 1024px) {
-            .main-nav { display: none; } /* Hide navigation on tablets and smaller */
+            .main-nav { display: none; } /* Oculta o menu de navegação em tablets */
         }
 
         @media (max-width: 768px) {
@@ -301,7 +319,7 @@
             h1, h2 { font-size: 2.2rem; }
             .hero h1 { font-size: 2.5rem; }
             .hero p { font-size: 1.2rem; }
-            .about-us-grid, .comparison-grid { grid-template-columns: 1fr; }
+            .about-us-grid, .comparison-grid, .results-grid { grid-template-columns: 1fr; }
             .rocket-col { transform: scale(1); order: -1; }
             .main-header { padding: 0.5rem 1rem; }
             .logo-img { width: 120px; }
@@ -465,35 +483,36 @@
                 <div class="tab-buttons">
                     <button class="tab-button active" data-tab="imposto">Calculadora "Imposto iFood"</button>
                     <button class="tab-button" data-tab="preco">Simulador de Preço de Pizza</button>
+                    <button class="tab-button" data-tab="dre">DRE Simplificado</button>
                 </div>
 
                 <div id="imposto" class="tab-content active">
-                     <h3>Descubra o 'Imposto iFood'</h3>
+                    <h3>Descubra o 'Imposto iFood'</h3>
                     <p>Veja na prática a diferença no seu bolso ao final de cada venda.</p>
-                     <div class="calculator-form">
+                    <div class="calculator-form">
+                       <div class="input-group">
+                           <label for="pizzaPrice">1. Qual o preço de venda da sua pizza?</label>
+                           <input type="number" id="pizzaPrice" placeholder="Ex: 60.00" step="0.01">
+                       </div>
+                       <div class="input-group">
+                            <label for="ingredientsCost">2. Qual seu custo com ingredientes? (<span id="range-value">30%</span>)</label>
+                            <input type="range" id="ingredientsCost" min="20" max="45" value="30">
+                       </div>
                         <div class="input-group">
-                            <label for="pizzaPrice">1. Qual o preço de venda da sua pizza?</label>
-                            <input type="number" id="pizzaPrice" placeholder="Ex: 60.00" step="0.01">
-                        </div>
-                        <div class="input-group">
-                             <label for="ingredientsCost">2. Qual seu custo com ingredientes? (<span id="range-value">30%</span>)</label>
-                             <input type="range" id="ingredientsCost" min="20" max="45" value="30">
-                        </div>
-                         <div class="input-group">
-                            <label>3. Qual plano do iFood você usa?</label>
-                            <div class="radio-group">
-                                <input type="radio" id="planoBasico" name="ifoodPlan" value="basico">
-                                <label for="planoBasico">Plano Básico<br><small>(Eu entrego)</small></label>
-                                
-                                <input type="radio" id="planoEntrega" name="ifoodPlan" value="entrega" checked>
-                                <label for="planoEntrega">Plano Entrega<br><small>(iFood entrega)</small></label>
-                            </div>
-                        </div>
-                        <button id="calculateBtn">Calcular Lucro</button>
-                        <div class="calculator-results-display" id="calculator-results" style="display: none; text-align: center;">
-                            </div>
-                    </div>
-                </div>
+                           <label>3. Qual plano do iFood você usa?</label>
+                           <div class="radio-group">
+                               <input type="radio" id="planoBasico" name="ifoodPlan" value="basico">
+                               <label for="planoBasico">Plano Básico<br><small>(Eu entrego)</small></label>
+                               
+                               <input type="radio" id="planoEntrega" name="ifoodPlan" value="entrega" checked>
+                               <label for="planoEntrega">Plano Entrega<br><small>(iFood entrega)</small></label>
+                           </div>
+                       </div>
+                       <button id="calculateBtn">Calcular Lucro</button>
+                       <div id="ifood-results-display" style="display: none;">
+                           </div>
+                   </div>
+               </div>
 
                 <div id="preco" class="tab-content">
                     <h3>Simulador de Preço de Pizza</h3>
@@ -513,6 +532,32 @@
                         </div>
                         <button id="calcularPreco">Calcular Preço Sugerido</button>
                         <div class="calculator-results-display" id="preco-results" style="display: none;">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="dre" class="tab-content">
+                    <h3>Calculadora de DRE Simplificado</h3>
+                    <p>Entenda a saúde financeira da sua pizzaria de forma rápida e descomplicada.</p>
+                    <div class="calculator-form">
+                        <div class="input-group">
+                            <label for="receitaBruta">Receita Bruta Mensal (R$):</label>
+                            <input type="number" id="receitaBruta" placeholder="Ex: 15000.00" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="cmv">Custo da Mercadoria Vendida (CMV - % da Receita):</label>
+                            <input type="number" id="cmv" placeholder="Ex: 30" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="despesasFixas">Despesas Operacionais Fixas (R$):</label>
+                            <input type="number" id="despesasFixas" placeholder="Ex: 3000.00" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="despesasVariaveis">Despesas Operacionais Variáveis (R$):</label>
+                            <input type="number" id="despesasVariaveis" placeholder="Ex: 1500.00" step="0.01">
+                        </div>
+                        <button id="calcularDRE">Calcular DRE</button>
+                        <div class="calculator-results-display" id="dre-results" style="display: none;">
                             </div>
                     </div>
                 </div>
@@ -619,64 +664,70 @@
             
             const IFOOD_BASIC_COMMISSION = 0.12, IFOOD_DELIVERY_COMMISSION = 0.25, IFOOD_PAYMENT_FEE = 0.032, DIRECT_PAYMENT_FEE = 0.02;
 
-            ingredientsCostSlider.addEventListener('input', () => { rangeValueSpan.textContent = `${ingredientsCostSlider.value}%`; });
+            if (ingredientsCostSlider) {
+                ingredientsCostSlider.addEventListener('input', () => { 
+                    if(rangeValueSpan) rangeValueSpan.textContent = `${ingredientsCostSlider.value}%`; 
+                });
+            }
 
-            calculateBtn.addEventListener('click', () => {
-                const pizzaPrice = parseFloat(document.getElementById('pizzaPrice').value);
-                if (isNaN(pizzaPrice) || pizzaPrice <= 0) {
-                    alert('Por favor, insira um preço de venda válido.');
-                    return;
-                }
+            if (calculateBtn) {
+                calculateBtn.addEventListener('click', () => {
+                    const pizzaPrice = parseFloat(document.getElementById('pizzaPrice').value);
+                    if (isNaN(pizzaPrice) || pizzaPrice <= 0) {
+                        alert('Por favor, insira um preço de venda válido.');
+                        return;
+                    }
 
-                const ingredientsCostPercent = parseInt(ingredientsCostSlider.value, 10);
-                const selectedPlan = document.querySelector('input[name="ifoodPlan"]:checked').value;
-                const costOfGoods = pizzaPrice * (ingredientsCostPercent / 100);
-                const ifoodCommissionRate = selectedPlan === 'basico' ? IFOOD_BASIC_COMMISSION : IFOOD_DELIVERY_COMMISSION;
-                const ifoodCommissionValue = pizzaPrice * ifoodCommissionRate;
-                const ifoodPaymentFeeValue = pizzaPrice * IFOOD_PAYMENT_FEE;
-                const ifoodProfit = pizzaPrice - costOfGoods - ifoodCommissionValue - ifoodPaymentFeeValue;
-                const directPaymentFeeValue = pizzaPrice * DIRECT_PAYMENT_FEE;
-                const directProfit = pizzaPrice - costOfGoods - directPaymentFeeValue;
-                const profitDifference = directProfit - ifoodProfit;
-                const percentageLoss = directProfit > 0 ? (profitDifference / directProfit) * 100 : 0;
-                
-                const resultsContainer = document.getElementById('calculator-results');
-                resultsContainer.innerHTML = `
-                    <div class="results-grid">
-                        <div id="ifood-results" class="results-column">
-                            <h3>Venda no iFood</h3>
-                            <ul>
-                                <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
-                                <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
-                                <li><span class="loss">Comissão iFood</span> <span class="loss">- ${formatCurrency(ifoodCommissionValue)}</span></li>
-                                <li><span class="loss">Taxa de Pagamento</span> <span class="loss">- ${formatCurrency(ifoodPaymentFeeValue)}</span></li>
-                            </ul>
-                            <div class="profit">
-                                <span>Seu Lucro Final</span>
-                                <span>${formatCurrency(ifoodProfit)}</span>
+                    const ingredientsCostPercent = parseInt(ingredientsCostSlider.value, 10);
+                    const selectedPlan = document.querySelector('input[name="ifoodPlan"]:checked').value;
+                    const costOfGoods = pizzaPrice * (ingredientsCostPercent / 100);
+                    const ifoodCommissionRate = selectedPlan === 'basico' ? IFOOD_BASIC_COMMISSION : IFOOD_DELIVERY_COMMISSION;
+                    const ifoodCommissionValue = pizzaPrice * ifoodCommissionRate;
+                    const ifoodPaymentFeeValue = pizzaPrice * IFOOD_PAYMENT_FEE;
+                    const ifoodProfit = pizzaPrice - costOfGoods - ifoodCommissionValue - ifoodPaymentFeeValue;
+                    const directPaymentFeeValue = pizzaPrice * DIRECT_PAYMENT_FEE;
+                    const directProfit = pizzaPrice - costOfGoods - directPaymentFeeValue;
+                    const profitDifference = directProfit - ifoodProfit;
+                    const percentageLoss = directProfit > 0 ? (profitDifference / directProfit) * 100 : 0;
+                    
+                    const resultsContainer = document.getElementById('ifood-results-display');
+                    resultsContainer.innerHTML = `
+                        <div class="results-grid">
+                            <div id="ifood-results" class="results-column">
+                                <h3>Venda no iFood</h3>
+                                <ul>
+                                    <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
+                                    <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
+                                    <li><span class="loss">Comissão iFood</span> <span class="loss">- ${formatCurrency(ifoodCommissionValue)}</span></li>
+                                    <li><span class="loss">Taxa de Pagamento</span> <span class="loss">- ${formatCurrency(ifoodPaymentFeeValue)}</span></li>
+                                </ul>
+                                <div class="profit">
+                                    <span>Seu Lucro Final</span>
+                                    <span>${formatCurrency(ifoodProfit)}</span>
+                                </div>
+                            </div>
+                            <div id="direct-results" class="results-column">
+                                <h3>Venda Direta</h3>
+                                <ul>
+                                    <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
+                                    <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
+                                    <li><span class="gain">Taxa do Cartão</span> <span class="gain">- ${formatCurrency(directPaymentFeeValue)}</span></li>
+                                    <li><span>&nbsp;</span><span>&nbsp;</span></li>
+                                </ul>
+                                 <div class="profit">
+                                    <span>Seu Lucro Final</span>
+                                    <span>${formatCurrency(directProfit)}</span>
+                                </div>
                             </div>
                         </div>
-                        <div id="direct-results" class="results-column">
-                            <h3>Venda Direta</h3>
-                            <ul>
-                                <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
-                                <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
-                                <li><span class="gain">Taxa do Cartão</span> <span class="gain">- ${formatCurrency(directPaymentFeeValue)}</span></li>
-                                <li><span>&nbsp;</span><span>&nbsp;</span></li>
-                            </ul>
-                             <div class="profit">
-                                <span>Seu Lucro Final</span>
-                                <span>${formatCurrency(directProfit)}</span>
-                            </div>
+                        <div class="punchline">
+                            Nesta única venda, você deixou <span class="loss">${formatCurrency(profitDifference)}</span> na mesa. <br>Isso é <span class="loss">${Math.round(percentageLoss)}%</span> do seu lucro que ficou com o iFood.
                         </div>
-                    </div>
-                    <div class="punchline">
-                        Nesta única venda, você deixou <span class="loss">${formatCurrency(profitDifference)}</span> na mesa. <br>Isso é <span class="loss">${Math.round(percentageLoss)}%</span> do seu lucro que ficou com o iFood.
-                    </div>
-                `;
-                resultsContainer.style.display = 'block';
-                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
+                    `;
+                    resultsContainer.style.display = 'block';
+                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            }
 
             // --- Lógica da Calculadora de DRE ---
             document.getElementById('calcularDRE').addEventListener('click', () => {
@@ -696,17 +747,12 @@
                 const lucroOperacional = lucroBruto - despesasFixas - despesasVariaveis;
                 const margemLiquida = receitaBruta > 0 ? (lucroOperacional / receitaBruta) * 100 : 0;
                 
-                const lucroBrutoEl = document.getElementById('dre-lucro-bruto');
-                const lucroOpEl = document.getElementById('dre-lucro-operacional');
-                const margemLiqEl = document.getElementById('dre-margem-liquida');
-
-                lucroBrutoEl.textContent = formatCurrency(lucroBruto);
-                lucroOpEl.textContent = formatCurrency(lucroOperacional);
-                margemLiqEl.textContent = `${margemLiquida.toFixed(2).replace('.', ',')}%`;
-
-                toggleNegativeClass(lucroBrutoEl, lucroBruto);
-                toggleNegativeClass(lucroOpEl, lucroOperacional);
-                toggleNegativeClass(margemLiqEl, margemLiquida);
+                resultsEl.innerHTML = `
+                    <p>Lucro Bruto: <span class="result-value">${formatCurrency(lucroBruto)}</span></p>
+                    <p>Lucro Operacional: <span class="result-value">${formatCurrency(lucroOperacional)}</span></p>
+                    <p>Margem Líquida: <span class="result-value">${margemLiquida.toFixed(2).replace('.', ',')}%</span></p>
+                `;
+                toggleNegativeClass(resultsEl.querySelector('.result-value'), lucroOperacional);
                 resultsEl.style.display = 'block';
             });
 
@@ -725,10 +771,12 @@
                 const custoTotal = custoIngredientes + outrosCustos;
                 const precoVendaSugerido = custoTotal / (1 - (margemDesejada / 100));
                 const lucroAbsoluto = precoVendaSugerido - custoTotal;
-
-                document.getElementById('preco-custo-total').textContent = formatCurrency(custoTotal);
-                document.getElementById('preco-sugerido').textContent = formatCurrency(precoVendaSugerido);
-                document.getElementById('preco-lucro-absoluto').textContent = formatCurrency(lucroAbsoluto);
+                
+                resultsEl.innerHTML = `
+                    <p>Custo Total por Pizza: <span class="result-value">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span></p>
+                    <p>Preço de Venda Sugerido: <span class="result-value">R$ ${precoVendaSugerido.toFixed(2).replace('.', ',')}</span></p>
+                    <p>Lucro Absoluto por Pizza: <span class="result-value">R$ ${lucroAbsoluto.toFixed(2).replace('.', ',')}</span></p>
+                `;
                 resultsEl.style.display = 'block';
             });
 
