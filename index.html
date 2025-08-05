@@ -134,7 +134,7 @@
         .main-nav a:hover, .main-nav a.active {
             border-color: var(--yellow);
         }
-
+        
         /* --- Hero Section --- */
         .hero {
             background-color: var(--dark-gray);
@@ -487,10 +487,10 @@
                 </div>
 
                 <div id="imposto" class="tab-content active">
-                    <h3>Descubra o 'Imposto iFood'</h3>
+                     <h3>Descubra o 'Imposto iFood'</h3>
                     <p>Veja na prática a diferença no seu bolso ao final de cada venda.</p>
-                    <div class="calculator-form">
-                       <div class="input-group">
+                     <div class="calculator-form">
+                        <div class="input-group">
                            <label for="pizzaPrice">1. Qual o preço de venda da sua pizza?</label>
                            <input type="number" id="pizzaPrice" placeholder="Ex: 60.00" step="0.01">
                        </div>
@@ -655,7 +655,9 @@
     <script defer>
         document.addEventListener('DOMContentLoaded', function() {
             const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
-            const toggleNegativeClass = (element, value) => element.classList.toggle('negative', value < 0);
+            const toggleNegativeClass = (element, value) => {
+                if(element) element.classList.toggle('negative', value < 0);
+            };
 
             // --- Lógica do "Imposto iFood" ---
             const calculateBtn = document.getElementById('calculateBtn');
@@ -664,13 +666,11 @@
             
             const IFOOD_BASIC_COMMISSION = 0.12, IFOOD_DELIVERY_COMMISSION = 0.25, IFOOD_PAYMENT_FEE = 0.032, DIRECT_PAYMENT_FEE = 0.02;
 
-            if (ingredientsCostSlider) {
-                ingredientsCostSlider.addEventListener('input', () => { 
-                    if(rangeValueSpan) rangeValueSpan.textContent = `${ingredientsCostSlider.value}%`; 
-                });
+            if(ingredientsCostSlider && rangeValueSpan) {
+                ingredientsCostSlider.addEventListener('input', () => { rangeValueSpan.textContent = `${ingredientsCostSlider.value}%`; });
             }
 
-            if (calculateBtn) {
+            if(calculateBtn) {
                 calculateBtn.addEventListener('click', () => {
                     const pizzaPrice = parseFloat(document.getElementById('pizzaPrice').value);
                     if (isNaN(pizzaPrice) || pizzaPrice <= 0) {
@@ -752,7 +752,9 @@
                     <p>Lucro Operacional: <span class="result-value">${formatCurrency(lucroOperacional)}</span></p>
                     <p>Margem Líquida: <span class="result-value">${margemLiquida.toFixed(2).replace('.', ',')}%</span></p>
                 `;
-                toggleNegativeClass(resultsEl.querySelector('.result-value'), lucroOperacional);
+                toggleNegativeClass(resultsEl.children[0].querySelector('.result-value'), lucroBruto);
+                toggleNegativeClass(resultsEl.children[1].querySelector('.result-value'), lucroOperacional);
+                toggleNegativeClass(resultsEl.children[2].querySelector('.result-value'), margemLiquida);
                 resultsEl.style.display = 'block';
             });
 
@@ -773,9 +775,9 @@
                 const lucroAbsoluto = precoVendaSugerido - custoTotal;
                 
                 resultsEl.innerHTML = `
-                    <p>Custo Total por Pizza: <span class="result-value">R$ ${custoTotal.toFixed(2).replace('.', ',')}</span></p>
-                    <p>Preço de Venda Sugerido: <span class="result-value">R$ ${precoVendaSugerido.toFixed(2).replace('.', ',')}</span></p>
-                    <p>Lucro Absoluto por Pizza: <span class="result-value">R$ ${lucroAbsoluto.toFixed(2).replace('.', ',')}</span></p>
+                    <p>Custo Total por Pizza: <span class="result-value">${formatCurrency(custoTotal)}</span></p>
+                    <p>Preço de Venda Sugerido: <span class="result-value">${formatCurrency(precoVendaSugerido)}</span></p>
+                    <p>Lucro Absoluto por Pizza: <span class="result-value">${formatCurrency(lucroAbsoluto)}</span></p>
                 `;
                 resultsEl.style.display = 'block';
             });
@@ -809,7 +811,9 @@
                         link.classList.add('active');
                     }
                 });
-                backToTopButton.classList.toggle('visible', pageYOffset > 300);
+                if (backToTopButton) {
+                    backToTopButton.classList.toggle('visible', pageYOffset > 300);
+                }
             }
             window.addEventListener('scroll', onScroll);
             onScroll();
