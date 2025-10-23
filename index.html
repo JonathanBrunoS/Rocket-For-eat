@@ -3,821 +3,1712 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket for Eat - Marketing Digital para Pizzarias</title>
-    <meta name="description" content="Sua pizzaria refém dos aplicativos? Liberte-se das taxas, construa um delivery próprio lucrativo e decole suas vendas com nossa consultoria gratuita.">
-    <meta name="keywords" content="marketing para pizzaria, delivery próprio, aumentar vendas pizzaria, gestão de tráfego para pizzaria, marketing digital, iFood, delivery, Rocket for Eat">
-    <meta name="author" content="Rocket for Eat">
-    <link rel="icon" href="https://i.postimg.cc/sgvdLPdZ/Design-sem-nome-1.png" type="image/png">
-
+    <title>CRM Rocket</title>
+    <!-- Carrega o TailwindCSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones (Lucide) --><script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
+    
     <style>
-        /* --- Reset e Estilos Globais --- */
-        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap");
-
-        :root {
-            --yellow: #FFC900;
-            --dark-gray: #212529;
-            --white: #FFFFFF;
-            --light-gray: #f8f9fa;
-            --green: #28a745;
-            --red: #dc3545;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
-
+        /* CSS mínimo para a aplicação */
         body {
-            font-family: 'Montserrat', sans-serif;
-            color: var(--dark-gray);
-            line-height: 1.6;
-            background-color: var(--white);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 5rem 2rem;
+        /* Oculta as telas inativas */
+        .page { /* Containers principais: auth vs app */
+            display: none;
+        }
+        .page.active {
+            display: block;
         }
         
-        section {
-            text-align: center;
-            padding: 60px 0;
+        .page-content { /* Áreas de conteúdo dentro do app */
+            display: none;
         }
-        
-        section:nth-of-type(even) {
-            background-color: var(--light-gray);
+        .page-content.active {
+            display: block;
         }
 
-        h1, h2, h3 {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
+        .modal { /* Modais (pop-ups) */
+            display: none; /* Oculto por padrão */
+        }
+        .modal.active {
+            display: flex; /* Visível quando ativo (Tailwind usa flex) */
+        }
+        
+        .hidden {
+            display: none;
         }
 
-        h2 {
-            font-size: 2.5rem;
-            font-weight: 900;
+        /* Estilo para o "fantasma" do drag-and-drop */
+        .dragging {
+            opacity: 0.5;
+            background: #fffbeb; /* Amarelo clarinho */
+            border: 2px dashed #fbbf24; /* Amarelo */
         }
-        
-        h2 .highlight {
-            color: var(--yellow);
-        }
-
-        p {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+        .drag-over {
+            background-color: #fffbeb; /* Amarelo clarinho */
         }
 
-        .cta-button {
-            display: inline-block;
-            background-color: var(--yellow);
-            color: var(--dark-gray);
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 700;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-transform: uppercase;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
-        
-        /* --- Header --- */
-        .main-header {
-            padding: 0.5rem 2rem;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: var(--white);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
-        
-        .main-header .container {
-            padding: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo-img {
-            width: 150px;
-            vertical-align: middle;
-        }
-        
-        .main-nav ul {
-            list-style: none;
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .main-nav a {
-            text-decoration: none;
-            color: var(--dark-gray);
-            font-weight: 700;
-            padding-bottom: 5px;
-            font-size: 0.9rem;
-            border-bottom: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-        
-        .main-nav a:hover, .main-nav a.active {
-            border-color: var(--yellow);
-        }
-        
-        /* --- Hero Section --- */
-        .hero {
-            background-color: var(--dark-gray);
-            color: var(--white);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-        }
-        
-        .hero h1 .highlight {
-            color: var(--yellow);
-        }
-        
-        .hero p {
-            font-size: 1.5rem;
-            opacity: 0.9;
-            margin-bottom: 2.5rem;
-        }
-        
-        /* --- Problem Section --- */
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .problem-card {
-            background-color: var(--white);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-        
-        .problem-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .problem-card h3 {
-            font-size: 1.5rem;
-        }
-        
-        /* --- Solution Section --- */
-        section.solution {
-            background-color: var(--dark-gray);
-            color: var(--white);
-        }
-        
-        .solution h2 { font-size: 3rem; }
-        
-        .motto {
-            font-size: 1.8rem;
-            font-weight: 700;
-            border: 2px solid var(--yellow);
-            padding: 1.5rem;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 2rem;
-        }
-
-        /* --- Comparison Table Section --- */
-        .comparison-grid-container {
-            max-width: 1200px;
-            margin: 2rem auto 0;
-            background-color: var(--white);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-        .comparison-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; align-items: stretch; }
-        .comparison-column { padding: 1.5rem; display: flex; flex-direction: column; }
-        .column-header { min-height: 80px; margin-bottom: 2rem; }
-        .comparison-column h3 { font-size: 1.5rem; font-weight: 900; }
-        .comparison-column .subtitle { font-size: 0.9rem; font-weight: 700; }
-        .comparison-column ul { list-style: none; flex-grow: 1; }
-        .comparison-column li { margin-bottom: 1.5rem; position: relative; padding-left: 30px; font-weight: 700; }
-        .comparison-column li::before { position: absolute; left: 0; font-size: 1.5rem; line-height: 1; }
-        .apps-col .subtitle { color: var(--red); }
-        .apps-col li::before { content: '×'; color: var(--red); }
-        .rocket-col { background-color: var(--light-gray); border-radius: 8px; transform: scale(1.05); }
-        .rocket-col .subtitle { color: var(--green); }
-        .rocket-col li::before { content: '✔'; color: var(--green); }
-        .agencies-col .subtitle { color: var(--dark-gray); opacity: 0.7; }
-        .agencies-col li::before { content: '–'; color: var(--dark-gray); opacity: 0.7; }
-
-        /* --- Services Section --- */
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; text-align: left; }
-        .service-card { background: var(--white); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .service-card .phase { font-weight: 900; color: var(--yellow); font-size: 1.2rem; }
-        .service-card h3 { margin-top: 0.5rem; margin-bottom: 1rem; font-size: 1.8rem; }
-        .service-card ul { list-style: none; }
-        .service-card ul li { margin-bottom: 0.75rem; position: relative; padding-left: 25px; }
-        .service-card ul li::before { content: '✔'; position: absolute; left: 0; color: var(--yellow); }
-        
-        /* --- Calculator Section --- */
-        .calculator-section { padding: 60px 0; }
-        .calculator-section .container { background-color: var(--white); padding: 3rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .calculator-section h2 { margin-bottom: 2rem; }
-        .calculator-form .input-group { margin-bottom: 1.5rem; text-align: left; }
-        .calculator-form label { display: block; font-weight: 700; margin-bottom: 0.5rem; color: var(--dark-gray); }
-        .calculator-form input[type="number"], .calculator-form input[type="range"] { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
-        .calculator-form input[type="range"] { padding: 0; }
-        .calculator-form button { width: 100%; padding: 1rem; margin-top: 1rem; background-color: var(--yellow); color: var(--dark-gray); border: none; border-radius: 5px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s; }
-        .calculator-form button:hover { background-color: #e6b800; }
-        .calculator-results-display { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; text-align: left; }
-        .calculator-results-display p { font-size: 1.1rem; margin-bottom: 0.8rem; max-width: 100%; }
-        .calculator-results-display .result-value { font-weight: 700; color: var(--green); }
-        .calculator-results-display .result-value.negative { color: var(--red); }
-        .tab-buttons { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; gap: 1rem; }
-        .tab-button { background-color: #eee; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
-        .tab-button.active { background-color: var(--yellow); color: var(--dark-gray); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .radio-group { display: flex; gap: 1rem; justify-content: center; }
-        .radio-group label { flex: 1; padding: 1rem; border: 2px solid #ccc; border-radius: 5px; cursor: pointer; text-align: center; transition: all 0.3s; }
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group input[type="radio"]:checked + label { border-color: var(--yellow); background-color: #fffbeb; }
-        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left; }
-        .results-column { padding: 1.5rem; border-radius: 8px; }
-        .results-column h3 { border-bottom: 2px solid; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-        .results-column ul { list-style: none; }
-        .results-column li { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1.1rem; }
-        .results-column .profit { font-weight: 900; font-size: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
-        #ifood-results-display #ifood-results { background-color: #fff5f5; border: 1px solid #ffe0e0; }
-        #ifood-results-display #ifood-results h3 { border-color: var(--red); }
-        #ifood-results-display #ifood-results .profit { color: var(--red); }
-        #ifood-results-display #direct-results { background-color: #f2fff5; border: 1px solid #d4f7e0; }
-        #ifood-results-display #direct-results h3 { border-color: var(--green); }
-        #ifood-results-display #direct-results .profit { color: var(--green); }
-        .punchline { margin-top: 2rem; font-size: 1.2rem; font-weight: 700; background-color: var(--light-gray); padding: 1.5rem; border-radius: 8px; }
-        .punchline .loss { color: var(--red); }
-        
-        /* --- ICP Section --- */
-        .icp-list { max-width: 800px; margin: 3rem auto 0; text-align: left; background: var(--white); padding: 2rem; border-radius: 8px; }
-        .icp-list h3 { text-align: center; font-size: 1.5rem; }
-        .icp-list ul li { list-style: none; padding-left: 30px; position: relative; font-size: 1.1rem; margin-bottom: 1rem; }
-        .icp-list ul li::before { content: '🍕'; position: absolute; left: 0; font-size: 1.2rem; }
-        
-        /* --- About Us Section --- */
-        .about-us-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; text-align: left; margin-top: 3rem; }
-        .about-us-image img { width: 100%; border-radius: 8px; }
-        .about-us-text h2 { font-size: 2.2rem; }
-        .about-us-text p { max-width: 100%; }
-
-        /* --- FAQ Section --- */
-        .faq-item { text-align: left; max-width: 800px; margin: 0 auto 1.5rem auto; border: 1px solid #ddd; border-radius: 5px; }
-        .faq-item summary { font-weight: 700; font-size: 1.2rem; padding: 1.5rem; cursor: pointer; outline: none; position: relative; }
-        .faq-item summary::-webkit-details-marker { display: none; }
-        .faq-item summary::after { content: '+'; position: absolute; right: 1.5rem; font-size: 2rem; transition: transform 0.2s; }
-        .faq-item[open] summary::after { transform: rotate(45deg); }
-        .faq-item div { padding: 0 1.5rem 1.5rem 1.5rem; }
-
-        /* --- Floating Buttons --- */
-        .whatsapp-float, .back-to-top { position: fixed; width: 60px; height: 60px; border-radius: 50px; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 100; display: flex; justify-content: center; align-items: center; text-decoration: none; transition: transform 0.3s, opacity 0.3s, visibility 0.3s; }
-        .whatsapp-float { bottom: 30px; right: 30px; background-color: #25D366; }
-        .back-to-top { bottom: 100px; right: 30px; background-color: var(--yellow); opacity: 0; visibility: hidden; }
-        .back-to-top.visible { opacity: 1; visibility: visible; }
-        .whatsapp-float:hover, .back-to-top:hover { transform: scale(1.1); }
-
-        /* --- Footer --- */
-        footer { background-color: var(--dark-gray); color: var(--white); padding: 4rem 2rem 2rem 2rem; text-align: center; }
-        .social-links { margin-bottom: 2rem; }
-        .social-links a { margin: 0 1rem; text-decoration: none; display: inline-block; }
-        .social-links svg { width: 35px; height: 35px; fill: var(--white); transition: fill 0.3s, transform 0.3s; }
-        .social-links a:hover svg { fill: var(--yellow); transform: translateY(-3px); }
-        footer p { font-size: 1rem; margin-bottom: 0; opacity: 0.8; }
-        
-        /* --- Media Queries --- */
-        @media (max-width: 1024px) {
-            .main-nav { display: none; } /* Oculta o menu de navegação em tablets */
-        }
-
-        @media (max-width: 768px) {
-            .container { padding: 4rem 1.5rem; }
-            h1, h2 { font-size: 2.2rem; }
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1.2rem; }
-            .about-us-grid, .comparison-grid, .results-grid { grid-template-columns: 1fr; }
-            .rocket-col { transform: scale(1); order: -1; }
-            .main-header { padding: 0.5rem 1rem; }
-            .logo-img { width: 120px; }
-            .cta-button { font-size: 0.8rem; padding: 0.6rem 1rem; }
-        }
-
     </style>
 </head>
-<body>
+<body class="bg-gray-100">
 
-    <header class="main-header">
-        <div class="container">
-            <a href="#hero" aria-label="Página inicial Rocket for Eat">
-                <img src="https://i.postimg.cc/sgvdLPdZ/Design-sem-nome-1.png" alt="Logo Rocket for Eat" class="logo-img">
-            </a>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#problema">O Problema</a></li>
-                    <li><a href="#solucao">A Solução</a></li>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#calculadoras">Calculadoras</a></li>
-                    <li><a href="#sobre">Quem Somos</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                </ul>
-            </nav>
-            <a href="#cta-final" class="cta-button">Consultoria Gratuita</a>
+    <!-- TELA DE LOGIN (AGORA TELA DE CARREGAMENTO) --><div id="auth-page" class="page active">
+        <div class="flex min-h-screen items-center justify-center bg-gray-950 text-white p-4">
+            <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
+                <h1 class="text-3xl font-bold text-yellow-400 text-center mb-2">CRM Rocket</h1>
+                <p class="text-center text-gray-400 mb-6">Carregando seus dados...</p>
+                <div id="authError" class="text-red-400 text-center text-sm mt-4 hidden"></div>
+            </div>
         </div>
-    </header>
+    </div>
 
-    <main>
-        <section class="hero" id="hero">
-            <div class="container">
-                <h1>Sua pizzaria <span class="highlight">refém</span> dos aplicativos de delivery?</h1>
-                <p>Assuma o controle, construa sua própria base de clientes e veja seu lucro decolar com marketing digital especialista em pizzarias.</p>
-                <a href="#cta-final" class="cta-button">AGENDAR CONSULTORIA GRATUITA</a>
-            </div>
-        </section>
-
-        <section class="problem" id="problema">
-            <div class="container">
-                <h2>Você se sente <span class="highlight">frustrado</span> com seu delivery?</h2>
-                <p>Muitos donos de pizzaria talentosos enfrentam os mesmos desafios todos os dias. Você se reconhece nesse cenário?</p>
-                <div class="problem-grid">
-                    <div class="problem-card">
-                        <div class="icon">💸</div>
-                        <h3>Taxas Abusivas</h3>
-                        <p>Até 30% do seu faturamento fica com os aplicativos, esmagando sua margem de lucro.</p>
-                    </div>
-                    <div class="problem-card">
-                        <div class="icon">👥</div>
-                        <h3>Clientes "Alugados"</h3>
-                        <p>Os dados dos seus clientes pertencem aos apps. Você não sabe quem são e não pode contatá-los diretamente.</p>
-                    </div>
-                    <div class="problem-card">
-                        <div class="icon">⚔️</div>
-                        <h3>Concorrência Desleal</h3>
-                        <p>Seu negócio aparece ao lado de dezenas de outros, em uma guerra constante por preço e visibilidade.</p>
-                    </div>
+    <!-- APLICAÇÃO PRINCIPAL (CRM) --><div id="app-page" class="page">
+        <div class="flex h-screen bg-gray-100">
+            <!-- MENU LATERAL (SIDEBAR) --><aside class="w-64 bg-gray-950 text-white flex flex-col p-4">
+                <div class="bg-white p-4 rounded-lg mb-8">
+                    <img src="https://i.postimg.cc/jjgT3jhJ/logo.png" alt="Logo da Empresa" class="w-auto h-12 mx-auto">
                 </div>
-            </div>
-        </section>
 
-        <section class="solution" id="solucao">
-            <div class="container">
-                <h2>É hora de ter um <span class="highlight">Delivery Próprio e Lucrativo.</span></h2>
-                <p>Nós criamos e gerenciamos um ecossistema digital para que sua pizzaria receba pedidos diretos, construa uma marca forte e pare de depender de terceiros.</p>
-                <div class="motto">Você domina o forno. A gente domina o digital.</div>
-            </div>
-        </section>
+                <nav class="flex-1 space-y-2">
+                    <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button data-page="prospectsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="kanban-square"></i>
+                        <span>Prospecção</span>
+                    </button>
+                    <button data-page="clientsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="users"></i>
+                        <span>Clientes</span>
+                    </button>
+                    <button data-page="financialReportPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="dollar-sign"></i>
+                        <span>Financeiro</span>
+                    </button>
+                    <button data-page="globalTasksPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="check-square"></i>
+                        <span>Tarefas Globais</span>
+                    </button>
+                    <button data-page="companyPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                        <i data-lucide="target"></i>
+                        <span>Minha Empresa</span>
+                    </button>
+                </nav>
 
-        <section class="comparison-table" id="comparativo">
-            <div class="container">
-                <h2>Onde você quer <span class="highlight">posicionar</span> sua pizzaria?</h2>
-                <div class="comparison-grid-container">
-                    <div class="comparison-grid">
-                        <div class="comparison-column apps-col">
-                            <div class="column-header">
-                                <h3>Apps de Delivery</h3>
-                                <span class="subtitle">Plataformas tradicionais</span>
+                <div class="mt-auto">
+                </div>
+            </aside>
+
+            <!-- CONTEÚDO PRINCIPAL --><main class="flex-1 overflow-y-auto p-8">
+
+                <!-- TELA 1: DASHBOARD --><div id="dashboardPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+                    
+                    <!-- KPIs --><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Clientes Ativos</h3>
+                            <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Receita Recorrente (MRR)</h3>
+                            <p id="kpi-mrr" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Vendas Novas (Mês)</h3>
+                            <p id="kpi-vendas-novas" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Upsell (Mês)</h3>
+                            <p id="kpi-upsell" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <!-- Alertas --><div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos Vencendo (30 dias)</h3>
+                            <div id="alertas-contratos" class="space-y-3 max-h-48 overflow-y-auto">
+                                <p class="text-gray-500">Nenhum contrato vencendo.</p>
                             </div>
-                            <ul>
-                                <li>Comissão de <strong>até 35%</strong></li>
-                                <li><strong>Sem acesso</strong> aos dados dos clientes</li>
-                                <li><strong>Pouco controle</strong> sobre preços</li>
-                                <li><strong>Dependência total</strong> da plataforma</li>
-                            </ul>
                         </div>
-                        <div class="comparison-column rocket-col">
-                            <div class="column-header">
-                                <img src="https://i.postimg.cc/sgvdLPdZ/Design-sem-nome-1.png" alt="Logo Rocket for Eat" style="width: 150px;">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Vencendo (7 dias)</h3>
+                            <div id="alertas-pagamentos" class="space-y-3 max-h-48 overflow-y-auto">
+                                <p class="text-gray-500">Nenhum pagamento vencendo esta semana.</p>
                             </div>
-                            <span class="subtitle">Solução completa especializada</span>
-                            <ul>
-                                <li><strong>0% de comissão</strong> nas vendas diretas</li>
-                                <li><strong>100% dos dados</strong> são seus</li>
-                                <li><strong>Controle total</strong> sobre preços</li>
-                                <li><strong>Independência</strong> e autonomia</li>
-                            </ul>
                         </div>
-                        <div class="comparison-column agencies-col">
-                            <div class="column-header">
-                                <h3>Agências Comuns</h3>
-                                <span class="subtitle">Marketing tradicional</span>
+                    </div>
+
+                    <!-- Progresso do Mês --><div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                        <div class="space-y-6">
+                            <!-- Faturamento --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Faturamento</span>
+                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div id="faturamento-progress-dash" class="bg-yellow-500 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
                             </div>
-                            <ul>
-                                <li>Soluções <strong>genéricas</strong></li>
-                                <li>Falta de <strong>especialização</strong> em food</li>
-                                <li>Sem <strong>visão estratégica</strong> completa</li>
-                                <li>Resultados <strong>limitados</strong></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="services" id="servicos">
-            <div class="container">
-                <h2>Nosso Plano de Voo para o <span class="highlight">Sucesso</span></h2>
-                <p>Temos um método claro, dividido em 3 fases, para transformar sua presença digital em uma máquina de vendas.</p>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <div class="phase">FASE 1</div>
-                        <h3>Fundação Digital</h3>
-                        <p>Preparamos o terreno para o crescimento, garantindo que sua pizzaria seja encontrada e desejada.</p>
-                        <ul>
-                            <li>Otimização de Perfil no Google</li>
-                            <li>Gestão de Instagram para Pizzarias</li>
-                            <li>Criação de Cardápio Digital Interativo</li>
-                            <li>Configuração de Pedidos no WhatsApp</li>
-                        </ul>
-                    </div>
-                    <div class="service-card">
-                        <div class="phase">FASE 2</div>
-                        <h3>Aquisição de Clientes</h3>
-                        <p>Atraímos clientes famintos para o seu canal de vendas direto através de anúncios inteligentes.</p>
-                        <ul>
-                            <li>Gestão de Tráfego Pago (Anúncios)</li>
-                            <li>Campanhas no Instagram e Facebook</li>
-                            <li>Anúncios no Google (Rede de Pesquisa)</li>
-                            <li>Criação de Anúncios que Vendem</li>
-                        </ul>
-                    </div>
-                    <div class="service-card">
-                        <div class="phase">FASE 3</div>
-                        <h3>Fidelização e Escala</h3>
-                        <p>Transformamos clientes em fãs e expandimos seu alcance para garantir um crescimento sustentável.</p>
-                        <ul>
-                            <li>Estratégias de Retenção de Clientes</li>
-                            <li>Construção da sua Base de Clientes</li>
-                            <li>Análise de Métricas e Resultados</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-section" id="calculadoras">
-            <div class="container">
-                <h2>Nossas <span class="highlight">Ferramentas</span> de Decisão</h2>
-                <div class="tab-buttons">
-                    <button class="tab-button active" data-tab="imposto">Calculadora "Imposto iFood"</button>
-                    <button class="tab-button" data-tab="preco">Simulador de Preço de Pizza</button>
-                    <button class="tab-button" data-tab="dre">DRE Simplificado</button>
-                </div>
-
-                <div id="imposto" class="tab-content active">
-                     <h3>Descubra o 'Imposto iFood'</h3>
-                    <p>Veja na prática a diferença no seu bolso ao final de cada venda.</p>
-                     <div class="calculator-form">
-                        <div class="input-group">
-                           <label for="pizzaPrice">1. Qual o preço de venda da sua pizza?</label>
-                           <input type="number" id="pizzaPrice" placeholder="Ex: 60.00" step="0.01">
-                       </div>
-                       <div class="input-group">
-                            <label for="ingredientsCost">2. Qual seu custo com ingredientes? (<span id="range-value">30%</span>)</label>
-                            <input type="range" id="ingredientsCost" min="20" max="45" value="30">
-                       </div>
-                        <div class="input-group">
-                           <label>3. Qual plano do iFood você usa?</label>
-                           <div class="radio-group">
-                               <input type="radio" id="planoBasico" name="ifoodPlan" value="basico">
-                               <label for="planoBasico">Plano Básico<br><small>(Eu entrego)</small></label>
-                               
-                               <input type="radio" id="planoEntrega" name="ifoodPlan" value="entrega" checked>
-                               <label for="planoEntrega">Plano Entrega<br><small>(iFood entrega)</small></label>
-                           </div>
-                       </div>
-                       <button id="calculateBtn">Calcular Lucro</button>
-                       <div id="ifood-results-display" style="display: none;">
-                           </div>
-                   </div>
-               </div>
-
-                <div id="preco" class="tab-content">
-                    <h3>Simulador de Preço de Pizza</h3>
-                    <p>Defina o preço ideal para suas pizzas e garanta sua margem de lucro.</p>
-                    <div class="calculator-form">
-                        <div class="input-group">
-                            <label for="custoIngredientes">Custo Total dos Ingredientes por Pizza (R$):</label>
-                            <input type="number" id="custoIngredientes" placeholder="Ex: 15.00" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <label for="outrosCustos">Outros Custos (Embalagem, Mão de Obra, etc.) por Pizza (R$):</label>
-                            <input type="number" id="outrosCustos" placeholder="Ex: 5.50" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <label for="margemDesejada">Margem de Lucro Desejada (%):</label>
-                            <input type="number" id="margemDesejada" placeholder="Ex: 25" step="0.1">
-                        </div>
-                        <button id="calcularPreco">Calcular Preço Sugerido</button>
-                        <div class="calculator-results-display" id="preco-results" style="display: none;">
+                            <!-- Prospecção --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Novos Clientes</span>
+                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div id="prospeccao-progress-dash" class="bg-yellow-500 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
                             </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="dre" class="tab-content">
-                    <h3>Calculadora de DRE Simplificado</h3>
-                    <p>Entenda a saúde financeira da sua pizzaria de forma rápida e descomplicada.</p>
-                    <div class="calculator-form">
-                        <div class="input-group">
-                            <label for="receitaBruta">Receita Bruta Mensal (R$):</label>
-                            <input type="number" id="receitaBruta" placeholder="Ex: 15000.00" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <label for="cmv">Custo da Mercadoria Vendida (CMV - % da Receita):</label>
-                            <input type="number" id="cmv" placeholder="Ex: 30" step="0.1">
-                        </div>
-                        <div class="input-group">
-                            <label for="despesasFixas">Despesas Operacionais Fixas (R$):</label>
-                            <input type="number" id="despesasFixas" placeholder="Ex: 3000.00" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <label for="despesasVariaveis">Despesas Operacionais Variáveis (R$):</label>
-                            <input type="number" id="despesasVariaveis" placeholder="Ex: 1500.00" step="0.01">
-                        </div>
-                        <button id="calcularDRE">Calcular DRE</button>
-                        <div class="calculator-results-display" id="dre-results" style="display: none;">
+                <!-- TELA 2: PROSPECÇÃO (KANBAN) --><div id="prospectsPage" class="page-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">Funil de Prospecção</h2>
+                        <button id="showAddProspectModalBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="plus"></i>
+                            <span>Novo Prospect</span>
+                        </button>
+                    </div>
+                    
+                    <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                    </div>
+                </div>
+
+                <!-- TELA 3: CLIENTES (LISTA) --><div id="clientsPage" class="page-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
+                        <button id="showAddClientModalBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="user-plus"></i>
+                            <span>Novo Cliente</span>
+                        </button>
+                    </div>
+                    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Término do Contrato</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-list-table" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TELA 4: DETALHE DO CLIENTE --><div id="clientDetailPage" class="page-content">
+                    <button data-page="clientsPage" class="nav-link text-yellow-600 hover:text-yellow-800 font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="arrow-left"></i>
+                        Voltar para Clientes
+                    </button>
+                    
+                    <!-- Header do Cliente --><div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h2 id="detail-client-name" class="text-3xl font-bold text-gray-800">Nome do Cliente</h2>
+                                <p id="detail-client-phone" class="text-gray-600 mt-1"></p>
                             </div>
+                            <button id="editClientBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                                <i data-lucide="edit-2"></i>
+                                <span>Editar</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mt-6 border-t pt-4">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Status</h4>
+                                <p id="detail-client-status" class="text-lg font-semibold text-green-600">Ativo</p>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Valor do Projeto</h4>
+                                <p id="detail-client-value" class="text-lg font-semibold text-gray-800">R$ 0,00</p>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Dias Restantes</h4>
+                                <p id="detail-client-days" class="text-lg font-semibold text-gray-800">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Abas de Detalhes --><div class="mb-6 border-b border-gray-200">
+                        <nav class="flex space-x-8" aria-label="Tabs">
+                            <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-yellow-500 text-yellow-500">Financeiro</button>
+                            <button data-tab="tasks" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Tarefas</button>
+                            <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
+                        </nav>
+                    </div>
+
+                    <!-- Conteúdo das Abas --><div id="financialTab" class="tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Histórico de Pagamentos</h3>
+                                <div id="payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Adicionar Serviço (Upsell)</h3>
+                                <form id="addPaymentForm" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
+                                        <input type="text" id="paymentDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Consultoria SEO" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                        <input type="number" step="0.01" id="paymentValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Data Vencimento</label>
+                                        <input type="date" id="paymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                    </div>
+                                    <div class="flex items-center pt-2">
+                                        <input type="checkbox" id="paymentIsUpsell" class="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400" checked>
+                                        <label for="paymentIsUpsell" class="ml-2 block text-sm text-gray-700">Registrar como Venda (Upsell)</label>
+                                    </div>
+                                    <button type="submit" class="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-semibold">Adicionar Serviço</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tasksTab" class="tab-content hidden">
+                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Checklist de Tarefas</h3>
+                                <div id="tasks-list" class="space-y-3">
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Tarefa</h3>
+                                <form id="addTaskForm" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                                        <input type="text" id="taskDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                    </div>
+                                    <button type="submit" class="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-semibold">Adicionar Tarefa</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="credentialsTab" class="tab-content hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Credenciais e Senhas</h3>
+                                <div id="credentials-list" class="space-y-3">
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Credencial</h3>
+                                <form id="addCredentialForm" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Serviço</label>
+                                        <input type="text" id="credService" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hospedagem, Google" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Login</label>
+                                        <input type="text" id="credLogin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Senha</label>
+                                        <input type="text" id="credPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                    </div>
+                                    <button type="submit" class="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-semibold">Salvar Senha</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="icp" id="icp">
-            <div class="container">
-                <h2>Este plano é perfeito <span class="highlight">para você?</span></h2>
-                <p>Nossa especialidade é ajudar um perfil específico de pizzaria a atingir seu máximo potencial. Veja se você se encaixa:</p>
-                <div class="icp-list">
-                    <h3>Atendemos pizzarias que:</h3>
-                    <ul>
-                        <li>Possuem uma operação de delivery ativa (ou com potencial) e buscam crescimento.</li>
-                        <li>Estão cansadas de pagar taxas abusivas para aplicativos e querem ter seu próprio canal.</li>
-                        <li>Valorizam a qualidade do seu produto e querem construir uma marca forte e reconhecida.</li>
-                        <li>Estão prontas para investir de forma inteligente em marketing que traz retorno de verdade.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        
-        <section class="about-us" id="sobre">
-            <div class="container">
-                <div class="about-us-grid">
-                    <div class="about-us-image">
-                        <img src="https://i.postimg.cc/5NtybNHd/Red-and-Yellow-Illustration-Food-Facebook-Cover-1.png" alt="Time da Rocket for Eat reunido">
+                <!-- TELA 5: RELATÓRIO FINANCEIRO --><div id="financialReportPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Relatório Financeiro</h2>
+
+                    <div class="mb-6 border-b border-gray-200">
+                        <nav class="flex space-x-8" aria-label="Tabs">
+                            <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-yellow-500 text-yellow-500">Contas a Receber</button>
+                            <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
+                        </nav>
                     </div>
-                    <div class="about-us-text">
-                        <h2>Quem está por trás do foguete que faz as pizzarias <span class="highlight">venderem mais?</span></h2>
-                        <p>A Rocket for Eat nasceu da paixão por dois mundos: pizza e resultados. Somos uma equipe pequena e obcecada, não apenas uma agência. Mergulhamos no universo das pizzarias para entender cada detalhe da sua operação.</p>
-                        <p>Acreditamos que cada pizzaria tem uma história única e merece um canal de vendas direto, sem intermediários. Não somos fornecedores, somos parceiros estratégicos sentados ao seu lado da mesa, focados em uma única coisa: fazer seu delivery decolar.</p>
+
+                    <div id="accountsReceivableTab" class="finance-tab-content">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Atrasados</h3>
+                                <div id="late-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">Nenhum pagamento atrasado.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Previstos</h3>
+                                <div id="upcoming-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">Nenhum pagamento previsto.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="paidThisMonthTab" class="finance-tab-content hidden">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Confirmados (Mês Atual)</h3>
+                            <div id="paid-this-month-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Nenhum pagamento registrado como pago este mês.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="cta-final" id="cta-final">
-            <div class="container">
-                <h2>Receba um Diagnóstico <span class="highlight">Gratuito</span> do seu Delivery</h2>
-                <p>Chega de ficar para trás. Agende uma conversa sem compromisso com um de nossos especialistas e descubra o potencial escondido da sua operação digital.</p>
-                <a href="https://wa.me/5511959228663?text=Ol%C3%A1!%20Vi%20o%20site%20da%20Rocket%20for%20Eat%20e%20gostaria%20de%20agendar%20minha%20consultoria%20gratuita." target="_blank" class="cta-button">AGENDAR MINHA CONSULTORIA</a>
-            </div>
-        </section>
-        
-        <section class="faq" id="faq">
-            <div class="container">
-                <h2>Dúvidas <span class="highlight">Frequentes</span></h2>
-                <details class="faq-item">
-                    <summary>Quanto custa o serviço?</summary>
-                    <div><p>Nossos planos são personalizados para a necessidade e o momento de cada pizzaria. Agende uma conversa para receber um orçamento justo e focado no seu crescimento.</p></div>
-                </details>
-                <details class="faq-item">
-                    <summary>Em quanto tempo eu vejo resultado?</summary>
-                    <div><p>A Fase 1 (Fundação) já traz melhorias imediatas na sua imagem. Os resultados em vendas com tráfego pago (Fase 2) geralmente começam a aparecer já no primeiro mês de campanha.</p></div>
-                </details>
-                <details class="faq-item">
-                    <summary>Preciso ter um site?</summary>
-                    <div><p>Não! Nosso sistema usa o Instagram, Google e um cardápio digital que envia pedidos direto para o seu WhatsApp. É uma estrutura de alta conversão e baixo custo inicial.</p></div>
-                </details>
-                <details class="faq-item">
-                    <summary>Vocês garantem resultados?</summary>
-                    <div><p>Garantimos nosso empenho, expertise e um método comprovado. Desconfie de quem garante resultados em marketing, pois eles dependem de muitos fatores. Nosso foco é o seu ROI (Retorno Sobre o Investimento).</p></div>
-                </details>
-            </div>
-        </section>
+                <!-- TELA 6: TAREFAS GLOBAIS --><div id="globalTasksPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Todas as Tarefas</h2>
 
-        <a href="https://wa.me/5511959228663?text=Ol%C3%A1!%20Vi%20o%20site%20da%20Rocket%20for%20Eat%20e%20gostaria%20de%20agendar%20minha%20consultoria%20gratuita." class="whatsapp-float" target="_blank" aria-label="Fale conosco pelo WhatsApp">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 28px; height: 28px; fill: white;"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 439.6c-33.8 0-66.3-8.8-94.3-25.1l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-        </a>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Checklist Completo</h3>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <select id="globalTaskClientFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
+                                    <option value="all">Todos os Clientes</option>
+                                </select>
+                                <select id="globalTaskStatusFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
+                                    <option value="all">Todos os Status</option>
+                                    <option value="A Fazer">A Fazer</option>
+                                    <option value="Feito">Feito</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="global-tasks-list" class="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto">
+                            <p class="text-gray-500">Nenhuma tarefa encontrada.</p>
+                        </div>
+                    </div>
+                </div>
 
-        <a href="#hero" class="back-to-top" aria-label="Voltar ao topo">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="width: 24px; height: 24px; fill: var(--dark-gray);"><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
-        </a>
-    </main>
+                <!-- TELA 7: MINHA EMPRESA (METAS) --><div id="companyPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Metas da Empresa</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
+                            <form id="goalsForm" class="space-y-4">
+                                <div>
+                                    <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturamento (R$)</label>
+                                    <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
+                                </div>
+                                <div>
+                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospecção (Novos Clientes)</label>
+                                    <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
+                                </div>
+                                <button type="submit" class="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-semibold">Salvar Metas</button>
+                            </form>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Faturamento</span>
+                                        <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <div id="faturamento-progress" class="bg-yellow-500 h-4 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Novos Clientes</span>
+                                        <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <div id="prospeccao-progress" class="bg-yellow-500 h-4 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <footer>
-        <div class="container">
-            <img src="https://i.postimg.cc/sgvdLPdZ/Design-sem-nome-1.png" alt="Logo Rocket for Eat" class="logo-img" style="width: 200px; margin-bottom: 2rem;">
-
-            <div class="social-links">
-                <a href="https://www.instagram.com/rocketfor_eat?igsh=MTc0MGRzM2Q1NXdlbQ%3D%3D&utm_source=qr" target="_blank" aria-label="Instagram da Rocket for Eat">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9 26.3 26.2 58 34.4 93.9 36.2 37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
-                </a>
-                <a href="https://wa.me/5511959228663?text=Ol%C3%A1!%20Vi%20o%20site%20da%20Rocket%20for%20Eat%20e%20gostaria%20de%20agendar%20minha%20consultoria%20gratuita." target="_blank" aria-label="WhatsApp da Rocket for Eat">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 28px; height: 28px; fill: white;"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 439.6c-33.8 0-66.3-8.8-94.3-25.1l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-                </a>
-            </div>
-
-            <p>Rocket for Eat - Marketing Digital para Pizzarias</p>
-            <p>&copy; 2025 - Todos os direitos reservados.</p>
+            </main>
         </div>
-    </footer>
+    </div>
 
-    <script defer>
-        document.addEventListener('DOMContentLoaded', function() {
-            const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
-            const toggleNegativeClass = (element, value) => {
-                if(element) element.classList.toggle('negative', value < 0);
-            };
+    <!-- MODAL: Adicionar/Editar Cliente --><div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <form id="clientForm">
+                <input type="hidden" id="clientId">
+                <div class="p-6">
+                    <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
+                            <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Início</label>
+                            <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Término</label>
+                            <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
+                            <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pausado">Pausado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
+                            <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="unico">Valor Único</option>
+                                <option value="parcelado">Parcelado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
+                            <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            // --- Lógica do "Imposto iFood" ---
-            const calculateBtn = document.getElementById('calculateBtn');
-            const ingredientsCostSlider = document.getElementById('ingredientsCost');
-            const rangeValueSpan = document.getElementById('range-value');
+    <!-- MODAL: Adicionar Prospect --><div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <form id="prospectForm">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Origem</label>
+                            <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Confirmação de Exclusão --><div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-6 text-center">
+                <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
+                <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
+                <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="bg-gray-50 p-4 flex justify-center gap-3">
+                <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts do Firebase e da Aplicação --><script type="module">
+        // Importações do Firebase (ESM - Módulos)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword, 
+            signOut,
+            signInWithCustomToken,
+            signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            getDocs,
+            setDoc, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            collection, 
+            query, 
+            where,
+            Timestamp,
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- VARIÁVEIS DE AMBIENTE (INJETADAS) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- INICIALIZAÇÃO DO FIREBASE ---
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Erro ao inicializar Firebase:", e);
+            document.body.innerHTML = "<h1 style='text-align: center; margin-top: 50px;'>Erro de Configuração do Firebase. Verifique o console.</h1>";
+        }
+
+        // --- ESTADO GLOBAL DA APLICAÇÃO ---
+        let userId = null; 
+        let currentClientId = null; 
+        let currentDeleteInfo = null; 
+        let draggedProspectId = null; 
+        let allClientsData = {}; 
+
+        // --- FUNÇÕES DE UTILIDADE ---
+
+        const renderIcons = () => {
+            if (typeof lucide !== 'undefined') {
+                try {
+                    lucide.createIcons();
+                } catch (e) {
+                    console.error("Erro ao renderizar ícones lucide:", e);
+                }
+            } else {
+                console.warn("Lucide ainda não definido, ícones podem demorar a aparecer.");
+            }
+        };
+
+        const formatCurrency = (value) => {
+            return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+
+        const getDaysRemaining = (dateStr) => {
+            if (!dateStr) return 0;
+            const today = new Date();
+            const endDate = new Date(dateStr + "T23:59:59"); 
+            const diffTime = endDate.getTime() - today.getTime();
+            return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        };
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return 'N/A';
+            const cleanDateStr = dateStr.split('T')[0];
+            const [year, month, day] = cleanDateStr.split('-');
+            return `${day}/${month}/${year}`;
+        };
+
+        const showPage = (pageId) => {
+            document.querySelectorAll('.page-content, #auth-page, #app-page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            if (pageId === 'auth-page') {
+                document.getElementById('auth-page').classList.add('active');
+            } else {
+                document.getElementById('app-page').classList.add('active');
+                if (document.getElementById(pageId)) {
+                    document.getElementById(pageId).classList.add('active');
+                } else {
+                    document.getElementById('dashboardPage').classList.add('active'); 
+                }
+            }
             
-            const IFOOD_BASIC_COMMISSION = 0.12, IFOOD_DELIVERY_COMMISSION = 0.25, IFOOD_PAYMENT_FEE = 0.032, DIRECT_PAYMENT_FEE = 0.02;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('bg-gray-700', link.dataset.page === pageId);
+            });
+            
+            switch(pageId) {
+                case 'dashboardPage': loadDashboardData(); break;
+                case 'prospectsPage': loadProspects(); break;
+                case 'clientsPage': loadClientsList(); break;
+                case 'financialReportPage': loadFinancialReport(); break;
+                case 'globalTasksPage': loadGlobalTasks(); break; 
+                case 'companyPage': loadCompanyGoalsPage(); break;
+            }
+        };
+        
+        const showModal = (modalId) => {
+            document.getElementById(modalId)?.classList.add('active');
+        };
 
-            if(ingredientsCostSlider && rangeValueSpan) {
-                ingredientsCostSlider.addEventListener('input', () => { rangeValueSpan.textContent = `${ingredientsCostSlider.value}%`; });
+        const hideModal = (modalId) => {
+            document.getElementById(modalId)?.classList.remove('active');
+        };
+        
+        const switchTab = (tabName, tabContainerClass, contentContainerClass) => {
+            document.querySelectorAll(contentContainerClass).forEach(content => {
+                content.classList.toggle('hidden', content.id !== `${tabName}Tab`);
+            });
+            document.querySelectorAll(tabContainerClass).forEach(link => {
+                link.classList.toggle('border-yellow-500', link.dataset.tab === tabName);
+                link.classList.toggle('text-yellow-500', link.dataset.tab === tabName);
+                link.classList.toggle('border-transparent', link.dataset.tab !== tabName);
+                link.classList.toggle('text-gray-500', link.dataset.tab !== tabName);
+            });
+        };
+
+        // --- AUTENTICAÇÃO ---
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                initEventListeners();
+                await loadAllClientsToCache();
+                showPage('dashboardPage'); 
+            } else {
+                userId = null;
+                autoLogin();
+            }
+        });
+
+        const autoLogin = async () => {
+             try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Falha no login automático: ", error);
+                const authPage = document.getElementById('auth-page');
+                authPage.innerHTML = `
+                    <div class="flex min-h-screen items-center justify-center bg-gray-950 text-white p-4">
+                        <div class="w-full max-w-md text-center">
+                            <h2 class="text-2xl font-bold text-red-400">Falha no Login Automático</h2>
+                            <p class="text-gray-300 mt-2">${error.message}</p>
+                            <p class="text-gray-500 text-sm mt-4">Verifique a configuração do Firebase.</p>
+                        </div>
+                    </div>`;
+            }
+        };
+
+        // --- METAS (Definição) ---
+        
+        const goalsDocRef = () => doc(db, `/artifacts/${appId}/users/${userId}/company/goals`);
+        
+        const loadCompanyGoalsData = async () => {
+            if (!userId) return;
+
+            let metaFaturamento = 0;
+            let metaProspeccao = 0;
+            try {
+                const docSnap = await getDoc(goalsDocRef());
+                if (docSnap.exists()) {
+                    const goals = docSnap.data();
+                    metaFaturamento = goals.faturamento || 0;
+                    metaProspeccao = goals.prospeccao || 0;
+                }
+            } catch (e) { console.error(e); }
+
+            const salesQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
+            let faturamentoAtual = 0;
+            let novosClientes = 0;
+
+            const salesSnapshot = await getDocs(salesQuery);
+            salesSnapshot.forEach(doc => {
+                const sale = doc.data();
+                faturamentoAtual += sale.valor || 0;
+                if (sale.tipo === 'Novo Contrato') {
+                    novosClientes++;
+                }
+            });
+
+            // Atualiza UI (Página Minha Empresa)
+            const fLabel = document.getElementById('faturamento-label');
+            const fProgress = document.getElementById('faturamento-progress');
+            const pLabel = document.getElementById('prospeccao-label');
+            const pProgress = document.getElementById('prospeccao-progress');
+
+            if (fLabel && fProgress && pLabel && pProgress) {
+                const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
+                fLabel.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
+                fProgress.style.width = `${Math.min(fPercent, 100)}%`;
+                
+                const pPercent = metaProspeccao > 0 ? (novosClientes / metaProspeccao) * 100 : 0;
+                pLabel.textContent = `${novosClientes} / ${metaProspeccao}`;
+                pProgress.style.width = `${Math.min(pPercent, 100)}%`;
             }
 
-            if(calculateBtn) {
-                calculateBtn.addEventListener('click', () => {
-                    const pizzaPrice = parseFloat(document.getElementById('pizzaPrice').value);
-                    if (isNaN(pizzaPrice) || pizzaPrice <= 0) {
-                        alert('Por favor, insira um preço de venda válido.');
-                        return;
-                    }
+            // Atualiza UI (Dashboard)
+            const fLabelDash = document.getElementById('faturamento-label-dash');
+            const fProgressDash = document.getElementById('faturamento-progress-dash');
+            const pLabelDash = document.getElementById('prospeccao-label-dash');
+            const pProgressDash = document.getElementById('prospeccao-progress-dash');
 
-                    const ingredientsCostPercent = parseInt(ingredientsCostSlider.value, 10);
-                    const selectedPlan = document.querySelector('input[name="ifoodPlan"]:checked').value;
-                    const costOfGoods = pizzaPrice * (ingredientsCostPercent / 100);
-                    const ifoodCommissionRate = selectedPlan === 'basico' ? IFOOD_BASIC_COMMISSION : IFOOD_DELIVERY_COMMISSION;
-                    const ifoodCommissionValue = pizzaPrice * ifoodCommissionRate;
-                    const ifoodPaymentFeeValue = pizzaPrice * IFOOD_PAYMENT_FEE;
-                    const ifoodProfit = pizzaPrice - costOfGoods - ifoodCommissionValue - ifoodPaymentFeeValue;
-                    const directPaymentFeeValue = pizzaPrice * DIRECT_PAYMENT_FEE;
-                    const directProfit = pizzaPrice - costOfGoods - directPaymentFeeValue;
-                    const profitDifference = directProfit - ifoodProfit;
-                    const percentageLoss = directProfit > 0 ? (profitDifference / directProfit) * 100 : 0;
+            if (fLabelDash && fProgressDash && pLabelDash && pProgressDash) {
+                const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
+                fLabelDash.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
+                fProgressDash.style.width = `${Math.min(fPercent, 100)}%`;
+                
+                const pPercent = metaProspeccao > 0 ? (novosClientes / metaProspeccao) * 100 : 0;
+                pLabelDash.textContent = `${novosClientes} / ${metaProspeccao}`;
+                pProgressDash.style.width = `${Math.min(pPercent, 100)}%`;
+            }
+        };
+
+        const loadCompanyGoalsPage = async () => {
+            if (!userId) return;
+
+            try {
+                const docSnap = await getDoc(goalsDocRef());
+                if (docSnap.exists()) {
+                    const goals = docSnap.data();
+                    document.getElementById('goal-faturamento').value = goals.faturamento || 0;
+                    document.getElementById('goal-prospeccao').value = goals.prospeccao || 0;
+                }
+            } catch (e) { console.error(e); }
+
+            loadCompanyGoalsData();
+        };
+
+
+        // --- DASHBOARD ---
+
+        const loadDashboardData = () => {
+            if (!userId) return;
+
+            // KPIs - Clientes Ativos e MRR
+            const clientsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`), where("status", "==", "Ativo"));
+            onSnapshot(clientsQuery, (snapshot) => {
+                let ativos = 0;
+                let mrr = 0;
+                snapshot.forEach(doc => {
+                    ativos++;
+                    // *** CORREÇÃO: Usa 'monthlyValue' (valor real da parcela) ***
+                    mrr += (doc.data().monthlyValue || 0); 
+                });
+                document.getElementById('kpi-ativos').textContent = ativos;
+                document.getElementById('kpi-mrr').textContent = formatCurrency(mrr);
+            }, console.error);
+
+            // KPIs - Vendas Novas e Upsell
+            const salesQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
+            onSnapshot(salesQuery, (snapshot) => {
+                let vendasNovas = 0;
+                let upsell = 0;
+                snapshot.forEach(doc => {
+                    const sale = doc.data();
+                    if (sale.tipo === 'Novo Contrato') {
+                        vendasNovas += sale.valor || 0;
+                    } else if (sale.tipo === 'Upsell') {
+                        upsell += sale.valor || 0;
+                    }
+                });
+                document.getElementById('kpi-vendas-novas').textContent = formatCurrency(vendasNovas);
+                document.getElementById('kpi-upsell').textContent = formatCurrency(upsell);
+            }, console.error);
+
+            // Alertas - Contratos Vencendo
+            const contractsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`), where("status", "==", "Ativo"));
+            onSnapshot(contractsQuery, (snapshot) => {
+                const container = document.getElementById('alertas-contratos');
+                container.innerHTML = '';
+                let hasAlert = false;
+                snapshot.forEach(doc => {
+                    const client = doc.data();
+                    const days = getDaysRemaining(client.dataTermino);
+                    if (days <= 30) {
+                        hasAlert = true;
+                        container.innerHTML += `
+                            <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-md">
+                                <div>
+                                    <p class="font-semibold text-yellow-800">${client.nome}</p>
+                                    <p class="text-sm text-yellow-600">Vence em ${days} dias (${formatDate(client.dataTermino)})</p>
+                                </div>
+                                <button onclick="window.handleViewClient('${doc.id}')" class="text-sm text-yellow-600 hover:underline">Ver</button>
+                            </div>
+                        `;
+                    }
+                });
+                if (!hasAlert) {
+                    container.innerHTML = '<p class="text-gray-500">Nenhum contrato vencendo.</p>';
+                }
+            }, console.error);
+            
+            // Alertas - Pagamentos Vencendo (7 dias)
+            // (Esta consulta foi simplificada para evitar o erro de índice)
+            const paymentsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`), 
+                where("status", "==", "Pendente")
+            );
+            onSnapshot(paymentsQuery, async (snapshot) => {
+                const container = document.getElementById('alertas-pagamentos');
+                container.innerHTML = '';
+                let hasAlert = false; 
+                
+                const today = new Date().toISOString().split('T')[0];
+                const nextWeek = new Date();
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                const nextWeekStr = nextWeek.toISOString().split('T')[0];
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento pendente registrado.</p>';
+                    return;
+                }
+                
+                for (const docSnap of snapshot.docs) {
+                    const payment = docSnap.data();
+                    const dueDate = payment.dataVencimento;
                     
-                    const resultsContainer = document.getElementById('ifood-results-display');
-                    resultsContainer.innerHTML = `
-                        <div class="results-grid">
-                            <div id="ifood-results" class="results-column">
-                                <h3>Venda no iFood</h3>
-                                <ul>
-                                    <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
-                                    <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
-                                    <li><span class="loss">Comissão iFood</span> <span class="loss">- ${formatCurrency(ifoodCommissionValue)}</span></li>
-                                    <li><span class="loss">Taxa de Pagamento</span> <span class="loss">- ${formatCurrency(ifoodPaymentFeeValue)}</span></li>
-                                </ul>
-                                <div class="profit">
-                                    <span>Seu Lucro Final</span>
-                                    <span>${formatCurrency(ifoodProfit)}</span>
+                    if (dueDate >= today && dueDate <= nextWeekStr) {
+                        hasAlert = true; 
+                        const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
+                        container.innerHTML += `
+                            <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-md">
+                                <div>
+                                    <p class="font-semibold text-yellow-800">${clientName}</p>
+                                    <p class="text-sm text-yellow-600">${payment.descricao} - ${formatCurrency(payment.valor)}</p>
                                 </div>
+                                <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-yellow-600 hover:underline">Ver</button>
                             </div>
-                            <div id="direct-results" class="results-column">
-                                <h3>Venda Direta</h3>
-                                <ul>
-                                    <li><span>Preço de Venda</span> <span>${formatCurrency(pizzaPrice)}</span></li>
-                                    <li><span>Custo Ingredientes</span> <span>- ${formatCurrency(costOfGoods)}</span></li>
-                                    <li><span class="gain">Taxa do Cartão</span> <span class="gain">- ${formatCurrency(directPaymentFeeValue)}</span></li>
-                                    <li><span>&nbsp;</span><span>&nbsp;</span></li>
-                                </ul>
-                                 <div class="profit">
-                                    <span>Seu Lucro Final</span>
-                                    <span>${formatCurrency(directProfit)}</span>
-                                </div>
+                        `;
+                    }
+                }
+                
+                if (!hasAlert) {
+                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento vencendo esta semana.</p>';
+                }
+            }, console.error);
+
+            loadCompanyGoalsData();
+        };
+        
+        // --- CLIENTES (CRUD) ---
+        
+        const loadAllClientsToCache = async () => {
+            if (!userId) return;
+            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
+            onSnapshot(q, (snapshot) => {
+                allClientsData = {}; 
+                snapshot.forEach(doc => {
+                    allClientsData[doc.id] = { id: doc.id, ...doc.data() };
+                });
+            }, console.error);
+        };
+
+        const loadClientsList = () => {
+            if (!userId) return;
+            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
+            onSnapshot(q, (snapshot) => {
+                const tbody = document.getElementById('clients-list-table');
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-6 text-gray-500">Nenhum cliente cadastrado.</td></tr>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const client = doc.data();
+                    const statusColor = client.status === 'Ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <p class="text-sm font-semibold text-gray-900">${client.nome}</p>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                    ${client.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formatDate(client.dataTermino)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                <button onclick="window.handleViewClient('${doc.id}')" class="text-yellow-600 hover:text-yellow-800">Ver Detalhes</button>
+                                <button onclick="window.handleDeleteClick('clients', '${doc.id}')" class="text-red-600 hover:text-red-800">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }, console.error);
+        };
+        
+        const openClientModal = async (clientId = null, initialData = null) => {
+            const form = document.getElementById('clientForm');
+            form.reset();
+            document.getElementById('clientId').value = '';
+            
+            document.getElementById('clientPaymentTypeInput').disabled = false;
+            document.getElementById('clientInstallmentsInput').disabled = true;
+            document.getElementById('clientInstallmentsInput').required = false;
+
+            if (clientId) {
+                // Modo Edição
+                document.getElementById('clientModalTitle').textContent = 'Editar Cliente';
+                try {
+                    const clientDoc = await getDoc(doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`));
+                    if (clientDoc.exists()) {
+                        const data = clientDoc.data();
+                        document.getElementById('clientId').value = clientId;
+                        document.getElementById('clientNameInput').value = data.nome || '';
+                        document.getElementById('clientPhoneInput').value = data.telefone || '';
+                        document.getElementById('clientStartDateInput').value = data.dataInicio || '';
+                        document.getElementById('clientEndDateInput').value = data.dataTermino || '';
+                        document.getElementById('clientValueInput').value = data.valorTotal || 0;
+                        document.getElementById('clientStatusInput').value = data.status || 'Ativo';
+                    }
+                    document.getElementById('clientPaymentTypeInput').value = data.monthlyValue > 0 ? 'parcelado' : 'unico';
+                    document.getElementById('clientPaymentTypeInput').disabled = true;
+                    document.getElementById('clientInstallmentsInput').value = '';
+                    document.getElementById('clientInstallmentsInput').disabled = true;
+
+                } catch(e) { console.error(e); }
+            } else {
+                // Modo Novo
+                document.getElementById('clientModalTitle').textContent = 'Novo Cliente';
+                if (initialData) {
+                    document.getElementById('clientNameInput').value = initialData.nome || '';
+                    document.getElementById('clientPhoneInput').value = initialData.telefone || ''; 
+                }
+            }
+            showModal('clientModal');
+        };
+
+        const handleClientFormSubmit = async (e) => {
+            e.preventDefault();
+            if (!userId) return;
+            
+            const clientId = document.getElementById('clientId').value;
+            const clientData = {
+                nome: document.getElementById('clientNameInput').value,
+                telefone: document.getElementById('clientPhoneInput').value,
+                dataInicio: document.getElementById('clientStartDateInput').value,
+                dataTermino: document.getElementById('clientEndDateInput').value,
+                valorTotal: parseFloat(document.getElementById('clientValueInput').value),
+                status: document.getElementById('clientStatusInput').value,
+                ownerId: userId 
+            };
+            const valorVenda = clientData.valorTotal;
+
+            // *** CORREÇÃO: Lógica de 'monthlyValue' (Valor Mensal) ***
+            let monthlyValue = 0;
+            const paymentType = document.getElementById('clientPaymentTypeInput').value;
+            const installments = parseInt(document.getElementById('clientInstallmentsInput').value) || 0;
+            
+            if (paymentType === 'parcelado' && installments > 0) {
+                monthlyValue = parseFloat((clientData.valorTotal / installments).toFixed(2));
+            }
+            clientData.monthlyValue = monthlyValue;
+            // *** Fim da Correção ***
+
+            try {
+                let savedClientId = clientId; 
+                
+                if (clientId) {
+                    // Atualiza
+                    const clientRef = doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`);
+                    // Ao editar, preserva o 'monthlyValue' original se a regra de parcelamento não estiver disponível
+                    const oldDoc = await getDoc(clientRef);
+                    clientData.monthlyValue = clientData.monthlyValue || oldDoc.data().monthlyValue || 0;
+                    await updateDoc(clientRef, clientData);
+                } else {
+                    // Cria
+                    const docRef = await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/clients`), clientData);
+                    savedClientId = docRef.id; 
+                    
+                    await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/sales`), {
+                        tipo: 'Novo Contrato',
+                        valor: valorVenda,
+                        data: new Date().toISOString().split('T')[0], 
+                        clientId: savedClientId,
+                        ownerId: userId
+                    });
+                    
+                    // Lógica de Parcelas
+                    if (paymentType === 'parcelado' && installments > 0) {
+                        const totalValue = clientData.valorTotal;
+                        const installmentValue = monthlyValue; // Usa o valor mensal já calculado
+                        const startDate = new Date(clientData.dataInicio + "T12:00:00"); 
+                        
+                        const batch = writeBatch(db);
+                        
+                        for (let i = 1; i <= installments; i++) {
+                            const dueDate = new Date(startDate);
+                            dueDate.setMonth(startDate.getMonth() + (i - 1)); 
+                            
+                            const paymentData = {
+                                clientId: savedClientId,
+                                descricao: `Parcela ${i} de ${installments}`,
+                                valor: installmentValue,
+                                dataVencimento: dueDate.toISOString().split('T')[0], 
+                                status: 'Pendente',
+                                ownerId: userId
+                            };
+                            
+                            const newPaymentRef = doc(collection(db, `/artifacts/${appId}/users/${userId}/payments`));
+                            batch.set(newPaymentRef, paymentData);
+                        }
+                        
+                        await batch.commit(); 
+                    }
+                }
+                
+                hideModal('clientModal');
+                
+                if(currentClientId === savedClientId) { 
+                    loadClientDetail(savedClientId); 
+                }
+
+            } catch (e) {
+                console.error("Erro ao salvar cliente:", e);
+                alert("Falha ao salvar cliente.");
+            }
+        };
+
+        // --- DETALHE DO CLIENTE ---
+        
+        window.handleViewClient = (clientId) => {
+            currentClientId = clientId;
+            loadClientDetail(clientId);
+            showPage('clientDetailPage');
+            switchTab('financial', '.tab-link', '.tab-content'); 
+        };
+        
+        const loadClientDetail = (clientId) => {
+            if (!userId || !clientId) return;
+            
+            const clientRef = doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`);
+            onSnapshot(clientRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    document.getElementById('detail-client-name').textContent = data.nome;
+                    document.getElementById('detail-client-phone').textContent = data.telefone || 'N/A';
+                    document.getElementById('detail-client-value').textContent = formatCurrency(data.valorTotal);
+                    document.getElementById('detail-client-status').textContent = data.status;
+                    document.getElementById('detail-client-days').textContent = getDaysRemaining(data.dataTermino) + ' dias';
+                } else {
+                    console.error("Cliente não encontrado");
+                    showPage('clientsPage'); 
+                }
+            }, console.error);
+            
+            loadClientPayments(clientId);
+            loadClientTasks(clientId);
+            loadClientCredentials(clientId);
+        };
+        
+        // --- Financeiro (Detalhe Cliente) ---
+        
+        const loadClientPayments = (clientId) => {
+            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`), where("clientId", "==", clientId));
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('payments-list');
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum pagamento registrado.</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    const statusColor = p.status === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                    
+                    let actionButton = '';
+                    if (p.status === 'Pendente') {
+                        actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pago')" class="text-sm font-medium text-green-600 hover:text-green-800">Marcar como Pago</button>`;
+                    } else {
+                        actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pendente')" class="text-sm font-medium text-gray-500 hover:text-gray-700">Desfazer</button>`;
+                    }
+                    
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center p-4 border rounded-md hover:bg-gray-50">
+                            <div>
+                                <p class="font-semibold text-gray-800">${p.descricao}</p>
+                                <p class="text-sm text-gray-600">${formatCurrency(p.valor)} - Venc: ${formatDate(p.dataVencimento)}</p>
                             </div>
-                        </div>
-                        <div class="punchline">
-                            Nesta única venda, você deixou <span class="loss">${formatCurrency(profitDifference)}</span> na mesa. <br>Isso é <span class="loss">${Math.round(percentageLoss)}%</span> do seu lucro que ficou com o iFood.
+                            <div class="flex items-center gap-4">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                    ${p.status}
+                                </span>
+                                ${actionButton}
+                                <button onclick="window.handleDeleteClick('payments', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
                         </div>
                     `;
-                    resultsContainer.style.display = 'block';
-                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
+                renderIcons();
+            }, console.error);
+        };
+        
+        window.markPaymentStatus = async (paymentId, newStatus) => {
+            try {
+                const paymentRef = doc(db, `/artifacts/${appId}/users/${userId}/payments/${paymentId}`);
+                await updateDoc(paymentRef, { status: newStatus });
+            } catch(e) {
+                console.error("Erro ao atualizar status:", e);
             }
+        };
+        
+        const handleAddPaymentSubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                clientId: currentClientId,
+                descricao: document.getElementById('paymentDesc').value,
+                valor: parseFloat(document.getElementById('paymentValue').value),
+                dataVencimento: document.getElementById('paymentDueDate').value,
+                status: 'Pendente',
+                ownerId: userId
+            };
+            
+            try {
+                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/payments`), data);
+                
+                const isUpsell = document.getElementById('paymentIsUpsell').checked;
+                if (isUpsell) {
+                    await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/sales`), {
+                        tipo: 'Upsell',
+                        valor: data.valor,
+                        data: new Date().toISOString().split('T')[0],
+                        clientId: currentClientId,
+                        ownerId: userId
+                    });
+                }
+                
+                document.getElementById('addPaymentForm').reset();
+                document.getElementById('paymentIsUpsell').checked = true;
+            } catch(e) { console.error(e); }
+        };
+        
+        // --- Tarefas (Detalhe Cliente) ---
 
-            // --- Lógica da Calculadora de DRE ---
-            document.getElementById('calcularDRE').addEventListener('click', () => {
-                const receitaBruta = parseFloat(document.getElementById('receitaBruta').value);
-                const cmvPercent = parseFloat(document.getElementById('cmv').value);
-                const despesasFixas = parseFloat(document.getElementById('despesasFixas').value);
-                const despesasVariaveis = parseFloat(document.getElementById('despesasVariaveis').value);
-                const resultsEl = document.getElementById('dre-results');
-
-                if ([receitaBruta, cmvPercent, despesasFixas, despesasVariaveis].some(isNaN) || receitaBruta < 0 || cmvPercent < 0 || despesasFixas < 0 || despesasVariaveis < 0) {
-                    alert('Por favor, preencha todos os campos do DRE com valores válidos.');
+        const loadClientTasks = (clientId) => {
+             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/tasks`), where("clientId", "==", clientId));
+             onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('tasks-list');
+                if (!container) return; 
+                container.innerHTML = '';
+                if(snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma tarefa registrada.</p>';
                     return;
                 }
-
-                const cmvValue = receitaBruta * (cmvPercent / 100);
-                const lucroBruto = receitaBruta - cmvValue;
-                const lucroOperacional = lucroBruto - despesasFixas - despesasVariaveis;
-                const margemLiquida = receitaBruta > 0 ? (lucroOperacional / receitaBruta) * 100 : 0;
-                
-                resultsEl.innerHTML = `
-                    <p>Lucro Bruto: <span class="result-value">${formatCurrency(lucroBruto)}</span></p>
-                    <p>Lucro Operacional: <span class="result-value">${formatCurrency(lucroOperacional)}</span></p>
-                    <p>Margem Líquida: <span class="result-value">${margemLiquida.toFixed(2).replace('.', ',')}%</span></p>
-                `;
-                toggleNegativeClass(resultsEl.children[0].querySelector('.result-value'), lucroBruto);
-                toggleNegativeClass(resultsEl.children[1].querySelector('.result-value'), lucroOperacional);
-                toggleNegativeClass(resultsEl.children[2].querySelector('.result-value'), margemLiquida);
-                resultsEl.style.display = 'block';
+                snapshot.forEach(doc => {
+                    const task = doc.data();
+                    const isDone = task.status === 'Feito';
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" onchange="window.toggleTaskStatus('${doc.id}', ${isDone})" ${isDone ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400">
+                                <p class="${isDone ? 'line-through text-gray-500' : 'text-gray-800'}">${task.descricao}</p>
+                            </div>
+                            <button onclick="window.handleDeleteClick('tasks', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    `;
+                });
+                renderIcons();
+             }, console.error);
+        };
+        
+        const handleAddTaskSubmit = async (e) => {
+            e.preventDefault();
+            const desc = document.getElementById('taskDesc').value;
+            if(!desc) return;
+            
+            await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/tasks`), {
+                clientId: currentClientId,
+                descricao: desc,
+                status: 'A Fazer',
+                ownerId: userId
             });
-
-            // --- Lógica do Simulador de Preços ---
-            document.getElementById('calcularPreco').addEventListener('click', () => {
-                const custoIngredientes = parseFloat(document.getElementById('custoIngredientes').value);
-                const outrosCustos = parseFloat(document.getElementById('outrosCustos').value);
-                const margemDesejada = parseFloat(document.getElementById('margemDesejada').value);
-                const resultsEl = document.getElementById('preco-results');
-
-                if ([custoIngredientes, outrosCustos, margemDesejada].some(isNaN) || custoIngredientes < 0 || outrosCustos < 0 || margemDesejada < 0 || margemDesejada >= 100) {
-                    alert('Preencha os custos com valores válidos e a margem desejada menor que 100%.');
+            document.getElementById('addTaskForm').reset();
+        };
+        
+        window.toggleTaskStatus = async (taskId, isDone) => {
+            const newStatus = isDone ? 'A Fazer' : 'Feito';
+            await updateDoc(doc(db, `/artifacts/${appId}/users/${userId}/tasks/${taskId}`), { status: newStatus });
+        };
+        
+        // --- Senhas (Detalhe Cliente) ---
+        
+        const loadClientCredentials = (clientId) => {
+            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), where("clientId", "==", clientId));
+             onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('credentials-list');
+                if (!container) return; 
+                container.innerHTML = '';
+                if(snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma credencial registrada.</p>';
                     return;
                 }
-
-                const custoTotal = custoIngredientes + outrosCustos;
-                const precoVendaSugerido = custoTotal / (1 - (margemDesejada / 100));
-                const lucroAbsoluto = precoVendaSugerido - custoTotal;
-                
-                resultsEl.innerHTML = `
-                    <p>Custo Total por Pizza: <span class="result-value">${formatCurrency(custoTotal)}</span></p>
-                    <p>Preço de Venda Sugerido: <span class="result-value">${formatCurrency(precoVendaSugerido)}</span></p>
-                    <p>Lucro Absoluto por Pizza: <span class="result-value">${formatCurrency(lucroAbsoluto)}</span></p>
-                `;
-                resultsEl.style.display = 'block';
+                snapshot.forEach(doc => {
+                    const cred = doc.data();
+                    container.innerHTML += `
+                        <div class="p-4 border rounded-md">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-semibold text-gray-800">${cred.servico}</h4>
+                                <button onclick="window.handleDeleteClick('credentials', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-2">
+                                <p><strong>Login:</strong> ${cred.login}</p>
+                                <p><strong>Senha:</strong> <span id="pass-${doc.id}" data-pass="${cred.senha}">••••••••</span> 
+                                    <button onclick="window.togglePassword('pass-${doc.id}')" class="ml-2 text-yellow-600 text-xs">(Mostrar)</button>
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                });
+                renderIcons();
+             }, console.error);
+        };
+        
+        const handleAddCredentialSubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), {
+                clientId: currentClientId,
+                servico: document.getElementById('credService').value,
+                login: document.getElementById('credLogin').value,
+                senha: document.getElementById('credPassword').value,
+                ownerId: userId
             });
-
-            // --- Lógica das Abas ---
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    tabContents.forEach(content => content.classList.toggle('active', content.id === button.dataset.tab));
-                });
-            });
-
-            // --- Lógica do Menu de Navegação e Botão Voltar ao Topo ---
-            const navLinks = document.querySelectorAll('.main-nav a');
-            const sections = document.querySelectorAll('main section[id]');
-            const backToTopButton = document.querySelector('.back-to-top');
-
-            function onScroll() {
-                let current = '';
-                sections.forEach(section => {
-                    if (pageYOffset >= section.offsetTop - 90) {
-                        current = section.getAttribute('id');
-                    }
-                });
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').includes(current)) {
-                        link.classList.add('active');
-                    }
-                });
-                if (backToTopButton) {
-                    backToTopButton.classList.toggle('visible', pageYOffset > 300);
-                }
+            document.getElementById('addCredentialForm').reset();
+        };
+        
+        window.togglePassword = (elementId) => {
+            const el = document.getElementById(elementId);
+            const btn = el.nextElementSibling;
+            if (el.textContent === '••••••••') {
+                el.textContent = el.dataset.pass;
+                btn.textContent = "(Ocultar)";
+            } else {
+                el.textContent = '••••••••';
+                btn.textContent = "(Mostrar)";
             }
-            window.addEventListener('scroll', onScroll);
-            onScroll();
-        });
+        };
+
+        // --- PROSPECÇÃO (KANBAN) ---
+        
+        const KANBAN_COLUMNS = [
+            { id: 'prospeccao', title: 'Prospecção' },
+            { id: 'contato', title: 'Contato Feito' },
+            { id: 'negociando', title: 'Negociando' },
+            { id: 'fechado', title: 'Fechado' },
+            { id: 'perdido', title: 'Perdido' }
+        ];
+
+        const loadProspects = () => {
+            if (!userId) return;
+            
+            const board = document.getElementById('kanban-board');
+            board.innerHTML = '';
+            KANBAN_COLUMNS.forEach(col => {
+                board.innerHTML += `
+                    <div class="bg-white rounded-lg shadow-md p-4 h-full min-h-[200px]" 
+                         id="kanban-col-${col.id}" 
+                         data-status="${col.id}">
+                        <h3 class="font-semibold text-gray-800 mb-4">${col.title}</h3>
+                        <div id="kanban-cards-${col.id}" class="space-y-3 min-h-[100px]">
+                        </div>
+                    </div>
+                `;
+            });
+            
+            initDragAndDrop();
+
+            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/prospects`));
+            onSnapshot(q, (snapshot) => {
+                document.querySelectorAll('[id^="kanban-cards-"]').forEach(col => col.innerHTML = '');
+                
+                if (snapshot.empty) {
+                     document.getElementById('kanban-cards-prospeccao').innerHTML = '<p class="text-sm text-gray-400">Nenhum prospect.</p>';
+                }
+                
+                snapshot.forEach(doc => {
+                    const prospect = doc.data();
+                    const statusId = prospect.status || 'prospeccao';
+                    const container = document.getElementById(`kanban-cards-${statusId}`);
+                    
+                    if(container) {
+                        let convertButton = '';
+                        if (statusId === 'fechado') {
+                            convertButton = `<button onclick="window.convertProspectToClient('${doc.id}', '${prospect.nome}', '${prospect.telefone || prospect.email || ''}')" class="text-xs text-yellow-600 hover:underline mt-2">Converter em Cliente</button>`;
+                        }
+
+                        container.innerHTML += `
+                        <div class="p-3 border-2 bg-white rounded-md shadow-sm cursor-grab" 
+                             draggable="true" 
+                             data-id="${doc.id}" 
+                             id="prospect-${doc.id}">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-semibold text-sm text-gray-800">${prospect.nome}</h4>
+                                <button onclick="window.handleDeleteClick('prospects', '${doc.id}')" class="text-gray-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-sm text-gray-600">${prospect.email || 'Sem email'}</p>
+                            <p class="text-xs text-gray-400 mt-2">Origem: ${prospect.origem || 'N/A'}</p>
+                            ${convertButton}
+                        </div>
+                        `;
+                    }
+                });
+                renderIcons();
+                initCardDragListeners();
+             }, console.error);
+        };
+        
+        const handleProspectFormSubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/prospects`), {
+                nome: document.getElementById('prospectNameInput').value,
+                email: document.getElementById('prospectEmailInput').value,
+                origem: document.getElementById('prospectOriginInput').value,
+                status: 'prospeccao', 
+                ownerId: userId
+            });
+            hideModal('prospectModal');
+            document.getElementById('prospectForm').reset();
+        };
+        
+        function initCardDragListeners() {
+            const cards = document.querySelectorAll('#kanban-board [draggable="true"]');
+            cards.forEach(card => {
+                card.addEventListener('dragstart', (e) => {
+                    draggedProspectId = e.target.dataset.id;
+                    e.target.classList.add('dragging');
+                });
+                
+                card.addEventListener('dragend', (e) => {
+                    draggedProspectId = null;
+                    e.target.classList.remove('dragging');
+                });
+            });
+        }
+        
+        function initDragAndDrop() {
+            const columns = document.querySelectorAll('#kanban-board [data-status]');
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    column.classList.add('drag-over');
+                });
+                
+                column.addEventListener('dragleave', () => {
+                    column.classList.remove('drag-over');
+                });
+                
+                column.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    column.classList.remove('drag-over');
+                    
+                    if (!draggedProspectId) return;
+                    
+                    const newStatus = column.dataset.status;
+                    const prospectRef = doc(db, `/artifacts/${appId}/users/${userId}/prospects/${draggedProspectId}`);
+                    
+                    try {
+                        await updateDoc(prospectRef, { status: newStatus });
+                    } catch(err) {
+                        console.error("Erro ao atualizar status do prospect:", err);
+                    }
+                });
+            });
+        }
+
+        window.convertProspectToClient = async (prospectId, prospectName, prospectContact) => {
+            if (!confirm(`Deseja realmente converter o prospect "${prospectName}" em um novo cliente?`)) {
+                return;
+            }
+
+            try {
+                await openClientModal(null, { nome: prospectName, telefone: prospectContact });
+                await deleteDoc(doc(db, `/artifacts/${appId}/users/${userId}/prospects/${prospectId}`));
+                alert(`Prospect "${prospectName}" pronto para ser salvo como cliente.`);
+            } catch (e) {
+                console.error("Erro ao converter prospect:", e);
+                alert("Falha ao converter prospect.");
+            }
+        };
+        
+        // --- RELATÓRIO FINANCEIRO ---
+         
+        const loadFinancialReport = () => {
+            if (!userId) return;
+
+            const paymentsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`));
+            onSnapshot(paymentsQuery, (snapshot) => {
+                const lateContainer = document.getElementById('late-payments-list');
+                const upcomingContainer = document.getElementById('upcoming-payments-list');
+                const paidThisMonthContainer = document.getElementById('paid-this-month-list');
+
+                lateContainer.innerHTML = '';
+                upcomingContainer.innerHTML = '';
+                paidThisMonthContainer.innerHTML = '';
+
+                let hasLate = false;
+                let hasUpcoming = false;
+                let hasPaidThisMonth = false;
+
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+                
+                snapshot.forEach(doc => {
+                    const payment = doc.data();
+                    const dueDate = new Date(payment.dataVencimento + "T12:00:00"); 
+                    const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
+
+                    const paymentHtml = `
+                        <div class="flex justify-between items-center p-3 border rounded-md hover:bg-gray-50">
+                            <div>
+                                <p class="font-semibold text-gray-800">${clientName} - ${payment.descricao}</p>
+                                <p class="text-sm text-gray-600">${formatCurrency(payment.valor)} - Venc: ${formatDate(payment.dataVencimento)}</p>
+                            </div>
+                            <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-yellow-600 hover:underline">Ver Cliente</button>
+                        </div>
+                    `;
+
+                    if (payment.status === 'Pendente') {
+                        if (dueDate < today) {
+                            lateContainer.innerHTML += `<div class="bg-red-50">${paymentHtml}</div>`;
+                            hasLate = true;
+                        } else {
+                            upcomingContainer.innerHTML += `<div class="bg-blue-50">${paymentHtml}</div>`;
+                            hasUpcoming = true;
+                        }
+                    } else if (payment.status === 'Pago' && 
+                                dueDate.getMonth() === currentMonth && 
+                                dueDate.getFullYear() === currentYear) {
+                        paidThisMonthContainer.innerHTML += `<div class="bg-green-50">${paymentHtml}</div>`;
+                        hasPaidThisMonth = true;
+                    }
+                });
+
+                if (!hasLate) lateContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento atrasado.</p>';
+                if (!hasUpcoming) upcomingContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento previsto.</p>';
+                if (!hasPaidThisMonth) paidThisMonthContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento registrado como pago este mês.</p>';
+                
+                renderIcons();
+            }, console.error);
+        };
+        
+        // --- TAREFAS GLOBAIS ---
+        
+        const loadGlobalTasks = () => {
+            if (!userId) return;
+
+            const clientFilterSelect = document.getElementById('globalTaskClientFilter');
+            clientFilterSelect.innerHTML = '<option value="all">Todos os Clientes</option>';
+            for (const clientId in allClientsData) {
+                const client = allClientsData[clientId];
+                clientFilterSelect.innerHTML += `<option value="${client.id}">${client.nome}</option>`;
+            }
+            
+            applyGlobalTaskFilters(); 
+        };
+
+        const applyGlobalTaskFilters = () => {
+            if (!userId) return;
+
+            const selectedClient = document.getElementById('globalTaskClientFilter').value;
+            const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
+            const container = document.getElementById('global-tasks-list');
+            container.innerHTML = '';
+
+            let q = collection(db, `/artifacts/${appId}/users/${userId}/tasks`);
+            let filters = [];
+
+            if (selectedClient !== 'all') {
+                filters.push(where("clientId", "==", selectedClient));
+            }
+            if (selectedStatus !== 'all') {
+                filters.push(where("status", "==", selectedStatus));
+            }
+            
+            const filteredQuery = query(q, ...filters);
+
+            onSnapshot(filteredQuery, (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const task = doc.data();
+                    const isDone = task.status === 'Feito';
+                    const clientName = allClientsData[task.clientId]?.nome || "Cliente...";
+
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
+                            <div class="flex items-center gap-3 w-full">
+                                <input type="checkbox" onchange="window.toggleTaskStatus('${doc.id}', ${isDone})" ${isDone ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400 flex-shrink-0">
+                                <p class="${isDone ? 'line-through text-gray-500' : 'text-gray-800'} flex-1">${task.descricao} <span class="text-xs text-gray-400">- ${clientName}</span></p>
+                            </div>
+                            <button onclick="window.handleDeleteClick('tasks', '${doc.id}')" class="text-red-600 hover:text-red-800 flex-shrink-0 ml-4"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    `;
+                });
+                renderIcons();
+            }, console.error);
+        };
+        
+        // --- MINHA EMPRESA (METAS) ---
+        
+        const handleGoalsFormSubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
+                prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
+                ownerId: userId
+            };
+            
+            try {
+                setDoc(goalsDocRef(), data, { merge: true });
+                alert("Metas salvas!");
+                loadCompanyGoalsPage(); 
+            } catch(e) {
+                console.error(e);
+                alert("Falha ao salvar metas.");
+            }
+        };
+
+        // --- EXCLUSÃO GENÉRICA (MODAL) ---
+        
+        window.handleDeleteClick = (collectionName, docId) => {
+            if (collectionName === 'clients') {
+                 document.getElementById('deleteModalText').textContent = "Tem certeza? Excluir um cliente também excluirá TODOS os seus pagamentos, tarefas e senhas associados. Esta ação é irreversível.";
+            } else {
+                 document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
+            }
+            currentDeleteInfo = { collectionName, docId };
+            showModal('deleteModal');
+        };
+        
+        const handleConfirmDelete = async () => {
+            if (!currentDeleteInfo || !userId) return;
+            
+            const { collectionName, docId } = currentDeleteInfo;
+            
+            try {
+                if (collectionName === 'clients') {
+                    const batch = writeBatch(db);
+                    
+                    batch.delete(doc(db, `/artifacts/${appId}/users/${userId}/clients/${docId}`));
+                    
+                    const subCollections = ['payments', 'tasks', 'credentials', 'sales'];
+                    for (const subCol of subCollections) {
+                        const q = query(collection(db, `/artifacts/${appId}/users/${userId}/${subCol}`), where("clientId", "==", docId));
+                        const snapshot = await getDocs(q);
+                        snapshot.forEach(doc => batch.delete(doc.ref));
+                    }
+                    
+                    await batch.commit();
+                    
+                    if (currentClientId === docId) {
+                        showPage('clientsPage');
+                    }
+                } else {
+                    await deleteDoc(doc(db, `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`));
+                }
+                
+                hideModal('deleteModal');
+                currentDeleteInfo = null;
+                
+            } catch (e) {
+                console.error("Erro ao excluir:", e);
+                alert("Falha ao excluir.");
+                hideModal('deleteModal');
+                currentDeleteInfo = null;
+            }
+        };
+        
+        
+        // --- INICIALIZAÇÃO DOS EVENT LISTENERS ---
+        
+        const initEventListeners = () => {
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const pageId = e.currentTarget.dataset.page;
+                    if (pageId === 'clientsPage') {
+                        currentClientId = null;
+                    }
+                    showPage(pageId);
+                });
+            });
+
+            // Modais de Cliente
+            document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
+            document.getElementById('editClientBtn').addEventListener('click', () => openClientModal(currentClientId));
+            document.getElementById('closeClientModalBtn').addEventListener('click', () => hideModal('clientModal'));
+            document.getElementById('clientForm').addEventListener('submit', handleClientFormSubmit);
+            document.getElementById('clientPaymentTypeInput').addEventListener('change', (e) => {
+                const installmentsInput = document.getElementById('clientInstallmentsInput');
+                if (e.target.value === 'parcelado') {
+                    installmentsInput.disabled = false;
+                    installmentsInput.required = true;
+                } else {
+                    installmentsInput.disabled = true;
+                    installmentsInput.required = false;
+                    installmentsInput.value = '';
+                }
+            });
+
+            // Modais de Prospect
+            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => showModal('prospectModal'));
+            document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
+            document.getElementById('prospectForm').addEventListener('submit', handleProspectFormSubmit);
+
+            // Abas (Detalhe Cliente)
+            document.querySelectorAll('.tab-link').forEach(link => {
+                link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.tab-link', '.tab-content'));
+            });
+
+            // Abas (Financeiro)
+            document.querySelectorAll('.finance-tab-link').forEach(link => {
+                link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.finance-tab-link', '.finance-tab-content'));
+            });
+
+            // Forms de Detalhe Cliente
+            document.getElementById('addPaymentForm').addEventListener('submit', handleAddPaymentSubmit);
+            document.getElementById('addTaskForm').addEventListener('submit', handleAddTaskSubmit);
+            document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredentialSubmit);
+
+            // Filtros de Tarefas Globais
+            document.getElementById('globalTaskClientFilter').addEventListener('change', applyGlobalTaskFilters);
+            document.getElementById('globalTaskStatusFilter').addEventListener('change', applyGlobalTaskFilters);
+
+            // Form de Metas
+            document.getElementById('goalsForm').addEventListener('submit', handleGoalsFormSubmit);
+
+            // Modal de Exclusão
+            document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+                currentDeleteInfo = null;
+                hideModal('deleteModal');
+            });
+            document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
+        };
+        
+        // --- INICIALIZAÇÃO DA PÁGINA ---
+        window.addEventListener('load', () => renderIcons()); 
+        
     </script>
 </body>
 </html>
+
