@@ -806,6 +806,7 @@
         let currentDeleteInfo = null; 
         let draggedProspectId = null; 
         let allClientsData = {}; 
+        let dashTotals = { bruto: 0, despesas: 0, recebido: 0 }; // NOVO: Para cálculo correto do líquido
 
         // --- FUNÇÕES DE UTILIDADE ---
 
@@ -1100,10 +1101,10 @@
             const clientsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(clientsQuery, (snapshot) => {
                 let ativos = 0;
-                let mrr = 0;
+                // let mrr = 0; // REMOVIDO (causava o bug)
                 snapshot.forEach(doc => {
                     ativos++;
-                    mrr += (doc.data().monthlyValue || 0); 
+                    // mrr += (doc.data().monthlyValue || 0); // REMOVIDO (causava o bug)
                 });
                 
                 // CORREÇÃO: Adiciona verificação de nulo para evitar erros de race condition
@@ -1111,10 +1112,10 @@
                 if (kpiAtivosEl) {
                     kpiAtivosEl.textContent = ativos;
                 }
-                const kpiMrrEl = document.getElementById('kpi-mrr');
-                if (kpiMrrEl) {
-                    kpiMrrEl.textContent = formatCurrency(mrr);
-                }
+                // const kpiMrrEl = document.getElementById('kpi-mrr'); // REMOVIDO (causava o bug)
+                // if (kpiMrrEl) { // REMOVIDO (causava o bug)
+                //     kpiMrrEl.textContent = formatCurrency(mrr); // REMOVIDO (causava o bug)
+                // } // REMOVIDO (causava o bug)
             }, (e) => { handleFriendlyError("Erro no Dashboard (Clientes)", e.message, e); });
 
             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
@@ -1133,6 +1134,9 @@
                     }
                 });
 
+                // CORREÇÃO: Atualiza o total global
+                dashTotals.bruto = faturamentoTotalMes;
+
                 // Popula os KPIs atualizados
                 // CORREÇÃO: Adiciona verificação de nulo
                 const kpiBrutoEl = document.getElementById('kpi-faturamento-bruto');
@@ -1145,7 +1149,7 @@
                 }
                 
                 // Recalcula o líquido quando as vendas mudam
-                calculateNetRevenue(); 
+                // calculateNetRevenue(); // REMOVIDO - Agora é chamado por despesas e recebidos
                 
             }, (e) => { handleFriendlyError("Erro no Dashboard (Vendas)", e.message, e); });
             
@@ -1156,6 +1160,9 @@
                 snapshot.forEach(doc => {
                     totalExpenses += doc.data().valor || 0;
                 });
+                
+                // CORREÇÃO: Atualiza o total global
+                dashTotals.despesas = totalExpenses;
                 
                 // CORREÇÃO: Adiciona verificação de nulo
                 const kpiDespesasEl = document.getElementById('kpi-despesas');
@@ -1168,25 +1175,49 @@
                 
             }, (e) => { handleFriendlyError("Erro no Dashboard (Despesas)", e.message, e); });
             
+            // NOVO: Carrega Pagamentos Recebidos (para Faturamento Líquido)
+            const paidPaymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
+                where("status", "==", "Pago")
+                // Filtro inicial, será refinado em JS
+                // where("dataVencimento", ">=", start) // Esta linha pode ser imprecisa se pago adiantado/atrasado
+            );
+            
+            onSnapshot(paidPaymentsQuery, (snapshot) => {
+                let totalRecebido = 0;
+                const { start: currentMonthStart } = getCurrentMonthRange(); // Pega de novo para garantir
+                const currentMonth = new Date(currentMonthStart + "T12:00:00").getMonth();
+                const currentYear = new Date(currentMonthStart + "T12:00:00").getFullYear();
+
+                snapshot.forEach(doc => {
+                    const payment = doc.data();
+                    // Filtro extra em JS para pagamentos no mês atual
+                    // Idealmente, teríamos um campo 'dataPagamento', mas usamos 'dataVencimento' como proxy
+                    const paymentDate = new Date(payment.dataVencimento + "T12:00:00");
+                    if (paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear) {
+                        totalRecebido += payment.valor || 0;
+                    }
+                });
+                
+                // CORREÇÃO: Atualiza o total global
+                dashTotals.recebido = totalRecebido;
+                calculateNetRevenue();
+                
+            }, (e) => { handleFriendlyError("Erro no Dashboard (Recebidos)", e.message, e); });
+
+            
             // NOVO: Função para calcular Faturamento Líquido
             const calculateNetRevenue = () => {
                 try {
                     // CORREÇÃO: Adiciona verificação de nulo para todos os elementos
-                    const brutoEl = document.getElementById('kpi-faturamento-bruto');
-                    const despesasEl = document.getElementById('kpi-despesas');
+                    // const brutoEl = document.getElementById('kpi-faturamento-bruto'); // REMOVIDO - Não é mais lido do DOM
+                    // const despesasEl = document.getElementById('kpi-despesas'); // REMOVIDO - Não é mais lido do DOM
                     const liquidoEl = document.getElementById('kpi-faturamento-liquido');
 
                     // Só executa se todos os elementos do dashboard estiverem visíveis
-                    if (brutoEl && despesasEl && liquidoEl) { 
-                        const brutoText = brutoEl.textContent;
-                        const despesasText = despesasEl.textContent;
-                        
-                        const bruto = parseFloat(brutoText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim());
-                        const despesas = parseFloat(despesasText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim());
-
-                        if (!isNaN(bruto) && !isNaN(despesas)) {
-                             liquidoEl.textContent = formatCurrency(bruto - despesas);
-                        }
+                    if (liquidoEl) { 
+                        // CORREÇÃO: Calcula líquido baseado nos totais globais
+                        const liquido = dashTotals.recebido - dashTotals.despesas;
+                        liquidoEl.textContent = formatCurrency(liquido);
                     }
                 } catch(e) {
                     console.error("Erro ao calcular faturamento líquido:", e);
@@ -2408,5 +2439,6 @@
     </script>
 </body>
 </html>
+
 
 
