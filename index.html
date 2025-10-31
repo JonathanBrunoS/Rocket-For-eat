@@ -614,18 +614,40 @@
 
         // --- VARIÁVEIS DE AMBIENTE (INJETADAS) ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        
+        // --- CHAVES DO FIREBASE INSERIDAS DIRETAMENTE ---
+        // Alterado conforme solicitado, para forçar a conexão sem o painel de Configurações.
+        const firebaseConfig = {
+          apiKey: "AIzaSyCjOOO8BjKHSl_4a8yU9Y6ggyVsKvIdT00",
+          authDomain: "crmrocket.firebaseapp.com",
+          projectId: "crmrocket",
+          storageBucket: "crmrocket.firebasestorage.app",
+          messagingSenderId: "395158203315",
+          appId: "1:395158203315:web:93adeda54e40734d1c39c6"
+        };
+
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
         let app, auth, db;
         try {
+            // Verifica se o firebaseConfig não está vazio
+            if (!firebaseConfig.apiKey) {
+                throw new Error("API Key do Firebase está faltando.");
+            }
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
         } catch (e) {
             console.error("Erro ao inicializar Firebase:", e);
-            document.body.innerHTML = "<h1 style='text-align: center; margin-top: 50px;'>Erro de Configuração do Firebase. Verifique o console.</h1>";
+            // Mostra o erro na tela de carregamento
+            const authError = document.getElementById('authError');
+            if(authError) {
+                authError.textContent = `Erro ao inicializar Firebase: ${e.message}. Verifique as chaves no código.`;
+                authError.classList.remove('hidden');
+            } else {
+                 document.body.innerHTML = `<h1 style='text-align: center; margin-top: 50px;'>Erro de Configuração do Firebase: ${e.message}. Verifique o console.</h1>`;
+            }
         }
 
         // --- ESTADO GLOBAL DA APLICAÇÃO ---
@@ -721,37 +743,48 @@
         };
 
         // --- AUTENTICAÇÃO ---
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                initEventListeners();
-                await loadAllClientsToCache();
-                showPage('dashboardPage'); 
-            } else {
-                userId = null;
-                autoLogin();
-            }
-        });
+        
+        // Verifica se 'auth' foi inicializado antes de usar
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    initEventListeners();
+                    await loadAllClientsToCache();
+                    showPage('dashboardPage'); 
+                } else {
+                    userId = null;
+                    autoLogin();
+                }
+            });
+        }
 
         const autoLogin = async () => {
+             if (!auth) {
+                 console.error("Autenticação do Firebase não inicializada.");
+                 return;
+             }
              try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // --- CORREÇÃO ---
+                // O initialAuthToken (do Canvas) não é válido para o projeto 'crmrocket' (do usuário).
+                // Nós devemos FORÇAR o login anônimo, que foi o que ativamos no painel do Firebase.
+                // O erro 'auth/custom-token-mismatch' acontece por causa da linha abaixo.
+                // if (initialAuthToken) {
+                //    await signInWithCustomToken(auth, initialAuthToken);
+                // } else {
+                //    await signInAnonymously(auth);
+                // }
+                
+                // Força o login anônimo sempre, pois estamos usando o Firebase do usuário.
+                await signInAnonymously(auth);
+                
             } catch (error) {
                 console.error("Falha no login automático: ", error);
-                const authPage = document.getElementById('auth-page');
-                authPage.innerHTML = `
-                    <div class="flex min-h-screen items-center justify-center bg-gray-950 text-white p-4">
-                        <div class="w-full max-w-md text-center">
-                            <h2 class="text-2xl font-bold text-red-400">Falha no Login Automático</h2>
-                            <p class="text-gray-300 mt-2">${error.message}</p>
-                            <p class="text-gray-500 text-sm mt-4">Verifique a configuração do Firebase.</p>
-                        </div>
-                    </div>`;
+                const authError = document.getElementById('authError');
+                if(authError) {
+                    authError.textContent = `Falha no login automático: ${error.message}`;
+                    authError.classList.remove('hidden');
+                }
             }
         };
 
@@ -760,7 +793,7 @@
         const goalsDocRef = () => doc(db, `/artifacts/${appId}/users/${userId}/company/goals`);
         
         const loadCompanyGoalsData = async () => {
-            if (!userId) return;
+            if (!userId || !db) return;
 
             let metaFaturamento = 0;
             let metaProspeccao = 0;
@@ -838,7 +871,7 @@
         // --- DASHBOARD ---
 
         const loadDashboardData = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
 
             // KPIs - Clientes Ativos e MRR
             const clientsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`), where("status", "==", "Ativo"));
@@ -948,7 +981,7 @@
         // --- CLIENTES (CRUD) ---
         
         const loadAllClientsToCache = async () => {
-            if (!userId) return;
+            if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
             onSnapshot(q, (snapshot) => {
                 allClientsData = {}; 
@@ -959,7 +992,7 @@
         };
 
         const loadClientsList = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
             onSnapshot(q, (snapshot) => {
                 const tbody = document.getElementById('clients-list-table');
@@ -1135,7 +1168,7 @@
         };
         
         const loadClientDetail = (clientId) => {
-            if (!userId || !clientId) return;
+            if (!userId || !clientId || !db) return;
             
             const clientRef = doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`);
             onSnapshot(clientRef, (doc) => {
@@ -1160,6 +1193,7 @@
         // --- Financeiro (Detalhe Cliente) ---
         
         const loadClientPayments = (clientId) => {
+            if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`), where("clientId", "==", clientId));
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('payments-list');
@@ -1200,6 +1234,7 @@
         };
         
         window.markPaymentStatus = async (paymentId, newStatus) => {
+            if (!userId || !db) return;
             try {
                 const paymentRef = doc(db, `/artifacts/${appId}/users/${userId}/payments/${paymentId}`);
                 await updateDoc(paymentRef, { status: newStatus });
@@ -1210,6 +1245,7 @@
         
         const handleAddPaymentSubmit = async (e) => {
             e.preventDefault();
+            if (!userId || !db) return;
             const data = {
                 clientId: currentClientId,
                 descricao: document.getElementById('paymentDesc').value,
@@ -1241,6 +1277,7 @@
         // --- Tarefas (Detalhe Cliente) ---
 
         const loadClientTasks = (clientId) => {
+             if (!userId || !db) return;
              const q = query(collection(db, `/artifacts/${appId}/users/${userId}/tasks`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('tasks-list');
@@ -1269,6 +1306,7 @@
         
         const handleAddTaskSubmit = async (e) => {
             e.preventDefault();
+            if (!userId || !db) return;
             const desc = document.getElementById('taskDesc').value;
             if(!desc) return;
             
@@ -1282,6 +1320,7 @@
         };
         
         window.toggleTaskStatus = async (taskId, isDone) => {
+            if (!userId || !db) return;
             const newStatus = isDone ? 'A Fazer' : 'Feito';
             await updateDoc(doc(db, `/artifacts/${appId}/users/${userId}/tasks/${taskId}`), { status: newStatus });
         };
@@ -1289,6 +1328,7 @@
         // --- Senhas (Detalhe Cliente) ---
         
         const loadClientCredentials = (clientId) => {
+            if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('credentials-list');
@@ -1321,6 +1361,7 @@
         
         const handleAddCredentialSubmit = async (e) => {
             e.preventDefault();
+            if (!userId || !db) return;
             await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), {
                 clientId: currentClientId,
                 servico: document.getElementById('credService').value,
@@ -1354,7 +1395,7 @@
         ];
 
         const loadProspects = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
             
             const board = document.getElementById('kanban-board');
             board.innerHTML = '';
@@ -1414,6 +1455,7 @@
         
         const handleProspectFormSubmit = async (e) => {
             e.preventDefault();
+            if (!userId || !db) return;
             await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/prospects`), {
                 nome: document.getElementById('prospectNameInput').value,
                 email: document.getElementById('prospectEmailInput').value,
@@ -1468,6 +1510,7 @@
                 
                 column.addEventListener('drop', async (e) => {
                     e.preventDefault();
+                    if (!userId || !db) return;
                     const targetColumn = e.target.closest('[data-status]');
                     if (!targetColumn) return;
                     
@@ -1491,6 +1534,7 @@
         
         // Corrigido: Passa os dados do prospect para a função de conversão
         window.convertProspectToClient = async (prospectId) => {
+             if (!userId || !db) return;
              const prospectCard = document.getElementById(`prospect-${prospectId}`);
              if (!prospectCard) return;
              
@@ -1529,7 +1573,7 @@
         // --- RELATÓRIO FINANCEIRO ---
          
         const loadFinancialReport = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
 
             const paymentsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`));
             onSnapshot(paymentsQuery, (snapshot) => {
@@ -1595,7 +1639,7 @@
         // --- TAREFAS GLOBAIS ---
         
         const loadGlobalTasks = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
 
             const clientFilterSelect = document.getElementById('globalTaskClientFilter');
             const currentValue = clientFilterSelect.value; // Salva o filtro atual
@@ -1614,7 +1658,7 @@
         };
 
         const applyGlobalTaskFilters = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
 
             const selectedClient = document.getElementById('globalTaskClientFilter').value;
             const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
@@ -1674,6 +1718,7 @@
         
         const handleGoalsFormSubmit = async (e) => {
             e.preventDefault();
+            if (!userId || !db) return;
             const data = {
                 faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
                 prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
@@ -1721,7 +1766,7 @@
         };
         
         const handleConfirmDelete = async () => {
-            if (!currentDeleteInfo || !userId) return;
+            if (!currentDeleteInfo || !userId || !db) return;
             
             const { collectionName, docId, data } = currentDeleteInfo;
             
@@ -1769,7 +1814,7 @@
         // --- ASSISTENTE IA (GEMINI) ---
 
         const loadAIPage = () => {
-            if (!userId) return;
+            if (!userId || !db) return;
             const select = document.getElementById('aiProspectSelect');
             select.innerHTML = '<option value="">Carregando prospects...</option>'; // Feedback de carregamento
 
