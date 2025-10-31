@@ -115,11 +115,12 @@
                         <i data-lucide="target"></i>
                         <span>Minha Empresa</span>
                     </button>
-                    <!-- NOVA FEATURE: Assistente IA -->
+                    <!-- REMOVIDO: Assistente IA 
                     <button data-page="aiAssistantPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="sparkles"></i>
                         <span>Assistente IA</span>
                     </button>
+                    -->
                 </nav>
 
                 <div class="mt-auto">
@@ -454,38 +455,10 @@
                     </div>
                 </div>
 
-                <!-- TELA 8: ASSISTENTE IA (NOVA) --><div id="aiAssistantPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Assistente de Vendas IA</h2>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Gerador de Mensagem de Abordagem</h3>
-                        
-                        <div class="space-y-4 max-w-2xl mx-auto">
-                            <div>
-                                <label for="aiProspectSelect" class="block text-sm font-medium text-gray-700">Selecione um Prospect</label>
-                                <select id="aiProspectSelect" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="">Carregando prospects...</option>
-                                </select>
-                            </div>
-                            
-                            <button id="generateMessageBtn" class="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-semibold flex items-center justify-center gap-2">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i>
-                                <span>Gerar Mensagem</span>
-                            </button>
-                            
-                            <div id="aiLoading" class="text-center text-gray-500 hidden mt-4">
-                                <i data-lucide="loader-2" class="w-6 h-6 animate-spin inline-block"></i>
-                                <p>Gerando...</p>
-                            </div>
-                            
-                            <div id="aiResultContainer" class="hidden mt-6">
-                                <label class="block text-sm font-medium text-gray-700">Mensagem Gerada:</label>
-                                <textarea id="aiResultText" rows="10" class="mt-1 block w-full p-2 border border-gray-200 rounded-md bg-gray-50" readonly></textarea>
-                                <button id="copyAIBtn" class="mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm">Copiar Texto</button>
-                            </div>
-                            <div id="aiError" class="text-red-500 text-sm mt-4 hidden"></div>
-                        </div>
-                    </div>
+                <!-- TELA 8: ASSISTENTE IA (REMOVIDA) 
+                <div id="aiAssistantPage" class="page-content">
                 </div>
+                -->
 
             </main>
         </div>
@@ -726,8 +699,8 @@
                 case 'financialReportPage': loadFinancialReport(); break;
                 case 'globalTasksPage': loadGlobalTasks(); break; 
                 case 'companyPage': loadCompanyGoalsPage(); break;
-                // NOVA FEATURE:
-                case 'aiAssistantPage': loadAIPage(); break;
+                // REMOVIDO:
+                // case 'aiAssistantPage': loadAIPage(); break;
             }
         };
         
@@ -760,7 +733,7 @@
             // Verifica se o erro é de permissão
             if (message.includes("Missing or insufficient permissions")) {
                  title = "Erro de Permissão do Banco de Dados.";
-                 message = "Suas 'Regras' do Firestore estão bloqueando o app. Por favor, vá em 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if request.auth != null;\n    }\n  }\n}</pre>";
+                 message = "Suas 'Regras' do Firestore estão bloqueando o app. Por favor, vá em 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/crm-rocket-data/public/data/{document=**} {\n      allow read, write: if request.auth != null;\n    }\n    match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}</pre>";
             }
             // Verifica se o erro é de client offline (Firestore não ativado)
             else if (message.includes("offline") || message.includes("Failed to get document")) {
@@ -791,7 +764,7 @@
         if (auth) {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    userId = user.uid;
+                    userId = user.uid; // IMPORTANTE: userId agora é usado para REGRAS de segurança
                     initEventListeners();
                     await loadAllClientsToCache();
                     showPage('dashboardPage'); 
@@ -824,7 +797,8 @@
 
         // --- METAS (Definição) ---
         
-        const goalsDocRef = () => doc(db, `/artifacts/${appId}/users/${userId}/company/goals`);
+        // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+        const goalsDocRef = () => doc(db, `/artifacts/${appId}/public/data/company/goals`);
         
         const loadCompanyGoalsData = async () => {
             if (!userId || !db) return;
@@ -845,7 +819,8 @@
             }
 
             try {
-                const salesQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
                 let faturamentoAtual = 0;
                 let novosClientes = 0;
 
@@ -917,8 +892,8 @@
         const loadDashboardData = () => {
             if (!userId || !db) return;
 
-            // KPIs - Clientes Ativos e MRR
-            const clientsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`), where("status", "==", "Ativo"));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const clientsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(clientsQuery, (snapshot) => {
                 let ativos = 0;
                 let mrr = 0;
@@ -930,8 +905,8 @@
                 document.getElementById('kpi-mrr').textContent = formatCurrency(mrr);
             }, (e) => { handleFriendlyError("Erro no Dashboard (Clientes)", e.message, e); });
 
-            // KPIs - Vendas Novas e Upsell
-            const salesQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]));
             onSnapshot(salesQuery, (snapshot) => {
                 let vendasNovas = 0;
                 let upsell = 0;
@@ -947,8 +922,8 @@
                 document.getElementById('kpi-upsell').textContent = formatCurrency(upsell);
             }, (e) => { handleFriendlyError("Erro no Dashboard (Vendas)", e.message, e); });
 
-            // Alertas - Contratos Vencendo
-            const contractsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`), where("status", "==", "Ativo"));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const contractsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(contractsQuery, (snapshot) => {
                 const container = document.getElementById('alertas-contratos');
                 container.innerHTML = '';
@@ -974,8 +949,8 @@
                 }
             }, (e) => { handleFriendlyError("Erro no Dashboard (Contratos)", e.message, e); });
             
-            // Alertas - Pagamentos Vencendo (7 dias)
-            const paymentsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`), 
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
                 where("status", "==", "Pendente")
             );
             onSnapshot(paymentsQuery, async (snapshot) => {
@@ -1024,7 +999,8 @@
         
         const loadAllClientsToCache = async () => {
             if (!userId || !db) return;
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
             onSnapshot(q, (snapshot) => {
                 allClientsData = {}; 
                 snapshot.forEach(doc => {
@@ -1035,7 +1011,8 @@
 
         const loadClientsList = () => {
             if (!userId || !db) return;
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/clients`));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
             onSnapshot(q, (snapshot) => {
                 const tbody = document.getElementById('clients-list-table');
                 tbody.innerHTML = '';
@@ -1080,7 +1057,8 @@
                 // Modo Edição
                 document.getElementById('clientModalTitle').textContent = 'Editar Cliente';
                 try {
-                    const clientDoc = await getDoc(doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`));
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    const clientDoc = await getDoc(doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`));
                     const data = clientDoc.data(); // Mova para fora do 'if' se 'data' for usado em 'disabled'
                     if (clientDoc.exists()) {
                         document.getElementById('clientId').value = clientId;
@@ -1129,7 +1107,7 @@
                 dataTermino: document.getElementById('clientEndDateInput').value,
                 valorTotal: parseFloat(document.getElementById('clientValueInput').value),
                 status: document.getElementById('clientStatusInput').value,
-                ownerId: userId 
+                ownerId: userId // Mantém o 'dono' para referência, mas o dado é público
             };
             const valorVenda = clientData.valorTotal;
 
@@ -1149,17 +1127,20 @@
                 
                 if (clientId) {
                     // Atualiza
-                    const clientRef = doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`);
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
                     // Ao editar, preserva o 'monthlyValue' original se a regra de parcelamento não estiver disponível
                     const oldDoc = await getDoc(clientRef);
                     clientData.monthlyValue = clientData.monthlyValue || (oldDoc.exists() ? oldDoc.data().monthlyValue : 0) || 0;
                     await updateDoc(clientRef, clientData);
                 } else {
                     // Cria
-                    const docRef = await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/clients`), clientData);
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/clients`), clientData);
                     savedClientId = docRef.id; 
                     
-                    await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/sales`), {
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
                         tipo: 'Novo Contrato',
                         valor: valorVenda,
                         data: new Date().toISOString().split('T')[0], 
@@ -1188,7 +1169,8 @@
                                 ownerId: userId
                             };
                             
-                            const newPaymentRef = doc(collection(db, `/artifacts/${appId}/users/${userId}/payments`));
+                            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                            const newPaymentRef = doc(collection(db, `/artifacts/${appId}/public/data/payments`));
                             batch.set(newPaymentRef, paymentData);
                         }
                         
@@ -1224,7 +1206,8 @@
         const loadClientDetail = (clientId) => {
             if (!userId || !clientId || !db) return;
             
-            const clientRef = doc(db, `/artifacts/${appId}/users/${userId}/clients/${clientId}`);
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
             onSnapshot(clientRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
@@ -1248,7 +1231,8 @@
         
         const loadClientPayments = (clientId) => {
             if (!userId || !db) return;
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`), where("clientId", "==", clientId));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const q = query(collection(db, `/artifacts/${appId}/public/data/payments`), where("clientId", "==", clientId));
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('payments-list');
                 container.innerHTML = '';
@@ -1290,7 +1274,8 @@
         window.markPaymentStatus = async (paymentId, newStatus) => {
             if (!userId || !db) return;
             try {
-                const paymentRef = doc(db, `/artifacts/${appId}/users/${userId}/payments/${paymentId}`);
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                const paymentRef = doc(db, `/artifacts/${appId}/public/data/payments/${paymentId}`);
                 await updateDoc(paymentRef, { status: newStatus });
             } catch(e) {
                 console.error("Erro ao atualizar status:", e);
@@ -1315,11 +1300,13 @@
             };
             
             try {
-                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/payments`), data);
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                await addDoc(collection(db, `/artifacts/${appId}/public/data/payments`), data);
                 
                 const isUpsell = document.getElementById('paymentIsUpsell').checked;
                 if (isUpsell) {
-                    await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/sales`), {
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
                         tipo: 'Upsell',
                         valor: data.valor,
                         data: new Date().toISOString().split('T')[0],
@@ -1342,7 +1329,8 @@
 
         const loadClientTasks = (clientId) => {
              if (!userId || !db) return;
-             const q = query(collection(db, `/artifacts/${appId}/users/${userId}/tasks`), where("clientId", "==", clientId));
+             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+             const q = query(collection(db, `/artifacts/${appId}/public/data/tasks`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('tasks-list');
                 if (!container) return; 
@@ -1382,7 +1370,8 @@
             }
             
             try {
-                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/tasks`), {
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                await addDoc(collection(db, `/artifacts/${appId}/public/data/tasks`), {
                     clientId: currentClientId,
                     descricao: desc,
                     status: 'A Fazer',
@@ -1399,14 +1388,16 @@
         window.toggleTaskStatus = async (taskId, isDone) => {
             if (!userId || !db) return;
             const newStatus = isDone ? 'A Fazer' : 'Feito';
-            await updateDoc(doc(db, `/artifacts/${appId}/users/${userId}/tasks/${taskId}`), { status: newStatus });
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            await updateDoc(doc(db, `/artifacts/${appId}/public/data/tasks/${taskId}`), { status: newStatus });
         };
         
         // --- Senhas (Detalhe Cliente) ---
         
         const loadClientCredentials = (clientId) => {
             if (!userId || !db) return;
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), where("clientId", "==", clientId));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const q = query(collection(db, `/artifacts/${appId}/public/data/credentials`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('credentials-list');
                 if (!container) return; 
@@ -1444,7 +1435,8 @@
             submitButton.disabled = true;
 
             try {
-                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/credentials`), {
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                await addDoc(collection(db, `/artifacts/${appId}/public/data/credentials`), {
                     clientId: currentClientId,
                     servico: document.getElementById('credService').value,
                     login: document.getElementById('credLogin').value,
@@ -1500,7 +1492,8 @@
             
             initDragAndDrop();
 
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/prospects`));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const q = query(collection(db, `/artifacts/${appId}/public/data/prospects`));
             onSnapshot(q, (snapshot) => {
                 document.querySelectorAll('[id^="kanban-cards-"]').forEach(col => col.innerHTML = '');
                 
@@ -1548,7 +1541,8 @@
             submitButton.disabled = true;
 
             try {
-                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/prospects`), {
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
                     email: document.getElementById('prospectEmailInput').value,
                     origem: document.getElementById('prospectOriginInput').value,
@@ -1616,7 +1610,8 @@
                     if (!draggedProspectId) return;
                     
                     const newStatus = targetColumn.dataset.status;
-                    const prospectRef = doc(db, `/artifacts/${appId}/users/${userId}/prospects/${draggedProspectId}`);
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${draggedProspectId}`);
                     
                     try {
                         await updateDoc(prospectRef, { status: newStatus });
@@ -1638,7 +1633,8 @@
              // Pega os dados do prospect diretamente do snapshot (carregado em `allClientsData` ou similar, mas aqui é `prospects`)
              // Melhor: buscar o doc para ter certeza
              try {
-                const prospectRef = doc(db, `/artifacts/${appId}/users/${userId}/prospects/${prospectId}`);
+                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
                 const prospectDoc = await getDoc(prospectRef);
                 
                 if (!prospectDoc.exists()) {
@@ -1672,7 +1668,8 @@
         const loadFinancialReport = () => {
             if (!userId || !db) return;
 
-            const paymentsQuery = query(collection(db, `/artifacts/${appId}/users/${userId}/payments`));
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`));
             onSnapshot(paymentsQuery, (snapshot) => {
                 const lateContainer = document.getElementById('late-payments-list');
                 const upcomingContainer = document.getElementById('upcoming-payments-list');
@@ -1762,7 +1759,8 @@
             const container = document.getElementById('global-tasks-list');
             container.innerHTML = '<p class="text-gray-500">Carregando tarefas...</p>'; // Feedback de carregamento
 
-            let q = collection(db, `/artifacts/${appId}/users/${userId}/tasks`);
+            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            let q = collection(db, `/artifacts/${appId}/public/data/tasks`);
             let filters = [];
 
             if (selectedClient !== 'all') {
@@ -1823,7 +1821,7 @@
             const data = {
                 faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
                 prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
-                ownerId: userId
+                ownerId: userId // Mantém o 'dono'
             };
             
             try {
@@ -1844,18 +1842,6 @@
             let data = null; // Inicializa data como null
             if (collectionName === 'clients') {
                  document.getElementById('deleteModalText').textContent = "Tem certeza? Excluir um cliente também excluirá TODOS os seus pagamentos, tarefas e senhas associados. Esta ação é irreversível.";
-            } else if (collectionName === 'prospects-convert') {
-                 // Busca os dados do prospect no cache `allClientsData` - Opa, erro meu, prospects não estão em allClientsData.
-                 // Vamos buscar no DOM ou refatorar.
-                 // CORREÇÃO: A lógica de buscar os dados do prospect já está em `convertProspectToClient`.
-                 // `convertProspectToClient` agora define `currentDeleteInfo` com os dados.
-                 // Esta função (handleDeleteClick) só é chamada para exclusões normais.
-                 // Vou ajustar `convertProspectToClient` para chamar `handleDeleteClick` da forma correta.
-
-                 // A lógica de `convertProspectToClient` já está correta, ela chama o modal.
-                 // Esta função (handleDeleteClick) é para exclusões diretas.
-                 document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
-            
             } else {
                  document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
             }
@@ -1878,11 +1864,13 @@
                     // Excluir Cliente e todos os sub-dados
                     const batch = writeBatch(db);
                     
-                    batch.delete(doc(db, `/artifacts/${appId}/users/${userId}/clients/${docId}`));
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    batch.delete(doc(db, `/artifacts/${appId}/public/data/clients/${docId}`));
                     
                     const subCollections = ['payments', 'tasks', 'credentials', 'sales'];
                     for (const subCol of subCollections) {
-                        const q = query(collection(db, `/artifacts/${appId}/users/${userId}/${subCol}`), where("clientId", "==", docId));
+                        // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                        const q = query(collection(db, `/artifacts/${appId}/public/data/${subCol}`), where("clientId", "==", docId));
                         const snapshot = await getDocs(q);
                         snapshot.forEach(doc => batch.delete(doc.ref));
                     }
@@ -1895,11 +1883,13 @@
                 } else if (collectionName === 'prospects-convert') {
                     // Converter Prospect para Cliente
                     await openClientModal(null, data); // Abre o modal de cliente com os dados
-                    await deleteDoc(doc(db, `/artifacts/${appId}/users/${userId}/prospects/${docId}`)); // Deleta o prospect
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`)); // Deleta o prospect
                 
                 } else {
                     // Exclusão simples (payments, tasks, credentials, prospects)
-                    await deleteDoc(doc(db, `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`));
+                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/${collectionName}/${docId}`));
                 }
                 
                 hideModal('deleteModal');
@@ -1914,162 +1904,12 @@
         };
         
         
-        // --- ASSISTENTE IA (GEMINI) ---
-
-        const loadAIPage = () => {
-            if (!userId || !db) return;
-            const select = document.getElementById('aiProspectSelect');
-            select.innerHTML = '<option value="">Carregando prospects...</option>'; // Feedback de carregamento
-
-            // Reutiliza os dados do Kanban (prospecção)
-            // CORREÇÃO: Firestore não permite dois '!=', usamos 'not-in'
-            const q = query(collection(db, `/artifacts/${appId}/users/${userId}/prospects`), 
-                            where("status", "not-in", ["fechado", "perdido"]));
-                            
-            onSnapshot(q, (snapshot) => {
-                select.innerHTML = ''; // Limpa antes de adicionar
-                if (snapshot.empty) {
-                    select.innerHTML = '<option value="">Nenhum prospect ativo</option>';
-                    return;
-                }
-                
-                select.innerHTML = '<option value="">Selecione um prospect</option>'; // Opção padrão
-                
-                const prospects = [];
-                snapshot.forEach(doc => {
-                    prospects.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Ordena por nome
-                prospects.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                prospects.forEach(prospect => {
-                    const option = new Option(`${prospect.nome} (${prospect.origem || 'N/A'})`, prospect.id);
-                    // Guarda os dados no dataset para usar na API
-                    option.dataset.prospect = JSON.stringify(prospect); 
-                    select.add(option);
-                });
-            }, (e) => { handleFriendlyError("Erro ao carregar prospects para IA.", e.message, e); });
-        };
-
-        const handleGenerateAIMessage = async () => {
-            const select = document.getElementById('aiProspectSelect');
-            const prospectId = select.value;
-            const errorDiv = document.getElementById('aiError');
-
-            if (!prospectId) {
-                errorDiv.textContent = "Por favor, selecione um prospect primeiro.";
-                errorDiv.classList.remove('hidden');
-                return;
-            }
-
-            const prospectData = JSON.parse(select.options[select.selectedIndex].dataset.prospect);
-            
-            const loading = document.getElementById('aiLoading');
-            const resultContainer = document.getElementById('aiResultContainer');
-            const resultText = document.getElementById('aiResultText');
-            const genBtn = document.getElementById('generateMessageBtn');
-
-            loading.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-            genBtn.disabled = true;
-
-            try {
-                // Sistema de prompt analítico, focado em marketing digital (como você pediu)
-                const systemPrompt = `
-                    Você é um assistente de vendas sênior, especialista em marketing digital e funis de venda.
-                    Sua tarefa é escrever uma mensagem de abordagem (cold message) curta, objetiva e persuasiva para um prospect.
-                    Seja profissional, mas amigável.
-                    O objetivo é marcar uma reunião de 15 minutos para apresentar a solução.
-                    Foque no benefício que o prospect pode ter.
-                `.trim();
-
-                const userQuery = `
-                    Escreva uma mensagem de abordagem para o prospect:
-                    - Nome: ${prospectData.nome}
-                    - Origem (como o conheci): ${prospectData.origem || 'Não informado'}
-                    - Email: ${prospectData.email || 'Não informado'}
-                    
-                    Minha empresa (CRM Rocket) oferece soluções de gestão de clientes e vendas para pequenas empresas.
-                    Gere apenas o texto da mensagem, sem saudações extras antes ou depois (ex: "Aqui está a mensagem:").
-                `.trim();
-
-                const generatedText = await callGeminiAPI(userQuery, systemPrompt);
-                
-                resultText.value = generatedText;
-                resultContainer.classList.remove('hidden');
-
-            } catch (error) {
-                console.error("Erro ao chamar API Gemini:", error);
-                errorDiv.textContent = `Erro ao gerar mensagem: ${error.message}`;
-                errorDiv.classList.remove('hidden');
-            } finally {
-                loading.classList.add('hidden');
-                genBtn.disabled = false;
-                renderIcons();
-            }
-        };
-
-        const callGeminiAPI = async (userQuery, systemPrompt) => {
-            const apiKey = ""; // A API Key é gerenciada pelo ambiente
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
-
-            let response;
-            let retries = 3;
-            let delay = 1000; // 1 segundo
-
-            while (retries > 0) {
-                try {
-                    response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        const candidate = result.candidates?.[0];
-                        
-                        if (candidate && candidate.content?.parts?.[0]?.text) {
-                            return candidate.content.parts[0].text;
-                        } else {
-                            // Tenta extrair texto mesmo se a estrutura for um pouco diferente
-                            const text = result.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || null;
-                            if (text) return text;
-                            throw new Error("Resposta da API inválida ou sem texto.");
-                        }
-                    } else if (response.status === 429 || response.status >= 500) {
-                        // Throttling ou erro de servidor, espera e tenta de novo
-                        console.warn(`API Rate Limit ou erro. Tentando novamente em ${delay}ms...`);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; // Backoff exponencial
-                        retries--;
-                    } else {
-                        // Outro erro (ex: 400 Bad Request)
-                        const errorResult = await response.json();
-                        throw new Error(errorResult.error?.message || `Erro ${response.status}: ${response.statusText}`);
-                    }
-                } catch (error) {
-                    if (retries === 1) {
-                        throw error; // Lança o erro na última tentativa
-                    }
-                    console.warn(`Tentativa falhou, ${retries-1} restantes. Erro: ${error.message}`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                    retries--;
-                }
-            }
-            throw new Error("Falha ao gerar conteúdo após várias tentativas.");
-        };
-
+        // --- ASSISTENTE IA (REMOVIDO) ---
+        /*
+        const loadAIPage = () => { ... };
+        const handleGenerateAIMessage = async () => { ... };
+        const callGeminiAPI = async (userQuery, systemPrompt) => { ... };
+        */
 
         // --- INICIALIZAÇÃO DOS EVENT LISTENERS ---
         
@@ -2142,35 +1982,9 @@
             });
             document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
 
-            // NOVA FEATURE: Listeners da IA
-            document.getElementById('generateMessageBtn').addEventListener('click', handleGenerateAIMessage);
-            document.getElementById('copyAIBtn').addEventListener('click', () => {
-                const textArea = document.getElementById('aiResultText');
-                textArea.select();
-                try {
-                    // Fallback para document.execCommand
-                    if (!navigator.clipboard) {
-                        document.execCommand('copy');
-                    } else {
-                        navigator.clipboard.writeText(textArea.value).catch(err => {
-                            console.error('Falha ao copiar com navigator.clipboard, tentando execCommand...', err);
-                            document.execCommand('copy'); // Tenta o fallback
-                        });
-                    }
-
-                    // Feedback visual simples
-                    const btn = document.getElementById('copyAIBtn');
-                    const originalText = btn.textContent;
-                    btn.textContent = "Copiado!";
-                    btn.classList.add('bg-green-200');
-                    setTimeout(() => { 
-                        btn.textContent = originalText; 
-                        btn.classList.remove('bg-green-200');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Falha ao copiar texto: ', err);
-                }
-            });
+            // REMOVIDO: Listeners da IA
+            // document.getElementById('generateMessageBtn').addEventListener('click', handleGenerateAIMessage);
+            // document.getElementById('copyAIBtn').addEventListener('click', () => { ... });
         };
         
         // --- INICIALIZAÇÃO DA PÁGINA ---
