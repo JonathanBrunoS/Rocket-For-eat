@@ -15,6 +15,7 @@
                     colors: {
                         // Amarelo principal da marca (baseado na logo)
                         'rocket-yellow': {
+                            '300': '#FDE68A', // Amarelo claro
                             '400': '#FDE047', // Cor principal (Tailwind Yellow 400)
                             '500': '#FACC15', // Cor de hover (Tailwind Yellow 500)
                             '600': '#EAB308', // Cor de texto (Tailwind Yellow 600)
@@ -68,7 +69,7 @@
             border: 2px dashed #FDE047; /* Amarelo da marca */
         }
         .drag-over {
-            background-color: #fffbeb; 
+            background-color: #f7f3e3; /* Amarelo bem claro */
         }
 
         /* Custom scrollbar */
@@ -88,6 +89,22 @@
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+        
+        /* CORREÇÃO: Estilo do NavLink Ativo */
+        .nav-link.active-nav {
+            background-color: #FACC15; /* rocket-yellow-500 */
+            color: #111827; /* rocket-dark */
+            font-weight: 600;
+        }
+        
+        /* Oculta o scrollbar do Kanban em si, mas mantém o do container */
+        #kanban-board::-webkit-scrollbar {
+            display: none; /* Oculta scrollbar no Chrome/Safari */
+        }
+        #kanban-board {
+            -ms-overflow-style: none;  /* Oculta scrollbar no IE/Edge */
+            scrollbar-width: none;  /* Oculta scrollbar no Firefox */
         }
     </style>
 </head>
@@ -273,7 +290,8 @@
                             </div>
                             <!-- Prospecção --><div>
                                 <div class="flex justify-between items-end mb-1">
-                                    <span class="text-sm font-medium text-gray-700">Novos Clientes (Prospecção)</span>
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
+                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
                                     <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
@@ -295,8 +313,11 @@
                         </button>
                     </div>
                     
-                    <!-- CORREÇÃO: Overflow-x para scroll horizontal em telas pequenas -->
-                    <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5 overflow-x-auto pb-4">
+                    <!-- CORREÇÃO: Container de scroll horizontal para mobile -->
+                    <div class="w-full overflow-x-auto pb-4">
+                        <div id="kanban-board" class="grid grid-flow-col auto-cols-auto md:grid-cols-3 lg:grid-cols-5 gap-5">
+                            <!-- Colunas serão geradas pelo JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -568,8 +589,8 @@
                                 <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                             </div>
                              <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Clientes (Prospec.)</h4>
-                                <p id="report-novos-clientes" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
+                                <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
                             </div>
                         </div>
                         <p id="report-loading-msg" class="text-gray-500 hidden">Carregando relatório...</p>
@@ -588,7 +609,8 @@
                                     <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
                                 </div>
                                 <div>
-                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospecção (Novos Clientes)</label>
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
+                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospecção (Novos Leads)</label>
                                     <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
                                 </div>
                                 <!-- CORREÇÃO: Cor da marca -->
@@ -611,7 +633,8 @@
                                 </div>
                                 <div>
                                     <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-medium text-gray-700">Novos Clientes (Prospecção)</span>
+                                        <!-- CORREÇÃO: Label "Novos Leads" -->
+                                        <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
                                         <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-4">
@@ -715,6 +738,47 @@
             </form>
         </div>
     </div>
+    
+    <!-- NOVO MODAL: Detalhes do Prospect (Editar/Comentar) --><div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <form id="prospectDetailForm">
+                <input type="hidden" id="prospectDetailId">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalhes do Prospect</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Origem</label>
+                            <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
+                            <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Observações</label>
+                            <textarea id="prospectDetailNotes" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-between gap-3">
+                    <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir Prospect</button>
+                    <div>
+                        <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- MODAL: Confirmação de Exclusão --><div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
@@ -803,6 +867,7 @@
         // --- ESTADO GLOBAL DA APLICAÇÃO ---
         let userId = null; 
         let currentClientId = null; 
+        let currentProspectId = null; // NOVO: Para modal de detalhe do prospect
         let currentDeleteInfo = null; 
         let draggedProspectId = null; 
         let allClientsData = {}; 
@@ -884,7 +949,8 @@
             
             // Destaque do link no menu
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.toggle('bg-gray-700', link.dataset.page === pageId);
+                // CORREÇÃO: Usa classe CSS dedicada para o estado ativo
+                link.classList.toggle('active-nav', link.dataset.page === pageId);
             });
             
             // Fecha o menu mobile ao navegar
@@ -1019,22 +1085,23 @@
             }
 
             try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
                 const { start } = getCurrentMonthRange();
+                
+                // 1. Contar Faturamento (de Vendas)
                 const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start));
                 let faturamentoAtual = 0;
-                let novosClientes = 0;
-
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => {
                     const sale = doc.data();
                     faturamentoAtual += sale.valor || 0; // Todas as vendas contam para o faturamento
-                    
-                    // CORREÇÃO: Apenas "Prospecção Fechada" conta para a meta de "Novos Clientes"
-                    if (sale.tipo === 'Prospecção Fechada') { 
-                        novosClientes++;
-                    }
                 });
+                
+                // 2. Contar Novos Leads (de Prospects)
+                // CORREÇÃO: A meta agora é "Novos Leads", não clientes fechados.
+                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), where("createdAt", ">=", start));
+                let novosLeads = 0;
+                const prospectsSnapshot = await getDocs(prospectsQuery);
+                novosLeads = prospectsSnapshot.size; // Total de prospects criados este mês
 
                 // Atualiza UI (Página Minha Empresa)
                 const fLabel = document.getElementById('faturamento-label');
@@ -1047,8 +1114,8 @@
                     fLabel.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
                     fProgress.style.width = `${Math.min(fPercent, 100)}%`;
                     
-                    const pPercent = metaProspeccao > 0 ? (novosClientes / metaProspeccao) * 100 : 0;
-                    pLabel.textContent = `${novosClientes} / ${metaProspeccao}`;
+                    const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
+                    pLabel.textContent = `${novosLeads} / ${metaProspeccao}`;
                     pProgress.style.width = `${Math.min(pPercent, 100)}%`;
                 }
 
@@ -1063,12 +1130,12 @@
                     fLabelDash.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
                     fProgressDash.style.width = `${Math.min(fPercent, 100)}%`;
                     
-                    const pPercent = metaProspeccao > 0 ? (novosClientes / metaProspeccao) * 100 : 0;
-                    pLabelDash.textContent = `${novosClientes} / ${metaProspeccao}`;
+                    const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
+                    pLabelDash.textContent = `${novosLeads} / ${metaProspeccao}`;
                     pProgressDash.style.width = `${Math.min(pPercent, 100)}%`;
                 }
             } catch (e) {
-                handleFriendlyError("Erro ao carregar dados de vendas", e.message, e);
+                handleFriendlyError("Erro ao carregar dados de vendas/prospects", e.message, e);
             }
         };
 
@@ -1112,10 +1179,6 @@
                 if (kpiAtivosEl) {
                     kpiAtivosEl.textContent = ativos;
                 }
-                // const kpiMrrEl = document.getElementById('kpi-mrr'); // REMOVIDO (causava o bug)
-                // if (kpiMrrEl) { // REMOVIDO (causava o bug)
-                //     kpiMrrEl.textContent = formatCurrency(mrr); // REMOVIDO (causava o bug)
-                // } // REMOVIDO (causava o bug)
             }, (e) => { handleFriendlyError("Erro no Dashboard (Clientes)", e.message, e); });
 
             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
@@ -1144,9 +1207,9 @@
                     kpiBrutoEl.textContent = formatCurrency(faturamentoTotalMes);
                 }
                 const kpiVendasEl = document.getElementById('kpi-vendas-novas');
-                if (kpiVendasEl) {
-                    kpiVendasEl.textContent = formatCurrency(vendasNovas);
-                }
+                // if (kpiVendasEl) { // ESSE KPI NÃO EXISTE MAIS NO DASHBOARD
+                //     kpiVendasEl.textContent = formatCurrency(vendasNovas);
+                // }
                 
                 // Recalcula o líquido quando as vendas mudam
                 // calculateNetRevenue(); // REMOVIDO - Agora é chamado por despesas e recebidos
@@ -1233,7 +1296,9 @@
             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
             const contractsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(contractsQuery, (snapshot) => {
+                // CORREÇÃO: Adiciona verificação de nulo
                 const container = document.getElementById('alertas-contratos');
+                if (!container) return; // Se o usuário não está no Dashboard, para aqui.
                 container.innerHTML = '';
                 let hasAlert = false;
                 snapshot.forEach(doc => {
@@ -1262,7 +1327,9 @@
                 where("status", "==", "Pendente")
             );
             onSnapshot(paymentsQuery, async (snapshot) => {
+                // CORREÇÃO: Adiciona verificação de nulo
                 const container = document.getElementById('alertas-pagamentos');
+                if (!container) return; // Se o usuário não está no Dashboard, para aqui.
                 container.innerHTML = '';
                 let hasAlert = false; 
                 
@@ -1571,13 +1638,13 @@
                     }
                     
                     container.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border rounded-md hover:bg-gray-50">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border rounded-md hover:bg-gray-50">
                             <div>
                                 <p class="font-semibold text-gray-800">${p.descricao}</p>
                                 <p class="text-sm text-gray-600">${formatCurrency(p.valor)} - Venc: ${formatDate(p.dataVencimento)}</p>
                             </div>
                             <!-- CORREÇÃO: Responsividade de botões -->
-                            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
+                            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
                                     ${p.status}
                                 </span>
@@ -1717,7 +1784,7 @@
         
         const loadClientCredentials = (clientId) => {
             if (!userId || !db) return;
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+            // CORREÇÃO: Caminho do DB voltou para PÚBLICO
             const q = query(collection(db, `/artifacts/${appId}/public/data/credentials`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('credentials-list');
@@ -1757,7 +1824,7 @@
             submitButton.disabled = true;
 
             try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                // CORREÇÃO: Caminho do DB voltou para PÚBLICO
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/credentials`), {
                     clientId: currentClientId,
                     servico: document.getElementById('credService').value,
@@ -1802,12 +1869,14 @@
             board.innerHTML = '';
             KANBAN_COLUMNS.forEach(col => {
                 // CORREÇÃO: Classes para responsividade mobile (min-w-[280px])
+                // CORREÇÃO: Estilo da marca no header
                 board.innerHTML += `
-                    <div class="bg-white rounded-lg shadow-md p-4 h-full min-h-[200px] min-w-[280px] md:min-w-0" 
+                    <div class="bg-gray-100 rounded-lg shadow-sm flex flex-col min-h-[200px] min-w-[280px] md:min-w-0" 
                          id="kanban-col-${col.id}" 
                          data-status="${col.id}">
-                        <h3 class="font-semibold text-gray-800 mb-4">${col.title}</h3>
-                        <div id="kanban-cards-${col.id}" class="space-y-3 min-h-[100px]">
+                        <h3 class="font-semibold text-rocket-yellow-400 bg-rocket-dark p-3 rounded-t-lg">${col.title}</h3>
+                        <div id="kanban-cards-${col.id}" class="space-y-3 p-3 overflow-y-auto h-full">
+                            <!-- Cards entram aqui -->
                         </div>
                     </div>
                 `;
@@ -1835,18 +1904,31 @@
                             // CORREÇÃO: Cor da marca
                             convertButton = `<button onclick="window.convertProspectToClient('${doc.id}')" class="text-xs text-rocket-yellow-600 hover:underline mt-2">Converter em Cliente</button>`;
                         }
+                        
+                        // NOVO: Adiciona etiqueta (label) se existir
+                        const labelHtml = prospect.label ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>` : '';
 
+                        // CORREÇÃO: Card com clique para abrir modal e alça para drag
                         container.innerHTML += `
-                        <div class="p-3 border-2 bg-white rounded-md shadow-sm cursor-grab" 
-                             draggable="true" 
+                        <div class="p-3 border-l-4 border-rocket-yellow-400 bg-white rounded-md shadow-sm" 
                              data-id="${doc.id}" 
                              id="prospect-${doc.id}">
-                            <div class="flex justify-between items-center mb-1">
-                                <h4 class="font-semibold text-sm text-gray-800">${prospect.nome}</h4>
-                                <button onclick="window.handleDeleteClick('prospects', '${doc.id}')" class="text-gray-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            
+                            <div class="flex justify-between items-start">
+                                <!-- Área Clicável para Abrir Modal -->
+                                <div class="flex-1 cursor-pointer" onclick="window.openProspectDetailModal('${doc.id}')">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h4 class="font-semibold text-sm text-gray-800">${prospect.nome}</h4>
+                                        ${labelHtml}
+                                    </div>
+                                    <p class="text-sm text-gray-600">${prospect.email || 'Sem email'}</p>
+                                    <p class="text-xs text-gray-400 mt-2">Origem: ${prospect.origem || 'N/A'}</p>
+                                </div>
+                                <!-- Alça para Arrastar -->
+                                <button data-drag-handle="true" draggable="true" class="cursor-grab p-1 text-gray-400 hover:text-gray-600">
+                                    <i data-lucide="grip-vertical" class="w-4 h-4"></i>
+                                </button>
                             </div>
-                            <p class="text-sm text-gray-600">${prospect.email || 'Sem email'}</p>
-                            <p class="text-xs text-gray-400 mt-2">Origem: ${prospect.origem || 'N/A'}</p>
                             ${convertButton}
                         </div>
                         `;
@@ -1866,11 +1948,15 @@
 
             try {
                 // CORREÇÃO: Caminho do DB mudou para PÚBLICO
+                // CORREÇÃO: Adiciona 'createdAt' para a meta de "Novos Leads"
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
                     email: document.getElementById('prospectEmailInput').value,
                     origem: document.getElementById('prospectOriginInput').value,
                     status: 'prospeccao', 
+                    createdAt: new Date().toISOString(), // NOVO: Para meta de "Novos Leads"
+                    label: '', // NOVO
+                    notes: '', // NOVO
                     ownerId: userId
                 });
                 hideModal('prospectModal');
@@ -1882,24 +1968,87 @@
             }
         };
         
+        // NOVO: Abre o modal de detalhes do prospect
+        window.openProspectDetailModal = async (prospectId) => {
+            if (!prospectId) return;
+            currentProspectId = prospectId; // Salva o ID atual
+            
+            const form = document.getElementById('prospectDetailForm');
+            form.reset();
+            
+            try {
+                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
+                const docSnap = await getDoc(prospectRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('prospectDetailId').value = prospectId;
+                    document.getElementById('prospectDetailName').value = data.nome || '';
+                    document.getElementById('prospectDetailEmail').value = data.email || '';
+                    document.getElementById('prospectDetailOrigin').value = data.origem || '';
+                    document.getElementById('prospectDetailLabel').value = data.label || '';
+                    document.getElementById('prospectDetailNotes').value = data.notes || '';
+                    
+                    showModal('prospectDetailModal');
+                } else {
+                    console.error("Prospect não encontrado");
+                }
+            } catch(e) {
+                 handleFriendlyError("Erro ao carregar prospect.", e.message, e);
+            }
+        };
+
+        // NOVO: Salva as alterações do modal de detalhes do prospect
+        const handleProspectDetailFormSubmit = async (e) => {
+            e.preventDefault();
+            if (!currentProspectId) return;
+            
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            
+            const dataToUpdate = {
+                nome: document.getElementById('prospectDetailName').value,
+                email: document.getElementById('prospectDetailEmail').value,
+                origem: document.getElementById('prospectDetailOrigin').value,
+                label: document.getElementById('prospectDetailLabel').value,
+                notes: document.getElementById('prospectDetailNotes').value,
+            };
+            
+            try {
+                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
+                await updateDoc(prospectRef, dataToUpdate);
+                
+                hideModal('prospectDetailModal');
+                currentProspectId = null;
+            } catch (e) {
+                console.error("Erro ao atualizar prospect:", e);
+            } finally {
+                submitButton.disabled = false;
+            }
+        };
+
+
         function initCardDragListeners() {
-            const cards = document.querySelectorAll('#kanban-board [draggable="true"]');
-            cards.forEach(card => {
-                card.addEventListener('dragstart', (e) => {
-                    // Verifique se o alvo é o card ou um filho dele
-                    const targetCard = e.target.closest('[draggable="true"]');
+            // CORREÇÃO: O listener agora é na ALÇA DE DRAG (`data-drag-handle`)
+            const cardHandles = document.querySelectorAll('[data-drag-handle="true"]');
+            
+            cardHandles.forEach(handle => {
+                handle.addEventListener('dragstart', (e) => {
+                    const targetCard = e.target.closest('[data-id]'); // Pega o card pai
                     if (targetCard) {
                         draggedProspectId = targetCard.dataset.id;
                         targetCard.classList.add('dragging');
+                        e.stopPropagation(); // Impede que o onclick do card dispare
                     }
                 });
                 
-                card.addEventListener('dragend', (e) => {
-                    const targetCard = e.target.closest('[draggable="true"]');
+                handle.addEventListener('dragend', (e) => {
+                    const targetCard = e.target.closest('[data-id]');
                     if (targetCard) {
                         targetCard.classList.remove('dragging');
                     }
                     draggedProspectId = null;
+                    e.stopPropagation();
                 });
             });
         }
@@ -1951,11 +2100,7 @@
         // Corrigido: Passa os dados do prospect para a função de conversão
         window.convertProspectToClient = async (prospectId) => {
              if (!userId || !db) return;
-             const prospectCard = document.getElementById(`prospect-${prospectId}`);
-             if (!prospectCard) return;
              
-             // Pega os dados do prospect diretamente do snapshot (carregado em `allClientsData` ou similar, mas aqui é `prospects`)
-             // Melhor: buscar o doc para ter certeza
              try {
                 // CORREÇÃO: Caminho do DB mudou para PÚBLICO
                 const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
@@ -2209,7 +2354,7 @@
             
             let bruto = 0;
             let despesas = 0;
-            let novosClientes = 0;
+            let novosLeads = 0; // CORREÇÃO: Nome da métrica
             
             try {
                 // 1. Faturamento Bruto
@@ -2219,11 +2364,7 @@
                 );
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => {
-                    const sale = doc.data();
-                    bruto += sale.valor || 0;
-                    if (sale.tipo === 'Prospecção Fechada') {
-                        novosClientes++;
-                    }
+                    bruto += doc.data().valor || 0;
                 });
                 
                 // 2. Despesas
@@ -2236,11 +2377,20 @@
                     despesas += doc.data().valor || 0;
                 });
                 
-                // 3. Atualizar UI
+                // 3. Novos Leads (Prospects)
+                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+                    where("createdAt", ">=", start), 
+                    where("createdAt", "<=", end)
+                );
+                const prospectsSnapshot = await getDocs(prospectsQuery);
+                novosLeads = prospectsSnapshot.size;
+                
+                
+                // 4. Atualizar UI
                 document.getElementById('report-faturamento-bruto').textContent = formatCurrency(bruto);
                 document.getElementById('report-despesas').textContent = formatCurrency(despesas);
-                document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto - despesas);
-                document.getElementById('report-novos-clientes').textContent = novosClientes;
+                document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto - despesas); // Líquido = Bruto - Despesas
+                document.getElementById('report-novos-leads').textContent = novosLeads; // CORREÇÃO: Nome do ID
                 
             } catch (e) {
                 handleFriendlyError("Erro ao carregar relatório histórico", e.message, e);
@@ -2311,8 +2461,14 @@
                     
                     const subCollections = ['payments', 'tasks', 'credentials', 'sales', 'expenses']; // Adiciona expenses
                     for (const subCol of subCollections) {
-                        // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                        const q = query(collection(db, `/artifacts/${appId}/public/data/${subCol}`), where("clientId", "==", docId));
+                        // CORREÇÃO: Caminho do DB voltou para PÚBLICO
+                        let subColPath;
+                        // if (subCol === 'credentials') { // REMOVIDO - Senhas são públicas
+                        //     subColPath = `/artifacts/${appId}/users/${userId}/${subCol}`;
+                        // } else {
+                            subColPath = `/artifacts/${appId}/public/data/${subCol}`;
+                        // }
+                        const q = query(collection(db, subColPath), where("clientId", "==", docId));
                         const snapshot = await getDocs(q);
                         snapshot.forEach(doc => batch.delete(doc.ref));
                     }
@@ -2332,8 +2488,14 @@
                 
                 } else {
                     // Exclusão simples (payments, tasks, credentials, prospects, expenses)
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/${collectionName}/${docId}`));
+                    // CORREÇÃO: Caminho do DB voltou para PÚBLICO
+                    let docPath;
+                    // if (collectionName === 'credentials') { // REMOVIDO
+                    //     docPath = `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`;
+                    // } else {
+                        docPath = `/artifacts/${appId}/public/data/${collectionName}/${docId}`;
+                    // }
+                    await deleteDoc(doc(db, docPath));
                 }
                 
                 hideModal('deleteModal');
@@ -2398,6 +2560,16 @@
             document.getElementById('showAddProspectModalBtn').addEventListener('click', () => showModal('prospectModal'));
             document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
             document.getElementById('prospectForm').addEventListener('submit', handleProspectFormSubmit);
+            
+            // NOVO: Listeners do Modal de Detalhe do Prospect
+            document.getElementById('prospectDetailForm').addEventListener('submit', handleProspectDetailFormSubmit);
+            document.getElementById('closeProspectDetailModalBtn').addEventListener('click', () => hideModal('prospectDetailModal'));
+            document.getElementById('deleteProspectBtn').addEventListener('click', () => {
+                // Reutiliza o modal de deleção
+                hideModal('prospectDetailModal');
+                handleDeleteClick('prospects', currentProspectId);
+            });
+
 
             // Abas (Detalhe Cliente)
             document.querySelectorAll('.tab-link').forEach(link => {
@@ -2439,6 +2611,4 @@
     </script>
 </body>
 </html>
-
-
 
