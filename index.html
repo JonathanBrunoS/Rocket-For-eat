@@ -315,7 +315,8 @@
                     
                     <!-- CORREÇÃO: Container de scroll horizontal para mobile -->
                     <div class="w-full overflow-x-auto pb-4">
-                        <div id="kanban-board" class="grid grid-flow-col auto-cols-auto md:grid-cols-3 lg:grid-cols-5 gap-5">
+                        <!-- CORREÇÃO: Removidas classes de grid responsivo (md: lg:) para forçar o scroll horizontal -->
+                        <div id="kanban-board" class="grid grid-flow-col auto-cols-auto gap-5">
                             <!-- Colunas serão geradas pelo JS -->
                         </div>
                     </div>
@@ -573,7 +574,7 @@
                 <!-- TELA NOVA: RELATÓRIOS --><div id="reportsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
                     
-                    <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Resumo do Mês Anterior</h3>
                         <div id="lastMonthReport" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div class="bg-gray-50 p-4 rounded-lg">
@@ -594,6 +595,15 @@
                             </div>
                         </div>
                         <p id="report-loading-msg" class="text-gray-500 hidden">Carregando relatório...</p>
+                    </div>
+
+                    <!-- NOVO: Faturamento por Cliente -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturamento Bruto por Cliente (Todo o Período)</h3>
+                        <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+                            <p id="client-revenue-loading" class="text-gray-500">Calculando faturamento por cliente...</p>
+                            <!-- Lista será gerada pelo JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -963,7 +973,10 @@
                 case 'receivablesPage': loadReceivablesReport(); break; // Antigo 'financialReportPage'
                 case 'expensesPage': loadExpensesPage(); break; // NOVO
                 case 'globalTasksPage': loadGlobalTasks(); break; 
-                case 'reportsPage': loadHistoricalReport(); break; // NOVO
+                case 'reportsPage':
+                    loadHistoricalReport();
+                    loadClientRevenueReport(); // NOVO
+                    break; 
                 case 'companyPage': loadCompanyGoalsPage(); break;
             }
         };
@@ -1870,8 +1883,9 @@
             KANBAN_COLUMNS.forEach(col => {
                 // CORREÇÃO: Classes para responsividade mobile (min-w-[280px])
                 // CORREÇÃO: Estilo da marca no header
+                // CORREÇÃO: Removido 'md:min-w-0' e setado 'w-[280px] sm:w-[300px]' para garantir tamanho fixo e scroll
                 board.innerHTML += `
-                    <div class="bg-gray-100 rounded-lg shadow-sm flex flex-col min-h-[200px] min-w-[280px] md:min-w-0" 
+                    <div class="bg-gray-100 rounded-lg shadow-sm flex flex-col min-h-[200px] w-[280px] sm:w-[300px]" 
                          id="kanban-col-${col.id}" 
                          data-status="${col.id}">
                         <h3 class="font-semibold text-rocket-yellow-400 bg-rocket-dark p-3 rounded-t-lg">${col.title}</h3>
@@ -2401,6 +2415,67 @@
         };
 
         
+        // --- NOVO: RELATÓRIO DE FATURAMENTO POR CLIENTE ---
+        
+        const loadClientRevenueReport = async () => {
+            if (!userId || !db) return;
+
+            const container = document.getElementById('client-revenue-list');
+            const loadingMsg = document.getElementById('client-revenue-loading');
+            
+            if (!container || !loadingMsg) return; // Sai se não estiver na página de relatórios
+
+            loadingMsg.classList.remove('hidden');
+            container.innerHTML = ''; // Limpa a lista antiga
+
+            try {
+                // 1. Pega todas as vendas
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`));
+                const salesSnapshot = await getDocs(salesQuery);
+                
+                if (salesSnapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Nenhum faturamento registrado ainda.</p>';
+                    loadingMsg.classList.add('hidden');
+                    return;
+                }
+                
+                // 2. Agrupa o faturamento por cliente
+                const revenueMap = {};
+                salesSnapshot.forEach(doc => {
+                    const sale = doc.data();
+                    if (sale.clientId && sale.valor) {
+                        revenueMap[sale.clientId] = (revenueMap[sale.clientId] || 0) + sale.valor;
+                    }
+                });
+
+                if (Object.keys(revenueMap).length === 0) {
+                     container.innerHTML = '<p class="text-gray-500">Nenhum faturamento registrado ainda.</p>';
+                     loadingMsg.classList.add('hidden');
+                     return;
+                }
+
+                // 3. Ordena por maior faturamento
+                const sortedRevenue = Object.entries(revenueMap).sort((a, b) => b[1] - a[1]); // [clientId, total]
+
+                // 4. Exibe na tela usando o cache de nomes de cliente
+                sortedRevenue.forEach(([clientId, total]) => {
+                    const clientName = allClientsData[clientId]?.nome || 'Cliente Excluído';
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center p-3 border rounded-md hover:bg-gray-50">
+                            <p class="font-semibold text-gray-800">${clientName}</p>
+                            <p class="font-bold text-gray-900">${formatCurrency(total)}</p>
+                        </div>
+                    `;
+                });
+
+            } catch (e) {
+                 handleFriendlyError("Erro ao carregar faturamento por cliente", e.message, e);
+                 container.innerHTML = '<p class="text-red-500">Erro ao carregar relatório.</p>';
+            } finally {
+                loadingMsg.classList.add('hidden');
+            }
+        };
+
         // --- MINHA EMPRESA (METAS) ---
         
         const handleGoalsFormSubmit = async (e) => {
@@ -2611,4 +2686,5 @@
     </script>
 </body>
 </html>
+
 
