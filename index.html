@@ -225,6 +225,34 @@
                 <!-- TELA 1: DASHBOARD --><div id="dashboardPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                     
+                    <!-- NOVO: Progresso do Mês movido para o topo -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                        <div class="space-y-6">
+                            <!-- Faturamento --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
+                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Prospecção --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
+                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
+                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- KPIs -->
                     <!-- CORREÇÃO: Ordem dos KPIs alterada para clareza -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -265,32 +293,7 @@
                         </div>
                     </div>
 
-                    <!-- Progresso do Mês --><div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                        <div class="space-y-6">
-                            <!-- Faturamento --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <!-- Prospecção --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <!-- CORREÇÃO: Label "Novos Leads" -->
-                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Progresso do Mês (MOVIDO PARA O TOPO) -->
                 </div>
 
                 <!-- TELA 2: PROSPECÇÃO (LISTA) -->
@@ -791,7 +794,7 @@
     </div>
 
     <!-- MODAL: Adicionar Prospect --><div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <form id="prospectForm">
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
@@ -807,6 +810,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Origem</label>
                             <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                        </div>
+                        <!-- NOVO: Checkboxes de Serviços -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <!-- Checkboxes serão renderizados aqui pelo JS -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -854,6 +864,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
+                            </div>
+                        </div>
+                        <!-- NOVO: Checkboxes de Serviços -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <!-- Checkboxes serão renderizados aqui pelo JS -->
                             </div>
                         </div>
                         <div>
@@ -972,6 +989,16 @@
         let dashTotals = { bruto: 0, despesas: 0, recebido: 0 }; // NOVO: Para cálculo correto do líquido
 
         // --- FUNÇÕES DE UTILIDADE ---
+        
+        // NOVO: Lista de serviços de prospecção
+        const prospectServices = [
+            "Cardápio 99Food", 
+            "Cardápio iFood", 
+            "Cardápio Próprio", 
+            "Google Meu Negócio (GMN)", 
+            "Otimização Instagram", 
+            "Otimização de Cardápio"
+        ];
 
         const renderIcons = () => {
             if (typeof lucide !== 'undefined') {
@@ -1075,6 +1102,30 @@
                 end: end.toISOString().split('T')[0]
             };
         };
+        
+        // NOVO: Renderiza checkboxes de serviços
+        function renderServicesCheckboxes(containerId, savedServices = []) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            prospectServices.forEach(service => {
+                const isChecked = savedServices.includes(service);
+                container.innerHTML += `
+                    <label class="flex items-center text-sm text-gray-700">
+                        <input type="checkbox" value="${service}" ${isChecked ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300">
+                        <span class="ml-2">${service}</span>
+                    </label>
+                `;
+            });
+        }
+        
+        // NOVO: Pega serviços selecionados dos checkboxes
+        function getSelectedServices(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return [];
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
 
 
         const showPage = (pageId) => {
@@ -2111,6 +2162,7 @@
                     createdAt: new Date().toISOString(), // NOVO: Para meta de "Novos Leads"
                     label: '', // NOVO
                     notes: '', // NOVO
+                    services: getSelectedServices('prospectServicesCheckboxes'), // NOVO
                     ownerId: userId
                 });
                 hideModal('prospectModal');
@@ -2146,6 +2198,9 @@
                     // NOVO: Adiciona o status ao modal
                     document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
                     
+                    // NOVO: Renderiza checkboxes de serviços
+                    renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
+                    
                     // NOVO: Mostra/Esconde o botão de converter
                     const convertBtn = document.getElementById('convertProspectBtn');
                     convertBtn.classList.toggle('hidden', data.status !== 'fechado');
@@ -2176,6 +2231,7 @@
                 label: document.getElementById('prospectDetailLabel').value,
                 notes: document.getElementById('prospectDetailNotes').value,
                 status: newStatus, // NOVO: Salva o status
+                services: getSelectedServices('prospectDetailServicesCheckboxes'), // NOVO
             };
             
             try {
@@ -2243,6 +2299,8 @@
                 const lateContainer = document.getElementById('late-payments-list');
                 const upcomingContainer = document.getElementById('upcoming-payments-list');
                 const paidThisMonthContainer = document.getElementById('paid-this-month-list');
+                
+                if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return; // Sai se não estiver na página
 
                 lateContainer.innerHTML = '';
                 upcomingContainer.innerHTML = '';
@@ -2310,7 +2368,9 @@
             
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('expenses-list');
+                if (!container) return; // Sai se não estiver na página
                 container.innerHTML = '';
+                
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma despesa registada este mês.</p>';
                     return;
@@ -2347,7 +2407,7 @@
             const data = {
                 descricao: document.getElementById('expenseDesc').value,
                 valor: parseFloat(document.getElementById('expenseValue').value),
-                data: document.getElementById('expenseDate').value,
+                data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0], // Pega data atual se vazia
                 ownerId: userId
             };
             
@@ -2389,6 +2449,7 @@
             const selectedClient = document.getElementById('globalTaskClientFilter').value;
             const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
             const container = document.getElementById('global-tasks-list');
+            if (!container) return; // Sai se não estiver na página
             container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>'; // Feedback de carregamento
 
             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
@@ -2405,6 +2466,7 @@
             const filteredQuery = query(q, ...filters);
 
             onSnapshot(filteredQuery, (snapshot) => {
+                if (!container) return; // Verificação extra de segurança
                 container.innerHTML = '';
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
@@ -2448,6 +2510,8 @@
             if (!userId || !db) return;
             
             const loadingMsg = document.getElementById('report-loading-msg');
+            if (!loadingMsg) return; // Sai se não estiver na página
+            
             loadingMsg.classList.remove('hidden');
             
             const { start, end } = getLastMonthRange();
@@ -2763,14 +2827,14 @@
                 });
             });
             
-            // NOVO: Listeners do Menu Mobile
-            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.remove('hidden');
-                renderIcons(); // Garante que ícones no menu mobile sejam renderizados
-            });
-            document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.add('hidden');
-            });
+            // NOVO: Listeners do Menu Mobile (Movidos para fora)
+            // document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            //     document.getElementById('mobileMenu').classList.remove('hidden');
+            //     renderIcons(); // Garante que ícones no menu mobile sejam renderizados
+            // });
+            // document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
+            //     document.getElementById('mobileMenu').classList.add('hidden');
+            // });
 
             // Modais de Cliente
             document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
@@ -2790,7 +2854,10 @@
             });
 
             // Modais de Prospect
-            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => showModal('prospectModal'));
+            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => {
+                renderServicesCheckboxes('prospectServicesCheckboxes'); // NOVO: Renderiza checkboxes
+                showModal('prospectModal');
+            });
             document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
             document.getElementById('prospectForm').addEventListener('submit', handleAddProspectFormSubmit); // CORREÇÃO: Chama a função certa
             
@@ -2854,10 +2921,26 @@
         };
         
         // --- INICIALIZAÇÃO DA PÁGINA ---
-        window.addEventListener('load', () => renderIcons()); 
+        window.addEventListener('load', () => {
+            renderIcons(); 
+            
+            // NOVO: Listeners do Menu Mobile por Delegação (Conserto Definitivo)
+            // Anexados ao 'document' para garantir que funcionem
+            // independentemente do estado de login ou de quando o JS é carregado.
+            document.addEventListener('click', (e) => {
+                // Botão de Abrir
+                if (e.target.closest('#mobileMenuBtn')) {
+                    document.getElementById('mobileMenu').classList.remove('hidden');
+                    renderIcons();
+                }
+                // Botão de Fechar
+                if (e.target.closest('#closeMobileMenuBtn')) {
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        }); 
         
     </script>
 </body>
 </html>
-
 
