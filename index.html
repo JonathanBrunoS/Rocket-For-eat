@@ -50,20 +50,6 @@
         .page-content.active {
             display: block;
         }
-        
-        /* NOVO: CSS Específico para a página de Prospeção */
-        #prospectsPage.active {
-            display: flex; /* Mudar para flex-col para o scroller funcionar */
-            flex-direction: column;
-            /* CORREÇÃO: Altura ajustada para viewport do mobile */
-            height: calc(100vh - 72px); /* 100% da altura da viewport menos o header mobile */
-        }
-        @media (min-width: 768px) { /* md: */
-            #prospectsPage.active {
-                height: 100%; /* Restaura altura normal no desktop */
-            }
-        }
-
 
         .modal { /* Modais (pop-ups) */
             display: none; /* Oculto por padrão */
@@ -76,15 +62,9 @@
             display: none;
         }
 
-        /* Estilo para o "fantasma" do drag-and-drop */
-        .dragging {
-            opacity: 0.5;
-            background: #fffbeb; 
-            border: 2px dashed #FDE047; /* Amarelo da marca */
-        }
-        .drag-over {
-            background-color: #f7f3e3; /* Amarelo bem claro */
-        }
+        /* REMOVIDO: CSS do Drag-and-drop */
+        /* .dragging, .drag-over ... */
+
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -112,24 +92,9 @@
             font-weight: 600;
         }
         
-        /* Oculta o scrollbar do Kanban em si, mas mantém o do container */
-        #kanban-board::-webkit-scrollbar {
-            display: none; /* Oculta scrollbar no Chrome/Safari */
-        }
-        #kanban-board {
-            -ms-overflow-style: none;  /* Oculta scrollbar no IE/Edge */
-            scrollbar-width: none;  /* Oculta scrollbar no Firefox */
-        }
+        /* REMOVIDO: CSS do Kanban */
+        /* #kanban-board, #kanban-scroller, [data-drag-handle] ... */
         
-        /* NOVO: Força o scroll horizontal em ecrãs touch */
-        #kanban-scroller {
-            touch-action: pan-x; /* Permite apenas 'arrastar' horizontal, bloqueia o vertical nesta área */
-        }
-        
-        /* NOVO: Permite drag-and-drop em dispositivos touch (A CORREÇÃO QUE FALTAVA) */
-        [data-drag-handle] {
-            touch-action: none;
-        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -245,8 +210,9 @@
             </div>
 
             <!-- CONTEÚDO PRINCIPAL -->
-            <!-- CORREÇÃO: 'w-full' para mobile, 'flex-1' para desktop. 'overflow-hidden' é controlado por JS -->
-            <main class="w-full flex-1 p-4 md:p-8 overflow-y-auto">
+            <!-- CORREÇÃO: 'w-full' para mobile, 'flex-1' para desktop -->
+            <!-- REVERTIDO: <main> volta a ter o scroll-y principal -->
+            <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
                 
                 <!-- CORREÇÃO: Header Mobile com Botão Menu -->
                 <div class="md:hidden flex justify-between items-center mb-4">
@@ -259,6 +225,34 @@
                 <!-- TELA 1: DASHBOARD --><div id="dashboardPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                     
+                    <!-- NOVO: Progresso do Mês movido para o topo -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                        <div class="space-y-6">
+                            <!-- Faturamento --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
+                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Prospecção --><div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
+                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
+                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- KPIs -->
                     <!-- CORREÇÃO: Ordem dos KPIs alterada para clareza -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -299,55 +293,50 @@
                         </div>
                     </div>
 
-                    <!-- Progresso do Mês --><div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                        <div class="space-y-6">
-                            <!-- Faturamento --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <!-- Prospecção --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <!-- CORREÇÃO: Label "Novos Leads" -->
-                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Progresso do Mês (MOVIDO PARA O TOPO) -->
                 </div>
 
-                <!-- TELA 2: PROSPECÇÃO (KANBAN) -->
-                <!-- CORREÇÃO: Adicionado 'flex flex-col' e 'h-full' para o layout de scroll interno -->
-                <div id="prospectsPage" class="page-content flex flex-col h-full"> 
-                    <!-- CORREÇÃO: Adicionado 'flex-shrink-0' para o header não encolher -->
-                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4 flex-shrink-0">
+                <!-- TELA 2: PROSPECÇÃO (LISTA) -->
+                <!-- CORREÇÃO: Kanban removido e substituído por uma lista simples -->
+                <div id="prospectsPage" class="page-content"> 
+                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                         <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
-                        <!-- CORREÇÃO: Cor da marca -->
-                        <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center flex-shrink-0">
+                        <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
                             <i data-lucide="plus"></i>
                             <span>Novo Prospect</span>
                         </button>
                     </div>
                     
-                    <!-- CORREÇÃO: Container de scroll horizontal para mobile -->
-                    <!-- NOVO: Adicionado id="kanban-scroller" para o CSS de 'touch-action' -->
-                    <!-- CORREÇÃO: Adicionado 'flex-1' e 'min-h-0' para fazer o scroller preencher o espaço restante -->
-                    <div id="kanban-scroller" class="w-full overflow-x-auto pb-4 flex-1 min-h-0">
-                        <!-- CORREÇÃO: Alterado de 'grid' para 'flex' e adicionado 'h-full' -->
-                        <div id="kanban-board" class="flex flex-row gap-5 h-full">
-                            <!-- Colunas serão geradas pelo JS -->
-                        </div>
+                    <!-- Filtros da Lista -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <select id="prospectStatusFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full sm:w-1/2">
+                            <option value="all">Todos os Status (Ativos)</option>
+                            <option value="prospeccao">Prospeção</option>
+                            <option value="contato">Contato Feito</option>
+                            <option value="negociando">Negociando</option>
+                            <option value="all-archived">Ver Arquivados (Fechados/Perdidos)</option>
+                            <option value="fechado">Fechado</option>
+                            <option value="perdido">Perdido</option>
+                        </select>
+                        <input type="text" id="prospectSearchInput" class="p-2 border border-gray-300 rounded-md text-sm w-full sm:w-1/2" placeholder="Pesquisar por nome ou etiqueta...">
+                    </div>
+                    
+                    <!-- Tabela de Prospects -->
+                    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prospect</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Etiqueta</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prospects-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Linhas serão geradas pelo JS -->
+                                <tr><td colspan="4" class="p-6 text-center text-gray-500">A carregar prospects...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -603,6 +592,7 @@
                 <!-- TELA NOVA: RELATÓRIOS --><div id="reportsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
                     
+                    <!-- NOVO: Filtro de Faturamento Personalizado -->
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Relatório de Faturação Personalizado</h3>
                         <div class="flex flex-col md:flex-row gap-4">
@@ -631,6 +621,7 @@
                                 <button id="generateCustomReportBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg w-full md:w-auto">Gerar</button>
                             </div>
                         </div>
+                        <!-- Resultados do Relatório Personalizado -->
                         <div id="customReportResults" class="hidden mt-6 space-y-4">
                             <h4 class="font-semibold text-gray-800">Resultados para o período:</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -667,162 +658,205 @@
                                 <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
                                 <p id="report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                             </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
-                                <form id="goalsForm" class="space-y-4">
-                                    <div>
-                                        <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
-                                        <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
-                                    </div>
-                                    <div>
-                                        <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
-                                        <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
-                                    </div>
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
-                                </form>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
+                                <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                             </div>
-                            
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                                <div class="space-y-6">
-                                    <div>
-                                        <div class="flex justify-between items-end mb-1">
-                                            <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                            <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-4">
-                                            <!-- CORREÇÃO: Cor da marca -->
-                                            <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                        </div>
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
+                                <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                            </div>
+                        </div>
+                        <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
+                    </div>
+
+                    <!-- NOVO: Faturamento por Cliente -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
+                        <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+                            <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
+                            <!-- Lista será gerada pelo JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TELA 7: MINHA EMPRESA (METAS) --><div id="companyPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
+                            <form id="goalsForm" class="space-y-4">
+                                <div>
+                                    <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
+                                    <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
+                                </div>
+                                <div>
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
+                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
+                                    <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
+                                </div>
+                                <!-- CORREÇÃO: Cor da marca -->
+                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
+                            </form>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                        <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
                                     </div>
-                                    <div>
-                                        <div class="flex justify-between items-end mb-1">
-                                            <!-- CORREÇÃO: Label "Novos Leads" -->
-                                            <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                            <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-4">
-                                            <!-- CORREÇÃO: Cor da marca -->
-                                            <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                        </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <!-- CORREÇÃO: Cor da marca -->
+                                        <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <!-- CORREÇÃO: Label "Novos Leads" -->
+                                        <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                        <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <!-- CORREÇÃO: Cor da marca -->
+                                        <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                </main>
-            </div>
+            </main>
         </div>
+    </div>
 
-        <!-- MODAIS -->
-        
-        <!-- Modal: Cliente -->
-        <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
-                <form id="clientForm">
-                    <input type="hidden" id="clientId">
-                    <!-- CORREÇÃO: Campo oculto para rastrear se é uma conversão de prospect -->
-                    <input type="hidden" id="conversionSource" value="">
-                    <div class="p-6">
-                        <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
+    <!-- MODAL: Adicionar/Editar Cliente --><div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <form id="clientForm">
+                <input type="hidden" id="clientId">
+                <!-- CORREÇÃO: Campo oculto para rastrear se é uma conversão de prospect -->
+                <input type="hidden" id="conversionSource" value="">
+                <div class="p-6">
+                    <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
+                            <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Início</label>
+                            <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Término</label>
+                            <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
+                            <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pausado">Pausado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
+                            <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="unico">Valor Único</option>
+                                <option value="parcelado">Parcelado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
+                            <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <!-- CORREÇÃO: Cor da marca -->
+                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Adicionar Prospect --><div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <form id="prospectForm">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Origem</label>
+                            <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                        </div>
+                        <!-- NOVO: Checkboxes de Serviços -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <!-- Checkboxes serão renderizados aqui pelo JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <!-- CORREÇÃO: Cor da marca -->
+                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- NOVO MODAL: Detalhes do Prospect (Editar/Comentar) --><div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <form id="prospectDetailForm">
+                <input type="hidden" id="prospectDetailId">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalhes do Prospect</h3>
+                    <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
-                                <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700">Telefone</label>
-                                <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Data Início</label>
-                                <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Data Término</label>
-                                <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
-                                <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="Ativo">Ativo</option>
-                                    <option value="Inativo">Inativo</option>
-                                    <option value="Pausado">Pausado</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
-                                <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="unico">Valor Único</option>
-                                    <option value="parcelado">Parcelado</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
-                                <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 p-4 flex justify-end gap-3">
-                        <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                        <!-- CORREÇÃO: Cor da marca -->
-                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal: Prospect (Novo) -->
-        <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-md animate-slide-up">
-                <form id="prospectForm">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Nome</label>
-                                <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Origem</label>
-                                <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 p-4 flex justify-end gap-3">
-                        <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                        <!-- CORREÇÃO: Cor da marca -->
-                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- NOVO MODAL: Detalhes do Prospect (Editar/Comentar) --><div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-slide-up">
-                <form id="prospectDetailForm">
-                    <input type="hidden" id="prospectDetailId">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalhes do Prospect</h3>
-                        <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nome</label>
                                 <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="prospectDetailStatus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="prospeccao">Prospeção</option>
+                                    <option value="contato">Contato Feito</option>
+                                    <option value="negociando">Negociando</option>
+                                    <option value="fechado">Fechado</option>
+                                    <option value="perdido">Perdido</option>
+                                </select>
                             </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Origem</label>
                                 <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
@@ -831,39 +865,51 @@
                                 <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Observações</label>
-                                <textarea id="prospectDetailNotes" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
+                        </div>
+                        <!-- NOVO: Checkboxes de Serviços -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <!-- Checkboxes serão renderizados aqui pelo JS -->
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-gray-50 p-4 flex justify-between gap-3">
-                        <button type="button" id="deleteProspectBtn" class_removed="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir Prospect</button>
                         <div>
-                            <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                            <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
+                            <label class="block text-sm font-medium text-gray-700">Observações</label>
+                            <textarea id="prospectDetailNotes" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-between gap-3">
+                    <div>
+                        <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+                        <!-- Botão de Conversão aparece dinamicamente -->
+                        <button type="button" id="convertProspectBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg hidden">Converter em Cliente</button>
+                    </div>
+                    <div>
+                        <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
         </div>
+    </div>
 
 
-        <!-- Modal: Exclusão -->
-        <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-[60]">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-sm animate-slide-up">
-                <div class="p-6 text-center">
-                    <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
-                    <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
-                </div>
-                <div class="bg-gray-50 p-4 flex justify-center gap-3">
-                    <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                    <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
-                </div>
+    <!-- MODAL: Confirmação de Exclusão --><div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-6 text-center">
+                <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
+                <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
+                <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="bg-gray-50 p-4 flex justify-center gap-3">
+                <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
             </div>
         </div>
-    
+    </div>
+
+
     <!-- Scripts do Firebase e da Aplicação --><script type="module">
         // Importações do Firebase (ESM - Módulos)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -938,11 +984,21 @@
         let currentClientId = null; 
         let currentProspectId = null; // NOVO: Para modal de detalhe do prospect
         let currentDeleteInfo = null; 
-        let draggedProspectId = null; 
+        let draggedProspectId = null; // REMOVIDO: Não mais usado
         let allClientsData = {}; 
         let dashTotals = { bruto: 0, despesas: 0, recebido: 0 }; // NOVO: Para cálculo correto do líquido
 
         // --- FUNÇÕES DE UTILIDADE ---
+        
+        // NOVO: Lista de serviços de prospecção
+        const prospectServices = [
+            "Cardápio 99Food", 
+            "Cardápio iFood", 
+            "Cardápio Próprio", 
+            "Google Meu Negócio (GMN)", 
+            "Otimização Instagram", 
+            "Otimização de Cardápio"
+        ];
 
         const renderIcons = () => {
             if (typeof lucide !== 'undefined') {
@@ -998,6 +1054,78 @@
                 end: lastDay.toISOString().split('T')[0]
             };
         };
+        
+        // NOVO: Retorna datas para o filtro de relatório personalizado
+        const getReportDateRange = (period) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            let start, end;
+            
+            end = new Date();
+            end.setHours(23, 59, 59, 999); // Fim do dia de hoje
+
+            switch(period) {
+                case 'today':
+                    start = new Date(today);
+                    break;
+                case 'last7':
+                    start = new Date(today);
+                    start.setDate(start.getDate() - 6); // 7 dias incluindo hoje
+                    break;
+                case 'thisMonth':
+                    start = new Date(today.getFullYear(), today.getMonth(), 1);
+                    break;
+                case 'lastMonth':
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // Fim do mês passado
+                    start = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1);
+                    end = lastMonth;
+                    break;
+                case 'thisYear':
+                    start = new Date(today.getFullYear(), 0, 1); // 1 de Janeiro
+                    break;
+                case 'custom':
+                    const startDateEl = document.getElementById('reportStartDate');
+                    const endDateEl = document.getElementById('reportEndDate');
+                    if (startDateEl.value && endDateEl.value) {
+                        start = new Date(startDateEl.value + "T00:00:00");
+                        end = new Date(endDateEl.value + "T23:59:59");
+                    } else {
+                        return null; // Datas personalizadas não preenchidas
+                    }
+                    break;
+                default:
+                    return getCurrentMonthRange(); // Padrão
+            }
+            
+            return {
+                start: start.toISOString().split('T')[0],
+                end: end.toISOString().split('T')[0]
+            };
+        };
+        
+        // NOVO: Renderiza checkboxes de serviços
+        function renderServicesCheckboxes(containerId, savedServices = []) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            prospectServices.forEach(service => {
+                const isChecked = savedServices.includes(service);
+                container.innerHTML += `
+                    <label class="flex items-center text-sm text-gray-700">
+                        <input type="checkbox" value="${service}" ${isChecked ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300">
+                        <span class="ml-2">${service}</span>
+                    </label>
+                `;
+            });
+        }
+        
+        // NOVO: Pega serviços selecionados dos checkboxes
+        function getSelectedServices(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return [];
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
 
 
         const showPage = (pageId) => {
@@ -1005,16 +1133,11 @@
                 page.classList.remove('active');
             });
 
-            // NOVO: Controlo de scroll da <main>
-            // A página de Prospeção (Kanban) controla o seu próprio scroll
+            // REVERTIDO: Lógica de controlo de scroll da <main> removida
             const mainElement = document.querySelector('main');
-            if (pageId === 'prospectsPage') {
-                mainElement.classList.remove('overflow-y-auto');
-                mainElement.classList.add('overflow-hidden'); // Remove o scroll vertical da <main>
-            } else {
-                mainElement.classList.add('overflow-y-auto');
-                mainElement.classList.remove('overflow-hidden'); // Restaura o scroll vertical da <main>
-            }
+            mainElement.classList.add('overflow-y-auto');
+            mainElement.classList.remove('overflow-hidden'); 
+
 
             if (pageId === 'auth-page') {
                 document.getElementById('auth-page').classList.add('active');
@@ -1082,17 +1205,17 @@
             if (message.includes("Missing or insufficient permissions")) {
                  title = "Erro de Permissão do Banco de Dados.";
                  // CORREÇÃO: Regra de segurança atualizada para /expenses
-                 message = "Suas 'Regras' do Firestore estão bloqueando o app. Por favor, vá em 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/crm-rocket-data/public/data/{collection}/{docId} {\n      allow read, write: if request.auth != null;\n    }\n    match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}</pre>";
+                 message = "As suas 'Regras' do Firestore estão a bloquear a app. Por favor, vá a 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/crm-rocket-data/public/data/{collection}/{docId} {\n      allow read, write: if request.auth != null;\n    }\n    match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}</pre>";
             }
             // Verifica se o erro é de client offline (Firestore não ativado)
             else if (message.includes("offline") || message.includes("Failed to get document")) {
                  title = "Erro de Banco de Dados: Client Offline.";
-                 message = "Isso geralmente significa que o 'Cloud Firestore' não foi ativado no seu projeto Firebase. Por favor, vá ao painel do Firebase, clique em 'Cloud Firestore', 'Criar banco de dados' e escolha 'Modo de Teste'.";
+                 message = "Isto geralmente significa que o 'Cloud Firestore' não foi ativado no seu projeto Firebase. Por favor, vá ao painel do Firebase, clique em 'Cloud Firestore', 'Criar banco de dados' e escolha 'Modo de Teste'.";
             }
              // Verifica se o erro é de config de auth (Anônimo não ativado)
             else if (message.includes("auth/configuration-not-found")) {
                 title = "Falha no Login: Configuração não encontrada.";
-                message = "Isso significa que você ativou a 'Autenticação' no Firebase, mas esqueceu de ativar o provedor 'Anônimo'. Por favor, vá em 'Authentication' > 'Método de Login' > 'Adicionar provedor' e ative 'Anônimo'.";
+                message = "Isto significa que ativou a 'Autenticação' no Firebase, mas esqueceu-se de ativar o provedor 'Anónimo'. Por favor, vá a 'Authentication' > 'Método de Login' > 'Adicionar provedor' e ative 'Anónimo'.";
             }
 
 
@@ -1114,7 +1237,7 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid; // IMPORTANTE: userId agora é usado para REGRAS de segurança
-                    initEventListeners();
+                    initEventListeners(); // CORREÇÃO: Esta chamada é a que ativa o menu mobile
                     await loadAllClientsToCache();
                     showPage('dashboardPage'); 
                 } else {
@@ -1366,7 +1489,7 @@
                         liquidoEl.textContent = formatCurrency(liquido);
                     }
                 } catch(e) {
-                    console.error("Erro ao calcular faturamento líquido:", e);
+                    console.error("Erro ao calcular faturação líquida:", e);
                     // CORREÇÃO: Adiciona verificação de nulo também no catch
                     const liquidoEl = document.getElementById('kpi-faturamento-liquido');
                     if (liquidoEl) {
@@ -1422,7 +1545,7 @@
                 const nextWeekStr = nextWeek.toISOString().split('T')[0];
                 
                 if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento pendente registrado.</p>';
+                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento pendente registado.</p>';
                     return;
                 }
                 
@@ -1706,7 +1829,7 @@
                 const container = document.getElementById('payments-list');
                 container.innerHTML = '';
                 if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum pagamento registrado.</p>';
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum pagamento registado.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
@@ -1806,7 +1929,7 @@
                 if (!container) return; 
                 container.innerHTML = '';
                 if(snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma tarefa registrada.</p>';
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma tarefa registada.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
@@ -1874,7 +1997,7 @@
                 if (!container) return; 
                 container.innerHTML = '';
                 if(snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma credencial registrada.</p>';
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma credencial registada.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
@@ -1935,99 +2058,93 @@
             }
         };
 
-        // --- PROSPECÇÃO (KANBAN) ---
+        // --- PROSPECÇÃO (LISTA) ---
         
-        const KANBAN_COLUMNS = [
-            { id: 'prospeccao', title: 'Prospeção' },
+        const KANBAN_COLUMNS = [ // Mantido para o dropdown de status
+            { id: 'prospeccao', title: 'Prospecção' },
             { id: 'contato', title: 'Contato Feito' },
             { id: 'negociando', title: 'Negociando' },
             { id: 'fechado', title: 'Fechado' },
             { id: 'perdido', title: 'Perdido' }
         ];
 
+        // CORREÇÃO: Função reescrita para carregar uma LISTA, não um Kanban
         const loadProspects = () => {
             if (!userId || !db) return;
             
-            const board = document.getElementById('kanban-board');
-            board.innerHTML = '';
-            KANBAN_COLUMNS.forEach(col => {
-                // CORREÇÃO:
-                // 1. Coluna (pai): 'overflow-hidden' para conter o scroll do filho. 'h-full'
-                // 2. Card Container (filho): 'overflow-y-auto' e 'h-full' para o scroll vertical ficar DENTRO da coluna, liberando o scroll-x do pai.
-                // 3. Altura da coluna agora é 'h-full' para preencher o container
-                board.innerHTML += `
-                    <div class="bg-gray-100 rounded-lg shadow-sm flex flex-col w-[280px] sm:w-[300px] flex-shrink-0 h-full" 
-                         id="kanban-col-${col.id}" 
-                         data-status="${col.id}">
-                        
-                        <h3 class="font-semibold text-rocket-yellow-400 bg-rocket-dark p-3 rounded-t-lg flex-shrink-0 sticky top-0 z-10">${col.title}</h3>
-                        
-                        <!-- CORREÇÃO: Adicionado 'overflow-y-auto' e 'h-full' AQUI -->
-                        <div id="kanban-cards-${col.id}" class="space-y-3 p-3 overflow-y-auto h-full">
-                            <!-- Cards entram aqui -->
-                        </div>
-                    </div>
-                `;
-            });
+            const statusFilter = document.getElementById('prospectStatusFilter').value;
+            const searchTerm = document.getElementById('prospectSearchInput').value.toLowerCase();
+            const tableBody = document.getElementById('prospects-table-body');
             
-            initDragAndDrop();
+            let q;
+            const baseQuery = collection(db, `/artifacts/${appId}/public/data/prospects`);
+            
+            // Lógica de Filtro
+            if (statusFilter === 'all') {
+                // 'all' = Todos os ATIVOS (não fechados, não perdidos)
+                q = query(baseQuery, where("status", "in", ["prospeccao", "contato", "negociando"]));
+            } else if (statusFilter === 'all-archived') {
+                // 'all-archived' = Todos os INATIVOS (fechados ou perdidos)
+                q = query(baseQuery, where("status", "in", ["fechado", "perdido"]));
+            } else {
+                // Filtro por status específico
+                q = query(baseQuery, where("status", "==", statusFilter));
+            }
 
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const q = query(collection(db, `/artifacts/${appId}/public/data/prospects`));
             onSnapshot(q, (snapshot) => {
-                document.querySelectorAll('[id^="kanban-cards-"]').forEach(col => col.innerHTML = '');
+                tableBody.innerHTML = '';
+                let prospects = [];
+                snapshot.forEach(doc => {
+                    prospects.push({ id: doc.id, ...doc.data() });
+                });
                 
-                if (snapshot.empty) {
-                     document.getElementById('kanban-cards-prospeccao').innerHTML = '<p class="text-sm text-gray-400">Nenhum prospect.</p>';
+                // Filtro de pesquisa (em JS, pós-query)
+                if (searchTerm) {
+                    prospects = prospects.filter(p => 
+                        (p.nome && p.nome.toLowerCase().includes(searchTerm)) ||
+                        (p.label && p.label.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                if (prospects.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-500">Nenhum prospect encontrado.</td></tr>';
+                     return;
                 }
                 
-                snapshot.forEach(doc => {
-                    const prospect = doc.data();
-                    const statusId = prospect.status || 'prospeccao';
-                    const container = document.getElementById(`kanban-cards-${statusId}`);
-                    
-                    if(container) {
-                        let convertButton = '';
-                        if (statusId === 'fechado') {
-                            // CORREÇÃO: Cor da marca
-                            convertButton = `<button onclick="window.convertProspectToClient('${doc.id}')" class="text-xs text-rocket-yellow-600 hover:underline mt-2">Converter em Cliente</button>`;
-                        }
-                        
-                        // NOVO: Adiciona etiqueta (label) se existir
-                        const labelHtml = prospect.label ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>` : '';
+                // Ordena (opcional, ex: por nome)
+                prospects.sort((a, b) => a.nome.localeCompare(b.nome));
 
-                        // CORREÇÃO: Card com clique para abrir modal e alça para drag
-                        container.innerHTML += `
-                        <div class="p-3 border-l-4 border-rocket-yellow-400 bg-white rounded-md shadow-sm" 
-                             data-id="${doc.id}" 
-                             id="prospect-${doc.id}">
-                            
-                            <div class="flex justify-between items-start">
-                                <!-- Área Clicável para Abrir Modal -->
-                                <div class="flex-1 cursor-pointer" onclick="window.openProspectDetailModal('${doc.id}')">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <h4 class="font-semibold text-sm text-gray-800">${prospect.nome}</h4>
-                                        ${labelHtml}
-                                    </div>
-                                    <p class="text-sm text-gray-600">${prospect.email || 'Sem email'}</p>
-                                    <p class="text-xs text-gray-400 mt-2">Origem: ${prospect.origem || 'N/A'}</p>
-                                </div>
-                                <!-- Alça para Arrastar -->
-                                <button data-drag-handle="true" draggable="true" class="cursor-grab p-1 text-gray-400 hover:text-gray-600">
-                                    <i data-lucide="grip-vertical" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            ${convertButton}
-                        </div>
-                        `;
-                    }
+                prospects.forEach(prospect => {
+                    const statusText = KANBAN_COLUMNS.find(c => c.id === prospect.status)?.title || prospect.status;
+                    const labelHtml = prospect.label ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>` : '';
+                    
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.openProspectDetailModal('${prospect.id}')">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <p class="text-sm font-semibold text-gray-900">${prospect.nome}</p>
+                                <p class="text-sm text-gray-500">${prospect.email || 'Sem email'}</p>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                ${labelHtml}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${prospect.status === 'fechado' ? 'bg-green-100 text-green-800' : (prospect.status === 'perdido' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800')}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-rocket-yellow-600 hover:text-rocket-yellow-500">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                    `;
                 });
-                renderIcons();
-                initCardDragListeners();
+                
              }, (e) => { handleFriendlyError("Erro ao carregar prospects.", e.message, e); });
         };
         
-        const handleProspectFormSubmit = async (e) => {
+        // REMOVIDO: handleProspectFormSubmit
+        // Substituído por:
+        const handleAddProspectFormSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
 
@@ -2045,6 +2162,7 @@
                     createdAt: new Date().toISOString(), // NOVO: Para meta de "Novos Leads"
                     label: '', // NOVO
                     notes: '', // NOVO
+                    services: getSelectedServices('prospectServicesCheckboxes'), // NOVO
                     ownerId: userId
                 });
                 hideModal('prospectModal');
@@ -2077,6 +2195,16 @@
                     document.getElementById('prospectDetailLabel').value = data.label || '';
                     document.getElementById('prospectDetailNotes').value = data.notes || '';
                     
+                    // NOVO: Adiciona o status ao modal
+                    document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
+                    
+                    // NOVO: Renderiza checkboxes de serviços
+                    renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
+                    
+                    // NOVO: Mostra/Esconde o botão de converter
+                    const convertBtn = document.getElementById('convertProspectBtn');
+                    convertBtn.classList.toggle('hidden', data.status !== 'fechado');
+                    
                     showModal('prospectDetailModal');
                 } else {
                     console.error("Prospect não encontrado");
@@ -2094,17 +2222,25 @@
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             
+            const newStatus = document.getElementById('prospectDetailStatus').value;
+            
             const dataToUpdate = {
                 nome: document.getElementById('prospectDetailName').value,
                 email: document.getElementById('prospectDetailEmail').value,
                 origem: document.getElementById('prospectDetailOrigin').value,
                 label: document.getElementById('prospectDetailLabel').value,
                 notes: document.getElementById('prospectDetailNotes').value,
+                status: newStatus, // NOVO: Salva o status
+                services: getSelectedServices('prospectDetailServicesCheckboxes'), // NOVO
             };
             
             try {
                 const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
                 await updateDoc(prospectRef, dataToUpdate);
+                
+                // NOVO: Mostra/Esconde o botão de converter
+                const convertBtn = document.getElementById('convertProspectBtn');
+                convertBtn.classList.toggle('hidden', newStatus !== 'fechado');
                 
                 hideModal('prospectDetailModal');
                 currentProspectId = null;
@@ -2115,75 +2251,7 @@
             }
         };
 
-
-        function initCardDragListeners() {
-            // CORREÇÃO: O listener agora é na ALÇA DE DRAG (`data-drag-handle`)
-            const cardHandles = document.querySelectorAll('[data-drag-handle="true"]');
-            
-            cardHandles.forEach(handle => {
-                handle.addEventListener('dragstart', (e) => {
-                    const targetCard = e.target.closest('[data-id]'); // Pega o card pai
-                    if (targetCard) {
-                        draggedProspectId = targetCard.dataset.id;
-                        targetCard.classList.add('dragging');
-                        e.stopPropagation(); // Impede que o onclick do card dispare
-                    }
-                });
-                
-                handle.addEventListener('dragend', (e) => {
-                    const targetCard = e.target.closest('[data-id]');
-                    if (targetCard) {
-                        targetCard.classList.remove('dragging');
-                    }
-                    draggedProspectId = null;
-                    e.stopPropagation();
-                });
-            });
-        }
-        
-        function initDragAndDrop() {
-            const columns = document.querySelectorAll('#kanban-board [data-status]');
-            
-            columns.forEach(column => {
-                column.addEventListener('dragover', (e) => {
-                    e.preventDefault(); // Necessário para permitir o 'drop'
-                    const targetColumn = e.target.closest('[data-status]');
-                    if (targetColumn) {
-                        targetColumn.classList.add('drag-over');
-                    }
-                });
-                
-                column.addEventListener('dragleave', (e) => {
-                    const targetColumn = e.target.closest('[data-status]');
-                    if (targetColumn) {
-                        targetColumn.classList.remove('drag-over');
-                    }
-                });
-                
-                column.addEventListener('drop', async (e) => {
-                    e.preventDefault();
-                    if (!userId || !db) return;
-                    const targetColumn = e.target.closest('[data-status]');
-                    if (!targetColumn) return;
-                    
-                    targetColumn.classList.remove('drag-over');
-                    
-                    if (!draggedProspectId) return;
-                    
-                    const newStatus = targetColumn.dataset.status;
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${draggedProspectId}`);
-                    
-                    try {
-                        await updateDoc(prospectRef, { status: newStatus });
-                    } catch(err) {
-                        console.error("Erro ao atualizar status do prospect:", err);
-                    }
-                    
-                    draggedProspectId = null; // Limpa após o drop
-                });
-            });
-        }
+        // REMOVIDO: initCardDragListeners() e initDragAndDrop()
         
         // Corrigido: Passa os dados do prospect para a função de conversão
         window.convertProspectToClient = async (prospectId) => {
@@ -2231,6 +2299,8 @@
                 const lateContainer = document.getElementById('late-payments-list');
                 const upcomingContainer = document.getElementById('upcoming-payments-list');
                 const paidThisMonthContainer = document.getElementById('paid-this-month-list');
+                
+                if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return; // Sai se não estiver na página
 
                 lateContainer.innerHTML = '';
                 upcomingContainer.innerHTML = '';
@@ -2298,7 +2368,9 @@
             
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('expenses-list');
+                if (!container) return; // Sai se não estiver na página
                 container.innerHTML = '';
+                
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma despesa registada este mês.</p>';
                     return;
@@ -2335,7 +2407,7 @@
             const data = {
                 descricao: document.getElementById('expenseDesc').value,
                 valor: parseFloat(document.getElementById('expenseValue').value),
-                data: document.getElementById('expenseDate').value,
+                data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0], // Pega data atual se vazia
                 ownerId: userId
             };
             
@@ -2377,6 +2449,7 @@
             const selectedClient = document.getElementById('globalTaskClientFilter').value;
             const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
             const container = document.getElementById('global-tasks-list');
+            if (!container) return; // Sai se não estiver na página
             container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>'; // Feedback de carregamento
 
             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
@@ -2393,6 +2466,7 @@
             const filteredQuery = query(q, ...filters);
 
             onSnapshot(filteredQuery, (snapshot) => {
+                if (!container) return; // Verificação extra de segurança
                 container.innerHTML = '';
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
@@ -2436,6 +2510,8 @@
             if (!userId || !db) return;
             
             const loadingMsg = document.getElementById('report-loading-msg');
+            if (!loadingMsg) return; // Sai se não estiver na página
+            
             loadingMsg.classList.remove('hidden');
             
             const { start, end } = getLastMonthRange();
@@ -2489,7 +2565,7 @@
         };
 
         
-        // --- NOVO: RELATÓRIO DE FATURAÇÃO POR CLIENTE ---
+        // --- NOVO: RELATÓRIO DE FATURAMENTO POR CLIENTE ---
         
         const loadClientRevenueReport = async () => {
             if (!userId || !db) return;
@@ -2550,100 +2626,68 @@
             }
         };
         
-        // --- NOVO: Função para gerar o relatório personalizado ---
-        const generateCustomReport = async () => {
+        // NOVO: Gera o relatório de faturação personalizado
+        const handleGenerateCustomReport = async () => {
             if (!userId || !db) return;
-
+            
             const period = document.getElementById('reportPeriodSelect').value;
-            const startDateInput = document.getElementById('reportStartDate');
-            const endDateInput = document.getElementById('reportEndDate');
+            const dateRange = getReportDateRange(period);
+            
+            if (period === 'custom' && !dateRange) {
+                alert("Por favor, selecione as datas de início e fim.");
+                return;
+            }
+            
             const loadingMsg = document.getElementById('custom-report-loading');
             const resultsContainer = document.getElementById('customReportResults');
-
             loadingMsg.classList.remove('hidden');
             resultsContainer.classList.add('hidden');
-
-            let start, end;
-            const today = new Date();
-
-            switch (period) {
-                case 'today':
-                    start = end = today.toISOString().split('T')[0];
-                    break;
-                case 'last7':
-                    const last7 = new Date();
-                    last7.setDate(today.getDate() - 7);
-                    start = last7.toISOString().split('T')[0];
-                    end = today.toISOString().split('T')[0];
-                    break;
-                case 'thisMonth':
-                    const thisMonth = getCurrentMonthRange();
-                    start = thisMonth.start;
-                    end = thisMonth.end;
-                    break;
-                case 'lastMonth':
-                    const lastMonth = getLastMonthRange();
-                    start = lastMonth.start;
-                    end = lastMonth.end;
-                    break;
-                case 'thisYear':
-                    start = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
-                    end = new Date(today.getFullYear(), 11, 31).toISOString().split('T')[0];
-                    break;
-                case 'custom':
-                    start = startDateInput.value;
-                    end = endDateInput.value;
-                    if (!start || !end) {
-                        handleFriendlyError("Erro no Relatório", "Por favor, selecione uma data de início e fim.", null);
-                        loadingMsg.classList.add('hidden');
-                        return;
-                    }
-                    break;
-            }
+            
+            const { start, end } = dateRange;
+            
+            let bruto = 0;
+            let despesas = 0;
+            let novosLeads = 0;
 
             try {
-                let bruto = 0;
-                let despesas = 0;
-                let novosLeads = 0;
-
                 // 1. Faturamento Bruto
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`),
-                    where("data", ">=", start),
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
+                    where("data", ">=", start), 
                     where("data", "<=", end)
                 );
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => {
                     bruto += doc.data().valor || 0;
                 });
-
+                
                 // 2. Despesas
-                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`),
-                    where("data", ">=", start),
+                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
+                    where("data", ">=", start), 
                     where("data", "<=", end)
                 );
                 const expensesSnapshot = await getDocs(expensesQuery);
                 expensesSnapshot.forEach(doc => {
                     despesas += doc.data().valor || 0;
                 });
-
+                
                 // 3. Novos Leads (Prospects)
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`),
-                    where("createdAt", ">=", start),
+                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+                    where("createdAt", ">=", start), 
                     where("createdAt", "<=", end)
                 );
                 const prospectsSnapshot = await getDocs(prospectsQuery);
                 novosLeads = prospectsSnapshot.size;
-
+                
                 // 4. Atualizar UI
                 document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
                 document.getElementById('custom-report-despesas').textContent = formatCurrency(despesas);
                 document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto - despesas);
                 document.getElementById('custom-report-leads').textContent = novosLeads;
-
+                
                 resultsContainer.classList.remove('hidden');
 
             } catch (e) {
-                handleFriendlyError("Erro ao gerar relatório", e.message, e);
+                handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
             } finally {
                 loadingMsg.classList.add('hidden');
             }
@@ -2730,6 +2774,10 @@
                     // Converter Prospect para Cliente
                     // CORREÇÃO: Adiciona o 'conversionSource' antes de abrir o modal
                     document.getElementById('conversionSource').value = 'prospect';
+                    
+                    // FECHA o modal de detalhes do prospect ANTES de abrir o de cliente
+                    hideModal('prospectDetailModal'); 
+                    
                     await openClientModal(null, data); // Abre o modal de cliente com os dados
                     // CORREÇÃO: Caminho do DB mudou para PÚBLICO
                     await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`)); // Deleta o prospect
@@ -2779,13 +2827,14 @@
                 });
             });
             
-            // NOVO: Listeners do Menu Mobile
-            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.remove('hidden');
-            });
-            document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.add('hidden');
-            });
+            // NOVO: Listeners do Menu Mobile (Movidos para fora)
+            // document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            //     document.getElementById('mobileMenu').classList.remove('hidden');
+            //     renderIcons(); // Garante que ícones no menu mobile sejam renderizados
+            // });
+            // document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
+            //     document.getElementById('mobileMenu').classList.add('hidden');
+            // });
 
             // Modais de Cliente
             document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
@@ -2805,9 +2854,12 @@
             });
 
             // Modais de Prospect
-            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => showModal('prospectModal'));
+            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => {
+                renderServicesCheckboxes('prospectServicesCheckboxes'); // NOVO: Renderiza checkboxes
+                showModal('prospectModal');
+            });
             document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
-            document.getElementById('prospectForm').addEventListener('submit', handleProspectFormSubmit);
+            document.getElementById('prospectForm').addEventListener('submit', handleAddProspectFormSubmit); // CORREÇÃO: Chama a função certa
             
             // NOVO: Listeners do Modal de Detalhe do Prospect
             document.getElementById('prospectDetailForm').addEventListener('submit', handleProspectDetailFormSubmit);
@@ -2817,6 +2869,13 @@
                 hideModal('prospectDetailModal');
                 handleDeleteClick('prospects', currentProspectId);
             });
+            // NOVO: Listener para o botão de converter
+            document.getElementById('convertProspectBtn').addEventListener('click', () => {
+                 window.convertProspectToClient(currentProspectId);
+            });
+            // NOVO: Listeners para os filtros de prospecção
+            document.getElementById('prospectStatusFilter').addEventListener('change', loadProspects);
+            document.getElementById('prospectSearchInput').addEventListener('input', loadProspects); // 'input' é melhor que 'change' para pesquisa
 
 
             // Abas (Detalhe Cliente)
@@ -2851,21 +2910,35 @@
             });
             document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
             
-            // NOVO: Listeners do Relatório Personalizado
+            // NOVO: Listeners do Filtro de Relatório
             document.getElementById('reportPeriodSelect').addEventListener('change', (e) => {
                 const customRange = document.getElementById('customDateRange');
-                if (e.target.value === 'custom') {
-                    customRange.classList.remove('hidden');
-                } else {
-                    customRange.classList.add('hidden');
-                }
+                customRange.classList.toggle('hidden', e.target.value !== 'custom');
+                customRange.classList.toggle('md:flex', e.target.value === 'custom');
             });
-            document.getElementById('generateCustomReportBtn').addEventListener('click', generateCustomReport);
+            document.getElementById('generateCustomReportBtn').addEventListener('click', handleGenerateCustomReport);
 
         };
         
         // --- INICIALIZAÇÃO DA PÁGINA ---
-        window.addEventListener('load', () => renderIcons()); 
+        window.addEventListener('load', () => {
+            renderIcons(); 
+            
+            // NOVO: Listeners do Menu Mobile por Delegação (Conserto Definitivo)
+            // Anexados ao 'document' para garantir que funcionem
+            // independentemente do estado de login ou de quando o JS é carregado.
+            document.addEventListener('click', (e) => {
+                // Botão de Abrir
+                if (e.target.closest('#mobileMenuBtn')) {
+                    document.getElementById('mobileMenu').classList.remove('hidden');
+                    renderIcons();
+                }
+                // Botão de Fechar
+                if (e.target.closest('#closeMobileMenuBtn')) {
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        }); 
         
     </script>
 </body>
