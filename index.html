@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM Rocket</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
+    <!-- Carrega o TailwindCSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones (Lucide) --><script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
     
+    <!-- CORREÇÃO: Configuração de Cores da Marca (Rocket For Eat) -->
     <script>
         tailwind.config = {
             theme: {
@@ -125,7 +126,7 @@
             touch-action: pan-x; /* Permite apenas 'arrastar' horizontal, bloqueia o vertical nesta área */
         }
         
-        /* NOVO: Permite drag-and-drop em dispositivos touch */
+        /* NOVO: Permite drag-and-drop em dispositivos touch (A CORREÇÃO QUE FALTAVA) */
         [data-drag-handle] {
             touch-action: none;
         }
@@ -133,9 +134,10 @@
 </head>
 <body class="bg-gray-100">
 
-    <div id="auth-page" class="page active">
+    <!-- TELA DE LOGIN (AGORA TELA DE CARREGAMENTO) --><div id="auth-page" class="page active">
         <div class="flex min-h-screen items-center justify-center bg-rocket-dark text-white p-4">
             <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
+                <!-- CORREÇÃO: Cor da marca -->
                 <h1 class="text-3xl font-bold text-rocket-yellow-400 text-center mb-2">CRM Rocket</h1>
                 <p class="text-center text-gray-400 mb-6">A carregar os seus dados...</p>
                 <div id="authError" class="text-red-400 text-center text-sm mt-4 hidden"></div>
@@ -143,10 +145,15 @@
         </div>
     </div>
 
-    <div id="app-page" class="page">
+    <!-- APLICAÇÃO PRINCIPAL (CRM) --><div id="app-page" class="page">
+        <!-- CORREÇÃO: Sidebar agora é oculta em telas pequenas (mobile) -->
         <div class="flex h-screen bg-gray-100">
+            <!-- MENU LATERAL (SIDEBAR) -->
+            <!-- CORREÇÃO: 'hidden' em mobile, 'flex' em desktop (md:) -->
             <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
+                <!-- CORREÇÃO: Removido 'bg-white' para logo integrar com sidebar -->
                 <div class="p-4 rounded-lg mb-8">
+                    <!-- ATENÇÃO: Substitua 'src' pela URL da sua logo 'logo.png' -->
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
                 </div>
 
@@ -163,10 +170,12 @@
                         <i data-lucide="users"></i>
                         <span>Clientes</span>
                     </button>
+                    <!-- CORREÇÃO: Renomeado de 'Financeiro' para 'Contas a Receber' -->
                     <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="dollar-sign"></i>
                         <span>Contas a Receber</span>
                     </button>
+                    <!-- NOVO: Despesas -->
                     <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="trending-down"></i>
                         <span>Despesas</span>
@@ -175,7 +184,8 @@
                         <i data-lucide="check-square"></i>
                         <span>Tarefas Globais</span>
                     </button>
-                    <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <!-- NOVO: Relatórios -->
+                     <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="archive"></i>
                         <span>Relatórios</span>
                     </button>
@@ -189,9 +199,11 @@
                 </div>
             </aside>
             
+            <!-- CORREÇÃO: Menu Mobile (overlay) -->
             <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
                  <div class="flex justify-between items-center mb-8">
-                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
+                     <!-- ATENÇÃO: Substitua 'src' pela URL da sua logo 'logo.png' -->
+                    <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
                     <button id="closeMobileMenuBtn">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
@@ -232,8 +244,11 @@
                 </nav>
             </div>
 
+            <!-- CONTEÚDO PRINCIPAL -->
+            <!-- CORREÇÃO: 'w-full' para mobile, 'flex-1' para desktop. 'overflow-hidden' é controlado por JS -->
             <main class="w-full flex-1 p-4 md:p-8 overflow-y-auto">
                 
+                <!-- CORREÇÃO: Header Mobile com Botão Menu -->
                 <div class="md:hidden flex justify-between items-center mb-4">
                     <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
                     <button id="mobileMenuBtn">
@@ -241,29 +256,35 @@
                     </button>
                 </div>
 
-                <div id="dashboardPage" class="page-content">
+                <!-- TELA 1: DASHBOARD --><div id="dashboardPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                     
+                    <!-- KPIs -->
+                    <!-- CORREÇÃO: Ordem dos KPIs alterada para clareza -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <!-- 1. Faturamento Líquido (Mês) -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
                             <p id="kpi-faturamento-liquido" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
+                        <!-- 2. Faturamento Bruto (Mês) -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta (Mês)</h3>
                             <p id="kpi-faturamento-bruto" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
-                         <div class="bg-white p-6 rounded-lg shadow-md">
+                         <!-- 3. Despesas (Mês) -->
+                        <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Despesas (Mês)</h3>
                             <p id="kpi-despesas" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
+                        <!-- 4. Clientes Ativos -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Clientes Ativos</h3>
                             <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Alertas --><div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos a Vencer (30 dias)</h3>
                             <div id="alertas-contratos" class="space-y-3 max-h-48 overflow-y-auto">
@@ -278,24 +299,27 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                    <!-- Progresso do Mês --><div class="bg-white p-6 rounded-lg shadow-md mt-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
                         <div class="space-y-6">
-                            <div>
+                            <!-- Faturamento --><div>
                                 <div class="flex justify-between items-end mb-1">
                                     <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
                                     <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
                                     <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                 </div>
                             </div>
-                            <div>
+                            <!-- Prospecção --><div>
                                 <div class="flex justify-between items-end mb-1">
+                                    <!-- CORREÇÃO: Label "Novos Leads" -->
                                     <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
                                     <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <!-- CORREÇÃO: Cor da marca -->
                                     <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                 </div>
                             </div>
@@ -303,29 +327,40 @@
                     </div>
                 </div>
 
+                <!-- TELA 2: PROSPECÇÃO (KANBAN) -->
+                <!-- CORREÇÃO: Adicionado 'flex flex-col' e 'h-full' para o layout de scroll interno -->
                 <div id="prospectsPage" class="page-content flex flex-col h-full"> 
+                    <!-- CORREÇÃO: Adicionado 'flex-shrink-0' para o header não encolher -->
                     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4 flex-shrink-0">
                         <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
+                        <!-- CORREÇÃO: Cor da marca -->
                         <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center flex-shrink-0">
                             <i data-lucide="plus"></i>
                             <span>Novo Prospect</span>
                         </button>
                     </div>
                     
+                    <!-- CORREÇÃO: Container de scroll horizontal para mobile -->
+                    <!-- NOVO: Adicionado id="kanban-scroller" para o CSS de 'touch-action' -->
+                    <!-- CORREÇÃO: Adicionado 'flex-1' e 'min-h-0' para fazer o scroller preencher o espaço restante -->
                     <div id="kanban-scroller" class="w-full overflow-x-auto pb-4 flex-1 min-h-0">
+                        <!-- CORREÇÃO: Alterado de 'grid' para 'flex' e adicionado 'h-full' -->
                         <div id="kanban-board" class="flex flex-row gap-5 h-full">
-                            </div>
+                            <!-- Colunas serão geradas pelo JS -->
+                        </div>
                     </div>
                 </div>
 
-                <div id="clientsPage" class="page-content">
+                <!-- TELA 3: CLIENTES (LISTA) --><div id="clientsPage" class="page-content">
                     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                         <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
+                        <!-- CORREÇÃO: Cor da marca -->
                         <button id="showAddClientModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
                             <i data-lucide="user-plus"></i>
                             <span>Novo Cliente (Manual)</span>
                         </button>
                     </div>
+                    <!-- CORREÇÃO: Overflow-x para scroll horizontal em telas pequenas -->
                     <div class="bg-white shadow-md rounded-lg overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -342,13 +377,14 @@
                     </div>
                 </div>
 
-                <div id="clientDetailPage" class="page-content">
+                <!-- TELA 4: DETALHE DO CLIENTE --><div id="clientDetailPage" class="page-content">
+                    <!-- CORREÇÃO: Cor da marca -->
                     <button data-page="clientsPage" class="nav-link text-rocket-yellow-600 hover:text-rocket-yellow-500 font-semibold mb-4 flex items-center gap-2">
                         <i data-lucide="arrow-left"></i>
                         Voltar para Clientes
                     </button>
                     
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <!-- Header do Cliente --><div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h2 id="detail-client-name" class="text-3xl font-bold text-gray-800">Nome do Cliente</h2>
@@ -359,6 +395,7 @@
                                 <span>Editar</span>
                             </button>
                         </div>
+                        <!-- CORREÇÃO: Grid responsivo para mobile -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 border-t pt-4">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-500 uppercase">Status</h4>
@@ -375,15 +412,18 @@
                         </div>
                     </div>
 
-                    <div class="mb-6 border-b border-gray-200">
+                    <!-- Abas de Detalhes --><div class="mb-6 border-b border-gray-200">
+                        <!-- CORREÇÃO: Overflow-x para scroll horizontal em telas pequenas -->
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
+                            <!-- CORREÇÃO: Cor da marca -->
                             <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Financeiro</button>
                             <button data-tab="tasks" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Tarefas</button>
                             <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
                         </nav>
                     </div>
 
-                    <div id="financialTab" class="tab-content">
+                    <!-- Conteúdo das Abas --><div id="financialTab" class="tab-content">
+                        <!-- CORREÇÃO: Layout de grid responsivo -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
                                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Histórico de Pagamentos</h3>
@@ -406,9 +446,11 @@
                                         <input type="date" id="paymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
                                     <div class="flex items-center pt-2">
+                                        <!-- CORREÇÃO: Cor da marca -->
                                         <input type="checkbox" id="paymentIsUpsell" class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300" checked>
                                         <label for="paymentIsUpsell" class="ml-2 block text-sm text-gray-700">Registar como Venda (Upsell)</label>
                                     </div>
+                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Serviço</button>
                                 </form>
                             </div>
@@ -429,6 +471,7 @@
                                         <label class="block text-sm font-medium text-gray-700">Descrição</label>
                                         <input type="text" id="taskDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
+                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Tarefa</button>
                                 </form>
                             </div>
@@ -457,6 +500,7 @@
                                         <label class="block text-sm font-medium text-gray-700">Senha</label>
                                         <input type="text" id="credPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
+                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Senha</button>
                                 </form>
                             </div>
@@ -464,11 +508,12 @@
                     </div>
                 </div>
 
-                <div id="receivablesPage" class="page-content">
+                <!-- TELA 5: CONTAS A RECEBER (Antigo Financeiro) --><div id="receivablesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Contas a Receber</h2>
 
                     <div class="mb-6 border-b border-gray-200">
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
+                            <!-- CORREÇÃO: Cor da marca -->
                             <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Contas a Receber</button>
                             <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
                         </nav>
@@ -501,7 +546,7 @@
                     </div>
                 </div>
                 
-                <div id="expensesPage" class="page-content">
+                <!-- TELA NOVA: DESPESAS --><div id="expensesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Controlo de Despesas</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
@@ -525,13 +570,14 @@
                                     <label class="block text-sm font-medium text-gray-700">Data da Despesa</label>
                                     <input type="date" id="expenseDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                 </div>
+                                <!-- CORREÇÃO: Cor da marca -->
                                 <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Registar Despesa</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <div id="globalTasksPage" class="page-content">
+                <!-- TELA 6: TAREFAS GLOBAIS --><div id="globalTasksPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Todas as Tarefas</h2>
 
                     <div class="bg-white p-6 rounded-lg shadow-md">
@@ -554,7 +600,7 @@
                     </div>
                 </div>
                 
-                <div id="reportsPage" class="page-content">
+                <!-- TELA NOVA: RELATÓRIOS --><div id="reportsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
                     
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -621,246 +667,203 @@
                                 <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
                                 <p id="report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
-                                <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
+                                <form id="goalsForm" class="space-y-4">
+                                    <div>
+                                        <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
+                                        <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
+                                    </div>
+                                    <div>
+                                        <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
+                                        <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
+                                    </div>
+                                    <!-- CORREÇÃO: Cor da marca -->
+                                    <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
+                                </form>
                             </div>
-                             <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
-                                <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                            </div>
-                        </div>
-                        <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
-                        <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
-                            <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="companyPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
-                            <form id="goalsForm" class="space-y-4">
-                                <div>
-                                    <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
-                                    <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
-                                </div>
-                                <div>
-                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
-                                    <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
-                                </div>
-                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
-                            </form>
-                        </div>
-                        
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                        <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                            
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                            <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-4">
+                                            <!-- CORREÇÃO: Cor da marca -->
+                                            <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                        <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <!-- CORREÇÃO: Label "Novos Leads" -->
+                                            <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                            <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-4">
+                                            <!-- CORREÇÃO: Cor da marca -->
+                                            <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </main>
+                </main>
+            </div>
         </div>
-    </div>
 
-    <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
-            <form id="clientForm">
-                <input type="hidden" id="clientId">
-                <input type="hidden" id="conversionSource" value="">
-                <div class="p-6">
-                    <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
-                            <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
-                            <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Data Início</label>
-                            <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Data Término</label>
-                            <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
-                            <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Status</label>
-                            <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                                <option value="Pausado">Pausado</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
-                            <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                <option value="unico">Valor Único</option>
-                                <option value="parcelado">Parcelado</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
-                            <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
+        <!-- MODAIS -->
+        
+        <!-- Modal: Cliente -->
+        <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+                <form id="clientForm">
+                    <input type="hidden" id="clientId">
+                    <!-- CORREÇÃO: Campo oculto para rastrear se é uma conversão de prospect -->
+                    <input type="hidden" id="conversionSource" value="">
+                    <div class="p-6">
+                        <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
+                                <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                                <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Data Início</label>
+                                <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Data Término</label>
+                                <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
+                                <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Inativo">Inativo</option>
+                                    <option value="Pausado">Pausado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
+                                <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="unico">Valor Único</option>
+                                    <option value="parcelado">Parcelado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
+                                <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-gray-50 p-4 flex justify-end gap-3">
-                    <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
-                </div>
-            </form>
+                    <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                        <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                        <!-- CORREÇÃO: Cor da marca -->
+                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md animate-slide-up">
-            <form id="prospectForm">
-                <div class="p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nome</label>
-                            <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
-                            <input type="tel" id="prospectPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Origem</label>
-                            <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+        <!-- Modal: Prospect (Novo) -->
+        <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md animate-slide-up">
+                <form id="prospectForm">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nome</label>
+                                <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Origem</label>
+                                <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-gray-50 p-4 flex justify-end gap-3">
-                    <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
-                </div>
-            </form>
+                    <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                        <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                        <!-- CORREÇÃO: Cor da marca -->
+                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    
-    <div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-slide-up">
-            <form id="prospectDetailForm">
-                <input type="hidden" id="prospectDetailId">
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-semibold text-gray-800">Detalhes do Prospect</h3>
-                        <div id="prospectDetailStatus" class="tag-badge"></div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nome</label>
-                            <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
-                            <input type="tel" id="prospectDetailPhone" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Origem</label>
-                            <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
+        
+        <!-- NOVO MODAL: Detalhes do Prospect (Editar/Comentar) --><div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-slide-up">
+                <form id="prospectDetailForm">
+                    <input type="hidden" id="prospectDetailId">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalhes do Prospect</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nome</label>
+                                <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Origem</label>
+                                <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Temperatura</label>
-                                <select id="prospectDetailTemp" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="none">Nenhuma</option>
-                                    <option value="hot">🔥 Quente</option>
-                                    <option value="warm">☀️ Morno</option>
-                                    <option value="cold">❄️ Frio</option>
-                                </select>
+                                <label class="block text-sm font-medium text-gray-700">Observações</label>
+                                <textarea id="prospectDetailNotes" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="bg-gray-50 p-4 flex justify-between gap-3">
+                        <button type="button" id="deleteProspectBtn" class_removed="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir Prospect</button>
                         <div>
-                            <h4 class="text-sm font-medium text-gray-700 mb-2">Linha do Tempo</h4>
-                            <div id="prospect-timeline" class="space-y-4 max-h-48 overflow-y-auto bg-gray-50 p-3 rounded-md">
-                                <p class="text-gray-500 text-sm">Nenhuma atividade registada.</p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nova Nota</label>
-                            <textarea id="prospectDetailNotes" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
-                            <button type="button" id="addNoteBtn" class="mt-2 bg-rocket-dark text-white font-semibold py-2 px-3 rounded-lg text-sm hover:bg-gray-700">Adicionar Nota</button>
+                            <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                            <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
                         </div>
                     </div>
-                </div>
-                <div class="bg-gray-50 p-4 flex justify-between gap-3">
-                    <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir Prospect</button>
-                    <div>
-                        <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                        <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-[60]">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm animate-slide-up">
-            <div class="p-6 text-center">
-                <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
-                <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
-                <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
-            </div>
-            <div class="bg-gray-50 p-4 flex justify-center gap-3">
-                <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+                </form>
             </div>
         </div>
-    </div>
 
+
+        <!-- Modal: Exclusão -->
+        <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-[60]">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-sm animate-slide-up">
+                <div class="p-6 text-center">
+                    <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
+                    <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-center gap-3">
+                    <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+                </div>
+            </div>
+        </div>
+    
 </body>
 </html>
+
