@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM Rocket</title>
-    <!-- Carrega o TailwindCSS --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ícones (Lucide) --><script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
     
-    <!-- CORREÇÃO: Configuração de Cores da Marca (Rocket For Eat) -->
     <script>
         tailwind.config = {
             theme: {
@@ -50,6 +49,20 @@
         .page-content.active {
             display: block;
         }
+        
+        /* NOVO: CSS Específico para a página de Prospeção */
+        #prospectsPage.active {
+            display: flex; /* Mudar para flex-col para o scroller funcionar */
+            flex-direction: column;
+            /* CORREÇÃO: Altura ajustada para viewport do mobile */
+            height: calc(100vh - 72px); /* 100% da altura da viewport menos o header mobile */
+        }
+        @media (min-width: 768px) { /* md: */
+            #prospectsPage.active {
+                height: 100%; /* Restaura altura normal no desktop */
+            }
+        }
+
 
         .modal { /* Modais (pop-ups) */
             display: none; /* Oculto por padrão */
@@ -62,9 +75,15 @@
             display: none;
         }
 
-        /* REMOVIDO: CSS do Drag-and-drop */
-        /* .dragging, .drag-over ... */
-
+        /* Estilo para o "fantasma" do drag-and-drop */
+        .dragging {
+            opacity: 0.5;
+            background: #fffbeb; 
+            border: 2px dashed #FDE047; /* Amarelo da marca */
+        }
+        .drag-over {
+            background-color: #f7f3e3; /* Amarelo bem claro */
+        }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -92,17 +111,31 @@
             font-weight: 600;
         }
         
-        /* REMOVIDO: CSS do Kanban */
-        /* #kanban-board, #kanban-scroller, [data-drag-handle] ... */
+        /* Oculta o scrollbar do Kanban em si, mas mantém o do container */
+        #kanban-board::-webkit-scrollbar {
+            display: none; /* Oculta scrollbar no Chrome/Safari */
+        }
+        #kanban-board {
+            -ms-overflow-style: none;  /* Oculta scrollbar no IE/Edge */
+            scrollbar-width: none;  /* Oculta scrollbar no Firefox */
+        }
         
+        /* NOVO: Força o scroll horizontal em ecrãs touch */
+        #kanban-scroller {
+            touch-action: pan-x; /* Permite apenas 'arrastar' horizontal, bloqueia o vertical nesta área */
+        }
+        
+        /* NOVO: Permite drag-and-drop em dispositivos touch */
+        [data-drag-handle] {
+            touch-action: none;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
 
-    <!-- TELA DE LOGIN (AGORA TELA DE CARREGAMENTO) --><div id="auth-page" class="page active">
+    <div id="auth-page" class="page active">
         <div class="flex min-h-screen items-center justify-center bg-rocket-dark text-white p-4">
             <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
-                <!-- CORREÇÃO: Cor da marca -->
                 <h1 class="text-3xl font-bold text-rocket-yellow-400 text-center mb-2">CRM Rocket</h1>
                 <p class="text-center text-gray-400 mb-6">A carregar os seus dados...</p>
                 <div id="authError" class="text-red-400 text-center text-sm mt-4 hidden"></div>
@@ -110,15 +143,10 @@
         </div>
     </div>
 
-    <!-- APLICAÇÃO PRINCIPAL (CRM) --><div id="app-page" class="page">
-        <!-- CORREÇÃO: Sidebar agora é oculta em telas pequenas (mobile) -->
+    <div id="app-page" class="page">
         <div class="flex h-screen bg-gray-100">
-            <!-- MENU LATERAL (SIDEBAR) -->
-            <!-- CORREÇÃO: 'hidden' em mobile, 'flex' em desktop (md:) -->
             <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
-                <!-- CORREÇÃO: Removido 'bg-white' para logo integrar com sidebar -->
                 <div class="p-4 rounded-lg mb-8">
-                    <!-- ATENÇÃO: Substitua 'src' pela URL da sua logo 'logo.png' -->
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
                 </div>
 
@@ -135,12 +163,10 @@
                         <i data-lucide="users"></i>
                         <span>Clientes</span>
                     </button>
-                    <!-- CORREÇÃO: Renomeado de 'Financeiro' para 'Contas a Receber' -->
                     <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="dollar-sign"></i>
                         <span>Contas a Receber</span>
                     </button>
-                    <!-- NOVO: Despesas -->
                     <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="trending-down"></i>
                         <span>Despesas</span>
@@ -149,8 +175,7 @@
                         <i data-lucide="check-square"></i>
                         <span>Tarefas Globais</span>
                     </button>
-                    <!-- NOVO: Relatórios -->
-                     <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="archive"></i>
                         <span>Relatórios</span>
                     </button>
@@ -164,11 +189,9 @@
                 </div>
             </aside>
             
-            <!-- CORREÇÃO: Menu Mobile (overlay) -->
             <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
                  <div class="flex justify-between items-center mb-8">
-                     <!-- ATENÇÃO: Substitua 'src' pela URL da sua logo 'logo.png' -->
-                    <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
+                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
                     <button id="closeMobileMenuBtn">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
@@ -209,12 +232,8 @@
                 </nav>
             </div>
 
-            <!-- CONTEÚDO PRINCIPAL -->
-            <!-- CORREÇÃO: 'w-full' para mobile, 'flex-1' para desktop -->
-            <!-- REVERTIDO: <main> volta a ter o scroll-y principal -->
-            <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
+            <main class="w-full flex-1 p-4 md:p-8 overflow-y-auto">
                 
-                <!-- CORREÇÃO: Header Mobile com Botão Menu -->
                 <div class="md:hidden flex justify-between items-center mb-4">
                     <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
                     <button id="mobileMenuBtn">
@@ -222,63 +241,29 @@
                     </button>
                 </div>
 
-                <!-- TELA 1: DASHBOARD --><div id="dashboardPage" class="page-content">
+                <div id="dashboardPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                     
-                    <!-- NOVO: Progresso do Mês movido para o topo -->
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                        <div class="space-y-6">
-                            <!-- Faturamento --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <!-- Prospecção --><div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <!-- CORREÇÃO: Label "Novos Leads" -->
-                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPIs -->
-                    <!-- CORREÇÃO: Ordem dos KPIs alterada para clareza -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <!-- 1. Faturamento Líquido (Mês) -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
                             <p id="kpi-faturamento-liquido" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
-                        <!-- 2. Faturamento Bruto (Mês) -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta (Mês)</h3>
                             <p id="kpi-faturamento-bruto" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
-                         <!-- 3. Despesas (Mês) -->
-                        <div class="bg-white p-6 rounded-lg shadow-md">
+                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Despesas (Mês)</h3>
                             <p id="kpi-despesas" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
-                        <!-- 4. Clientes Ativos -->
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Clientes Ativos</h3>
                             <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
                         </div>
                     </div>
 
-                    <!-- Alertas --><div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos a Vencer (30 dias)</h3>
                             <div id="alertas-contratos" class="space-y-3 max-h-48 overflow-y-auto">
@@ -293,63 +278,54 @@
                         </div>
                     </div>
 
-                    <!-- Progresso do Mês (MOVIDO PARA O TOPO) -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- TELA 2: PROSPECÇÃO (LISTA) -->
-                <!-- CORREÇÃO: Kanban removido e substituído por uma lista simples -->
-                <div id="prospectsPage" class="page-content"> 
-                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                <div id="prospectsPage" class="page-content flex flex-col h-full"> 
+                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4 flex-shrink-0">
                         <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
-                        <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
+                        <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center flex-shrink-0">
                             <i data-lucide="plus"></i>
                             <span>Novo Prospect</span>
                         </button>
                     </div>
                     
-                    <!-- Filtros da Lista -->
-                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                        <select id="prospectStatusFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full sm:w-1/2">
-                            <option value="all">Todos os Status (Ativos)</option>
-                            <option value="prospeccao">Prospeção</option>
-                            <option value="contato">Contato Feito</option>
-                            <option value="negociando">Negociando</option>
-                            <option value="all-archived">Ver Arquivados (Fechados/Perdidos)</option>
-                            <option value="fechado">Fechado</option>
-                            <option value="perdido">Perdido</option>
-                        </select>
-                        <input type="text" id="prospectSearchInput" class="p-2 border border-gray-300 rounded-md text-sm w-full sm:w-1/2" placeholder="Pesquisar por nome ou etiqueta...">
-                    </div>
-                    
-                    <!-- Tabela de Prospects -->
-                    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prospect</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Etiqueta</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="prospects-table-body" class="bg-white divide-y divide-gray-200">
-                                <!-- Linhas serão geradas pelo JS -->
-                                <tr><td colspan="4" class="p-6 text-center text-gray-500">A carregar prospects...</td></tr>
-                            </tbody>
-                        </table>
+                    <div id="kanban-scroller" class="w-full overflow-x-auto pb-4 flex-1 min-h-0">
+                        <div id="kanban-board" class="flex flex-row gap-5 h-full">
+                            </div>
                     </div>
                 </div>
 
-                <!-- TELA 3: CLIENTES (LISTA) --><div id="clientsPage" class="page-content">
+                <div id="clientsPage" class="page-content">
                     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                         <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
-                        <!-- CORREÇÃO: Cor da marca -->
                         <button id="showAddClientModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
                             <i data-lucide="user-plus"></i>
                             <span>Novo Cliente (Manual)</span>
                         </button>
                     </div>
-                    <!-- CORREÇÃO: Overflow-x para scroll horizontal em telas pequenas -->
                     <div class="bg-white shadow-md rounded-lg overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -366,14 +342,13 @@
                     </div>
                 </div>
 
-                <!-- TELA 4: DETALHE DO CLIENTE --><div id="clientDetailPage" class="page-content">
-                    <!-- CORREÇÃO: Cor da marca -->
+                <div id="clientDetailPage" class="page-content">
                     <button data-page="clientsPage" class="nav-link text-rocket-yellow-600 hover:text-rocket-yellow-500 font-semibold mb-4 flex items-center gap-2">
                         <i data-lucide="arrow-left"></i>
                         Voltar para Clientes
                     </button>
                     
-                    <!-- Header do Cliente --><div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h2 id="detail-client-name" class="text-3xl font-bold text-gray-800">Nome do Cliente</h2>
@@ -384,7 +359,6 @@
                                 <span>Editar</span>
                             </button>
                         </div>
-                        <!-- CORREÇÃO: Grid responsivo para mobile -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 border-t pt-4">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-500 uppercase">Status</h4>
@@ -401,18 +375,15 @@
                         </div>
                     </div>
 
-                    <!-- Abas de Detalhes --><div class="mb-6 border-b border-gray-200">
-                        <!-- CORREÇÃO: Overflow-x para scroll horizontal em telas pequenas -->
+                    <div class="mb-6 border-b border-gray-200">
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
-                            <!-- CORREÇÃO: Cor da marca -->
                             <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Financeiro</button>
                             <button data-tab="tasks" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Tarefas</button>
                             <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
                         </nav>
                     </div>
 
-                    <!-- Conteúdo das Abas --><div id="financialTab" class="tab-content">
-                        <!-- CORREÇÃO: Layout de grid responsivo -->
+                    <div id="financialTab" class="tab-content">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
                                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Histórico de Pagamentos</h3>
@@ -435,11 +406,9 @@
                                         <input type="date" id="paymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
                                     <div class="flex items-center pt-2">
-                                        <!-- CORREÇÃO: Cor da marca -->
                                         <input type="checkbox" id="paymentIsUpsell" class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300" checked>
                                         <label for="paymentIsUpsell" class="ml-2 block text-sm text-gray-700">Registar como Venda (Upsell)</label>
                                     </div>
-                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Serviço</button>
                                 </form>
                             </div>
@@ -460,7 +429,6 @@
                                         <label class="block text-sm font-medium text-gray-700">Descrição</label>
                                         <input type="text" id="taskDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
-                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Tarefa</button>
                                 </form>
                             </div>
@@ -489,7 +457,6 @@
                                         <label class="block text-sm font-medium text-gray-700">Senha</label>
                                         <input type="text" id="credPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                     </div>
-                                    <!-- CORREÇÃO: Cor da marca -->
                                     <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Senha</button>
                                 </form>
                             </div>
@@ -497,12 +464,11 @@
                     </div>
                 </div>
 
-                <!-- TELA 5: CONTAS A RECEBER (Antigo Financeiro) --><div id="receivablesPage" class="page-content">
+                <div id="receivablesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Contas a Receber</h2>
 
                     <div class="mb-6 border-b border-gray-200">
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
-                            <!-- CORREÇÃO: Cor da marca -->
                             <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Contas a Receber</button>
                             <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
                         </nav>
@@ -535,7 +501,7 @@
                     </div>
                 </div>
                 
-                <!-- TELA NOVA: DESPESAS --><div id="expensesPage" class="page-content">
+                <div id="expensesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Controlo de Despesas</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
@@ -559,14 +525,13 @@
                                     <label class="block text-sm font-medium text-gray-700">Data da Despesa</label>
                                     <input type="date" id="expenseDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                                 </div>
-                                <!-- CORREÇÃO: Cor da marca -->
                                 <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Registar Despesa</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- TELA 6: TAREFAS GLOBAIS --><div id="globalTasksPage" class="page-content">
+                <div id="globalTasksPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Todas as Tarefas</h2>
 
                     <div class="bg-white p-6 rounded-lg shadow-md">
@@ -589,10 +554,9 @@
                     </div>
                 </div>
                 
-                <!-- TELA NOVA: RELATÓRIOS --><div id="reportsPage" class="page-content">
+                <div id="reportsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
                     
-                    <!-- NOVO: Filtro de Faturamento Personalizado -->
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Relatório de Faturação Personalizado</h3>
                         <div class="flex flex-col md:flex-row gap-4">
@@ -621,7 +585,6 @@
                                 <button id="generateCustomReportBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg w-full md:w-auto">Gerar</button>
                             </div>
                         </div>
-                        <!-- Resultados do Relatório Personalizado -->
                         <div id="customReportResults" class="hidden mt-6 space-y-4">
                             <h4 class="font-semibold text-gray-800">Resultados para o período:</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -670,17 +633,15 @@
                         <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
                     </div>
 
-                    <!-- NOVO: Faturamento por Cliente -->
                     <div class="bg-white p-6 rounded-lg shadow-md mt-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
                         <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
                             <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
-                            <!-- Lista será gerada pelo JS -->
                         </div>
                     </div>
                 </div>
 
-                <!-- TELA 7: MINHA EMPRESA (METAS) --><div id="companyPage" class="page-content">
+                <div id="companyPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -692,11 +653,9 @@
                                     <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
                                 </div>
                                 <div>
-                                    <!-- CORREÇÃO: Label "Novos Leads" -->
                                     <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
                                     <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
                                 </div>
-                                <!-- CORREÇÃO: Cor da marca -->
                                 <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
                             </form>
                         </div>
@@ -710,18 +669,15 @@
                                         <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <!-- CORREÇÃO: Cor da marca -->
                                         <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="flex justify-between items-end mb-1">
-                                        <!-- CORREÇÃO: Label "Novos Leads" -->
                                         <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
                                         <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <!-- CORREÇÃO: Cor da marca -->
                                         <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                     </div>
                                 </div>
@@ -734,11 +690,10 @@
         </div>
     </div>
 
-    <!-- MODAL: Adicionar/Editar Cliente --><div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
             <form id="clientForm">
                 <input type="hidden" id="clientId">
-                <!-- CORREÇÃO: Campo oculto para rastrear se é uma conversão de prospect -->
                 <input type="hidden" id="conversionSource" value="">
                 <div class="p-6">
                     <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
@@ -786,15 +741,14 @@
                 </div>
                 <div class="bg-gray-50 p-4 flex justify-end gap-3">
                     <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                    <!-- CORREÇÃO: Cor da marca -->
                     <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: Adicionar Prospect --><div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md animate-slide-up">
             <form id="prospectForm">
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
@@ -808,83 +762,83 @@
                             <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" id="prospectPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700">Origem</label>
                             <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
-                        </div>
-                        <!-- NOVO: Checkboxes de Serviços -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
-                            <div id="prospectServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <!-- Checkboxes serão renderizados aqui pelo JS -->
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 p-4 flex justify-end gap-3">
                     <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
-                    <!-- CORREÇÃO: Cor da marca -->
                     <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
                 </div>
             </form>
         </div>
     </div>
     
-    <!-- NOVO MODAL: Detalhes do Prospect (Editar/Comentar) --><div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+    <div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-slide-up">
             <form id="prospectDetailForm">
                 <input type="hidden" id="prospectDetailId">
                 <div class="p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalhes do Prospect</h3>
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-semibold text-gray-800">Detalhes do Prospect</h3>
+                        <div id="prospectDetailStatus" class="tag-badge"></div>
+                    </div>
+                    
                     <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Nome</label>
-                                <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                            </div>
-                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="prospectDetailStatus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="prospeccao">Prospeção</option>
-                                    <option value="contato">Contato Feito</option>
-                                    <option value="negociando">Negociando</option>
-                                    <option value="fechado">Fechado</option>
-                                    <option value="perdido">Perdido</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
                             <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Origem</label>
-                                <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" id="prospectDetailPhone" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Origem</label>
+                            <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
                             </div>
-                        </div>
-                        <!-- NOVO: Checkboxes de Serviços -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
-                            <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <!-- Checkboxes serão renderizados aqui pelo JS -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Temperatura</label>
+                                <select id="prospectDetailTemp" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="none">Nenhuma</option>
+                                    <option value="hot">🔥 Quente</option>
+                                    <option value="warm">☀️ Morno</option>
+                                    <option value="cold">❄️ Frio</option>
+                                </select>
                             </div>
                         </div>
+
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Observações</label>
-                            <textarea id="prospectDetailNotes" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Linha do Tempo</h4>
+                            <div id="prospect-timeline" class="space-y-4 max-h-48 overflow-y-auto bg-gray-50 p-3 rounded-md">
+                                <p class="text-gray-500 text-sm">Nenhuma atividade registada.</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nova Nota</label>
+                            <textarea id="prospectDetailNotes" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Adicione comentários sobre o contato..."></textarea>
+                            <button type="button" id="addNoteBtn" class="mt-2 bg-rocket-dark text-white font-semibold py-2 px-3 rounded-lg text-sm hover:bg-gray-700">Adicionar Nota</button>
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 p-4 flex justify-between gap-3">
-                    <div>
-                        <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
-                        <!-- Botão de Conversão aparece dinamicamente -->
-                        <button type="button" id="convertProspectBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg hidden">Converter em Cliente</button>
-                    </div>
+                    <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir Prospect</button>
                     <div>
                         <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
                         <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
@@ -894,9 +848,8 @@
         </div>
     </div>
 
-
-    <!-- MODAL: Confirmação de Exclusão --><div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+    <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-[60]">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm animate-slide-up">
             <div class="p-6 text-center">
                 <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
                 <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
@@ -909,2038 +862,5 @@
         </div>
     </div>
 
-
-    <!-- Scripts do Firebase e da Aplicação --><script type="module">
-        // Importações do Firebase (ESM - Módulos)
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword, 
-            signOut,
-            signInWithCustomToken,
-            signInAnonymously
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            getDocs,
-            setDoc, 
-            addDoc, 
-            updateDoc, 
-            deleteDoc, 
-            onSnapshot, 
-            collection, 
-            query, 
-            where,
-            Timestamp,
-            writeBatch
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- VARIÁVEIS DE AMBIENTE (INJETADAS) ---
-        // CORREÇÃO: Usamos um ID estático (namespace) para o banco de dados,
-        // já que estamos usando o Firebase do usuário, não o do Canvas.
-        const appId = 'crm-rocket-data'; 
-        
-        // --- CHAVES DO FIREBASE INSERIDAS DIRETAMENTE ---
-        // Alterado conforme solicitado, para forçar a conexão sem o painel de Configurações.
-        const firebaseConfig = {
-          apiKey: "AIzaSyCjOOO8BjKHSl_4a8yU9Y6ggyVsKvIdT00",
-          authDomain: "crmrocket.firebaseapp.com",
-          projectId: "crmrocket",
-          storageBucket: "crmrocket.firebasestorage.app",
-          messagingSenderId: "395158203315",
-          appId: "1:395158203315:web:93adeda54e40734d1c39c6"
-        };
-        
-        // Esta variável não será usada, pois usaremos o login anônimo do 'crmrocket'
-        // const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // --- INICIALIZAÇÃO DO FIREBASE ---
-        let app, auth, db;
-        try {
-            // Verifica se o firebaseConfig não está vazio
-            if (!firebaseConfig.apiKey) {
-                throw new Error("API Key do Firebase está faltando.");
-            }
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Erro ao inicializar Firebase:", e);
-            // Mostra o erro na tela de carregamento
-            const authError = document.getElementById('authError');
-            if(authError) {
-                authError.textContent = `Erro ao inicializar Firebase: ${e.message}. Verifique as chaves no código.`;
-                authError.classList.remove('hidden');
-            } else {
-                 document.body.innerHTML = `<h1 style='text-align: center; margin-top: 50px;'>Erro de Configuração do Firebase: ${e.message}. Verifique o console.</h1>`;
-            }
-        }
-
-        // --- ESTADO GLOBAL DA APLICAÇÃO ---
-        let userId = null; 
-        let currentClientId = null; 
-        let currentProspectId = null; // NOVO: Para modal de detalhe do prospect
-        let currentDeleteInfo = null; 
-        let draggedProspectId = null; // REMOVIDO: Não mais usado
-        let allClientsData = {}; 
-        let dashTotals = { bruto: 0, despesas: 0, recebido: 0 }; // NOVO: Para cálculo correto do líquido
-
-        // --- FUNÇÕES DE UTILIDADE ---
-        
-        // NOVO: Lista de serviços de prospecção
-        const prospectServices = [
-            "Cardápio 99Food", 
-            "Cardápio iFood", 
-            "Cardápio Próprio", 
-            "Google Meu Negócio (GMN)", 
-            "Otimização Instagram", 
-            "Otimização de Cardápio"
-        ];
-
-        const renderIcons = () => {
-            if (typeof lucide !== 'undefined') {
-                try {
-                    lucide.createIcons();
-                } catch (e) {
-                    console.error("Erro ao renderizar ícones lucide:", e);
-                }
-            } else {
-                console.warn("Lucide ainda não definido, ícones podem demorar a aparecer.");
-            }
-        };
-
-        const formatCurrency = (value) => {
-            return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        };
-
-        const getDaysRemaining = (dateStr) => {
-            if (!dateStr) return 0;
-            const today = new Date();
-            const endDate = new Date(dateStr + "T23:59:59"); 
-            const diffTime = endDate.getTime() - today.getTime();
-            return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-        };
-
-        const formatDate = (dateStr) => {
-            if (!dateStr) return 'N/A';
-            const cleanDateStr = dateStr.split('T')[0];
-            const [year, month, day] = cleanDateStr.split('-');
-            return `${day}/${month}/${year}`;
-        };
-        
-        // Retorna o primeiro e último dia do MÊS ATUAL como strings 'YYYY-MM-DD'
-        const getCurrentMonthRange = () => {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Dia 0 do próximo mês = último dia deste mês
-            return {
-                start: firstDay.toISOString().split('T')[0],
-                end: lastDay.toISOString().split('T')[0]
-            };
-        };
-        
-        // Retorna o primeiro e último dia do MÊS ANTERIOR como strings 'YYYY-MM-DD'
-        const getLastMonthRange = () => {
-            const today = new Date();
-            // Primeiro dia do mês atual, menos 1ms = último dia do mês passado
-            const lastDay = new Date(today.getFullYear(), today.getMonth(), 0);
-            // Primeiro dia do mês passado
-            const firstDay = new Date(lastDay.getFullYear(), lastDay.getMonth(), 1);
-            return {
-                start: firstDay.toISOString().split('T')[0],
-                end: lastDay.toISOString().split('T')[0]
-            };
-        };
-        
-        // NOVO: Retorna datas para o filtro de relatório personalizado
-        const getReportDateRange = (period) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            let start, end;
-            
-            end = new Date();
-            end.setHours(23, 59, 59, 999); // Fim do dia de hoje
-
-            switch(period) {
-                case 'today':
-                    start = new Date(today);
-                    break;
-                case 'last7':
-                    start = new Date(today);
-                    start.setDate(start.getDate() - 6); // 7 dias incluindo hoje
-                    break;
-                case 'thisMonth':
-                    start = new Date(today.getFullYear(), today.getMonth(), 1);
-                    break;
-                case 'lastMonth':
-                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // Fim do mês passado
-                    start = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1);
-                    end = lastMonth;
-                    break;
-                case 'thisYear':
-                    start = new Date(today.getFullYear(), 0, 1); // 1 de Janeiro
-                    break;
-                case 'custom':
-                    const startDateEl = document.getElementById('reportStartDate');
-                    const endDateEl = document.getElementById('reportEndDate');
-                    if (startDateEl.value && endDateEl.value) {
-                        start = new Date(startDateEl.value + "T00:00:00");
-                        end = new Date(endDateEl.value + "T23:59:59");
-                    } else {
-                        return null; // Datas personalizadas não preenchidas
-                    }
-                    break;
-                default:
-                    return getCurrentMonthRange(); // Padrão
-            }
-            
-            return {
-                start: start.toISOString().split('T')[0],
-                end: end.toISOString().split('T')[0]
-            };
-        };
-        
-        // NOVO: Renderiza checkboxes de serviços
-        function renderServicesCheckboxes(containerId, savedServices = []) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = '';
-            prospectServices.forEach(service => {
-                const isChecked = savedServices.includes(service);
-                container.innerHTML += `
-                    <label class="flex items-center text-sm text-gray-700">
-                        <input type="checkbox" value="${service}" ${isChecked ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300">
-                        <span class="ml-2">${service}</span>
-                    </label>
-                `;
-            });
-        }
-        
-        // NOVO: Pega serviços selecionados dos checkboxes
-        function getSelectedServices(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return [];
-            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
-            return Array.from(checkboxes).map(cb => cb.value);
-        }
-
-
-        const showPage = (pageId) => {
-            document.querySelectorAll('.page-content, #auth-page, #app-page').forEach(page => {
-                page.classList.remove('active');
-            });
-
-            // REVERTIDO: Lógica de controlo de scroll da <main> removida
-            const mainElement = document.querySelector('main');
-            mainElement.classList.add('overflow-y-auto');
-            mainElement.classList.remove('overflow-hidden'); 
-
-
-            if (pageId === 'auth-page') {
-                document.getElementById('auth-page').classList.add('active');
-            } else {
-                document.getElementById('app-page').classList.add('active');
-                if (document.getElementById(pageId)) {
-                    document.getElementById(pageId).classList.add('active');
-                } else {
-                    document.getElementById('dashboardPage').classList.add('active'); 
-                }
-            }
-            
-            // Destaque do link no menu
-            document.querySelectorAll('.nav-link').forEach(link => {
-                // CORREÇÃO: Usa classe CSS dedicada para o estado ativo
-                link.classList.toggle('active-nav', link.dataset.page === pageId);
-            });
-            
-            // Fecha o menu mobile ao navegar
-            document.getElementById('mobileMenu').classList.add('hidden');
-            
-            switch(pageId) {
-                case 'dashboardPage': loadDashboardData(); break;
-                case 'prospectsPage': loadProspects(); break;
-                case 'clientsPage': loadClientsList(); break;
-                case 'receivablesPage': loadReceivablesReport(); break; // Antigo 'financialReportPage'
-                case 'expensesPage': loadExpensesPage(); break; // NOVO
-                case 'globalTasksPage': loadGlobalTasks(); break; 
-                case 'reportsPage':
-                    loadHistoricalReport();
-                    loadClientRevenueReport(); // NOVO
-                    break; 
-                case 'companyPage': loadCompanyGoalsPage(); break;
-            }
-        };
-        
-        const showModal = (modalId) => {
-            document.getElementById(modalId)?.classList.add('active');
-        };
-
-        const hideModal = (modalId) => {
-            document.getElementById(modalId)?.classList.remove('active');
-        };
-        
-        const switchTab = (tabName, tabContainerClass, contentContainerClass) => {
-            document.querySelectorAll(contentContainerClass).forEach(content => {
-                content.classList.toggle('hidden', content.id !== `${tabName}Tab`);
-            });
-            document.querySelectorAll(tabContainerClass).forEach(link => {
-                // CORREÇÃO: Cor da marca
-                link.classList.toggle('border-rocket-yellow-400', link.dataset.tab === tabName);
-                link.classList.toggle('text-rocket-yellow-500', link.dataset.tab === tabName);
-                link.classList.toggle('border-transparent', link.dataset.tab !== tabName);
-                link.classList.toggle('text-gray-500', link.dataset.tab !== tabName);
-            });
-        };
-
-        // NOVA FUNÇÃO: Trata erros amigáveis
-        const handleFriendlyError = (title, message, error) => {
-            console.error(title, error || message); // Loga o erro original no console
-            const authPage = document.getElementById('auth-page');
-            const authError = document.getElementById('authError');
-
-            // Verifica se o erro é de permissão
-            if (message.includes("Missing or insufficient permissions")) {
-                 title = "Erro de Permissão do Banco de Dados.";
-                 // CORREÇÃO: Regra de segurança atualizada para /expenses
-                 message = "As suas 'Regras' do Firestore estão a bloquear a app. Por favor, vá a 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/crm-rocket-data/public/data/{collection}/{docId} {\n      allow read, write: if request.auth != null;\n    }\n    match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}</pre>";
-            }
-            // Verifica se o erro é de client offline (Firestore não ativado)
-            else if (message.includes("offline") || message.includes("Failed to get document")) {
-                 title = "Erro de Banco de Dados: Client Offline.";
-                 message = "Isto geralmente significa que o 'Cloud Firestore' não foi ativado no seu projeto Firebase. Por favor, vá ao painel do Firebase, clique em 'Cloud Firestore', 'Criar banco de dados' e escolha 'Modo de Teste'.";
-            }
-             // Verifica se o erro é de config de auth (Anônimo não ativado)
-            else if (message.includes("auth/configuration-not-found")) {
-                title = "Falha no Login: Configuração não encontrada.";
-                message = "Isto significa que ativou a 'Autenticação' no Firebase, mas esqueceu-se de ativar o provedor 'Anónimo'. Por favor, vá a 'Authentication' > 'Método de Login' > 'Adicionar provedor' e ative 'Anónimo'.";
-            }
-
-
-            if (authPage && authError) {
-                authError.innerHTML = `
-                    <strong class="text-lg">${title}</strong><br>
-                    <span class="text-sm">${message}</span>
-                `;
-                authError.classList.remove('hidden');
-                authError.classList.add('text-left', 'bg-red-900', 'p-4', 'rounded-md');
-                showPage('auth-page'); // Volta para a tela de erro
-            }
-        };
-
-        // --- AUTENTICAÇÃO ---
-        
-        // Verifica se 'auth' foi inicializado antes de usar
-        if (auth) {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid; // IMPORTANTE: userId agora é usado para REGRAS de segurança
-                    initEventListeners(); // CORREÇÃO: Esta chamada é a que ativa o menu mobile
-                    await loadAllClientsToCache();
-                    showPage('dashboardPage'); 
-                } else {
-                    userId = null;
-                    autoLogin();
-                }
-            }, (error) => {
-                handleFriendlyError("Erro na Autenticação", error.message, error);
-            });
-        }
-
-        const autoLogin = async () => {
-             if (!auth) {
-                 console.error("Autenticação do Firebase não inicializada.");
-                 return;
-             }
-             try {
-                // CORREÇÃO: Força o login anônimo sempre, 
-                // já que estamos usando o Firebase do usuário (crmrocket)
-                // e ativamos o provedor "Anônimo" lá.
-                await signInAnonymously(auth);
-                
-            } catch (error) {
-                console.error("Falha no login automático: ", error);
-                // O handler de erro agora é chamado pela função principal
-                handleFriendlyError("Falha no login automático", error.message, error);
-            }
-        };
-
-        // --- METAS (Definição) ---
-        
-        // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-        const goalsDocRef = () => doc(db, `/artifacts/${appId}/public/data/company/goals`);
-        
-        const loadCompanyGoalsData = async () => {
-            if (!userId || !db) return;
-
-            let metaFaturamento = 0;
-            let metaProspeccao = 0;
-            try {
-                const docSnap = await getDoc(goalsDocRef());
-                if (docSnap.exists()) {
-                    const goals = docSnap.data();
-                    metaFaturamento = goals.faturamento || 0;
-                    metaProspeccao = goals.prospeccao || 0;
-                }
-            } catch (e) { 
-                // CORREÇÃO: Chama o handler de erro amigável
-                handleFriendlyError("Erro ao carregar metas", e.message, e);
-                return; // Para a execução se não puder carregar
-            }
-
-            try {
-                const { start } = getCurrentMonthRange();
-                
-                // 1. Contar Faturamento (de Vendas)
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start));
-                let faturamentoAtual = 0;
-                const salesSnapshot = await getDocs(salesQuery);
-                salesSnapshot.forEach(doc => {
-                    const sale = doc.data();
-                    faturamentoAtual += sale.valor || 0; // Todas as vendas contam para o faturamento
-                });
-                
-                // 2. Contar Novos Leads (de Prospects)
-                // CORREÇÃO: A meta agora é "Novos Leads", não clientes fechados.
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), where("createdAt", ">=", start));
-                let novosLeads = 0;
-                const prospectsSnapshot = await getDocs(prospectsQuery);
-                novosLeads = prospectsSnapshot.size; // Total de prospects criados este mês
-
-                // Atualiza UI (Página Minha Empresa)
-                const fLabel = document.getElementById('faturamento-label');
-                const fProgress = document.getElementById('faturamento-progress');
-                const pLabel = document.getElementById('prospeccao-label');
-                const pProgress = document.getElementById('prospeccao-progress');
-
-                if (fLabel && fProgress && pLabel && pProgress) {
-                    const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
-                    fLabel.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
-                    fProgress.style.width = `${Math.min(fPercent, 100)}%`;
-                    
-                    const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
-                    pLabel.textContent = `${novosLeads} / ${metaProspeccao}`;
-                    pProgress.style.width = `${Math.min(pPercent, 100)}%`;
-                }
-
-                // Atualiza UI (Dashboard)
-                const fLabelDash = document.getElementById('faturamento-label-dash');
-                const fProgressDash = document.getElementById('faturamento-progress-dash');
-                const pLabelDash = document.getElementById('prospeccao-label-dash');
-                const pProgressDash = document.getElementById('prospeccao-progress-dash');
-
-                if (fLabelDash && fProgressDash && pLabelDash && pProgressDash) {
-                    const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
-                    fLabelDash.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
-                    fProgressDash.style.width = `${Math.min(fPercent, 100)}%`;
-                    
-                    const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
-                    pLabelDash.textContent = `${novosLeads} / ${metaProspeccao}`;
-                    pProgressDash.style.width = `${Math.min(pPercent, 100)}%`;
-                }
-            } catch (e) {
-                handleFriendlyError("Erro ao carregar dados de vendas/prospects", e.message, e);
-            }
-        };
-
-        const loadCompanyGoalsPage = async () => {
-            if (!userId) return;
-
-            try {
-                const docSnap = await getDoc(goalsDocRef());
-                if (docSnap.exists()) {
-                    const goals = docSnap.data();
-                    document.getElementById('goal-faturamento').value = goals.faturamento || 0;
-                    document.getElementById('goal-prospeccao').value = goals.prospeccao || 0;
-                }
-            } catch (e) { 
-                handleFriendlyError("Erro ao carregar página de metas", e.message, e);
-            }
-
-            loadCompanyGoalsData();
-        };
-
-
-        // --- DASHBOARD ---
-
-        const loadDashboardData = () => {
-            if (!userId || !db) return;
-
-            const { start } = getCurrentMonthRange();
-
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const clientsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
-            onSnapshot(clientsQuery, (snapshot) => {
-                let ativos = 0;
-                // let mrr = 0; // REMOVIDO (causava o bug)
-                snapshot.forEach(doc => {
-                    ativos++;
-                    // mrr += (doc.data().monthlyValue || 0); // REMOVIDO (causava o bug)
-                });
-                
-                // CORREÇÃO: Adiciona verificação de nulo para evitar erros de race condition
-                const kpiAtivosEl = document.getElementById('kpi-ativos');
-                if (kpiAtivosEl) {
-                    kpiAtivosEl.textContent = ativos;
-                }
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Clientes)", e.message, e); });
-
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start));
-            onSnapshot(salesQuery, (snapshot) => {
-                let vendasNovas = 0;
-                let faturamentoTotalMes = 0;
-
-                snapshot.forEach(doc => {
-                    const sale = doc.data();
-                    faturamentoTotalMes += sale.valor || 0; // Soma todas as vendas para o total
-                    
-                    // CORREÇÃO: Lógica de Vendas Novas atualizada
-                    if (sale.tipo === 'Prospecção Fechada' || sale.tipo === 'Novo Contrato Manual') {
-                        vendasNovas += sale.valor || 0;
-                    }
-                });
-
-                // CORREÇÃO: Atualiza o total global
-                dashTotals.bruto = faturamentoTotalMes;
-
-                // Popula os KPIs atualizados
-                // CORREÇÃO: Adiciona verificação de nulo
-                const kpiBrutoEl = document.getElementById('kpi-faturamento-bruto');
-                if (kpiBrutoEl) {
-                    kpiBrutoEl.textContent = formatCurrency(faturamentoTotalMes);
-                }
-                const kpiVendasEl = document.getElementById('kpi-vendas-novas');
-                // if (kpiVendasEl) { // ESSE KPI NÃO EXISTE MAIS NO DASHBOARD
-                //     kpiVendasEl.textContent = formatCurrency(vendasNovas);
-                // }
-                
-                // Recalcula o líquido quando as vendas mudam
-                // calculateNetRevenue(); // REMOVIDO - Agora é chamado por despesas e recebidos
-                
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Vendas)", e.message, e); });
-            
-            // NOVO: Carrega Despesas
-            const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("data", ">=", start));
-            onSnapshot(expensesQuery, (snapshot) => {
-                let totalExpenses = 0;
-                snapshot.forEach(doc => {
-                    totalExpenses += doc.data().valor || 0;
-                });
-                
-                // CORREÇÃO: Atualiza o total global
-                dashTotals.despesas = totalExpenses;
-                
-                // CORREÇÃO: Adiciona verificação de nulo
-                const kpiDespesasEl = document.getElementById('kpi-despesas');
-                if (kpiDespesasEl) {
-                    kpiDespesasEl.textContent = formatCurrency(totalExpenses);
-                }
-                
-                // Recalcula o líquido quando as despesas mudam
-                calculateNetRevenue();
-                
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Despesas)", e.message, e); });
-            
-            // NOVO: Carrega Pagamentos Recebidos (para Faturamento Líquido)
-            const paidPaymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
-                where("status", "==", "Pago")
-                // Filtro inicial, será refinado em JS
-                // where("dataVencimento", ">=", start) // Esta linha pode ser imprecisa se pago adiantado/atrasado
-            );
-            
-            onSnapshot(paidPaymentsQuery, (snapshot) => {
-                let totalRecebido = 0;
-                const { start: currentMonthStart } = getCurrentMonthRange(); // Pega de novo para garantir
-                const currentMonth = new Date(currentMonthStart + "T12:00:00").getMonth();
-                const currentYear = new Date(currentMonthStart + "T12:00:00").getFullYear();
-
-                snapshot.forEach(doc => {
-                    const payment = doc.data();
-                    // Filtro extra em JS para pagamentos no mês atual
-                    // Idealmente, teríamos um campo 'dataPagamento', mas usamos 'dataVencimento' como proxy
-                    const paymentDate = new Date(payment.dataVencimento + "T12:00:00");
-                    if (paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear) {
-                        totalRecebido += payment.valor || 0;
-                    }
-                });
-                
-                // CORREÇÃO: Atualiza o total global
-                dashTotals.recebido = totalRecebido;
-                calculateNetRevenue();
-                
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Recebidos)", e.message, e); });
-
-            
-            // NOVO: Função para calcular Faturamento Líquido
-            const calculateNetRevenue = () => {
-                try {
-                    // CORREÇÃO: Adiciona verificação de nulo para todos os elementos
-                    // const brutoEl = document.getElementById('kpi-faturamento-bruto'); // REMOVIDO - Não é mais lido do DOM
-                    // const despesasEl = document.getElementById('kpi-despesas'); // REMOVIDO - Não é mais lido do DOM
-                    const liquidoEl = document.getElementById('kpi-faturamento-liquido');
-
-                    // Só executa se todos os elementos do dashboard estiverem visíveis
-                    if (liquidoEl) { 
-                        // CORREÇÃO: Calcula líquido baseado nos totais globais
-                        const liquido = dashTotals.recebido - dashTotals.despesas;
-                        liquidoEl.textContent = formatCurrency(liquido);
-                    }
-                } catch(e) {
-                    console.error("Erro ao calcular faturação líquida:", e);
-                    // CORREÇÃO: Adiciona verificação de nulo também no catch
-                    const liquidoEl = document.getElementById('kpi-faturamento-liquido');
-                    if (liquidoEl) {
-                        liquidoEl.textContent = "Erro";
-                    }
-                }
-            };
-
-
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const contractsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
-            onSnapshot(contractsQuery, (snapshot) => {
-                // CORREÇÃO: Adiciona verificação de nulo
-                const container = document.getElementById('alertas-contratos');
-                if (!container) return; // Se o usuário não está no Dashboard, para aqui.
-                container.innerHTML = '';
-                let hasAlert = false;
-                snapshot.forEach(doc => {
-                    const client = doc.data();
-                    const days = getDaysRemaining(client.dataTermino);
-                    if (days <= 30) {
-                        hasAlert = true;
-                        container.innerHTML += `
-                            <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-md">
-                                <div>
-                                    <p class="font-semibold text-rocket-yellow-600">${client.nome}</p>
-                                    <p class="text-sm text-yellow-500">Vence em ${days} dias (${formatDate(client.dataTermino)})</p>
-                                </div>
-                                <button onclick="window.handleViewClient('${doc.id}')" class="text-sm text-rocket-yellow-600 hover:underline">Ver</button>
-                            </div>
-                        `;
-                    }
-                });
-                if (!hasAlert) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhum contrato a vencer.</p>';
-                }
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Contratos)", e.message, e); });
-            
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
-                where("status", "==", "Pendente")
-            );
-            onSnapshot(paymentsQuery, async (snapshot) => {
-                // CORREÇÃO: Adiciona verificação de nulo
-                const container = document.getElementById('alertas-pagamentos');
-                if (!container) return; // Se o usuário não está no Dashboard, para aqui.
-                container.innerHTML = '';
-                let hasAlert = false; 
-                
-                const today = new Date().toISOString().split('T')[0];
-                const nextWeek = new Date();
-                nextWeek.setDate(nextWeek.getDate() + 7);
-                const nextWeekStr = nextWeek.toISOString().split('T')[0];
-                
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento pendente registado.</p>';
-                    return;
-                }
-                
-                for (const docSnap of snapshot.docs) {
-                    const payment = docSnap.data();
-                    const dueDate = payment.dataVencimento;
-                    
-                    if (dueDate >= today && dueDate <= nextWeekStr) {
-                        hasAlert = true; 
-                        const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
-                        container.innerHTML += `
-                            <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-md">
-                                <div>
-                                    <p class="font-semibold text-rocket-yellow-600">${clientName}</p>
-                                    <p class="text-sm text-yellow-500">${payment.descricao} - ${formatCurrency(payment.valor)}</p>
-                                </div>
-                                <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-rocket-yellow-600 hover:underline">Ver</button>
-                            </div>
-                        `;
-                    }
-                }
-                
-                if (!hasAlert) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhum pagamento a vencer esta semana.</p>';
-                }
-            }, (e) => { handleFriendlyError("Erro no Dashboard (Pagamentos)", e.message, e); });
-
-            loadCompanyGoalsData();
-        };
-        
-        // --- CLIENTES (CRUD) ---
-        
-        const loadAllClientsToCache = async () => {
-            if (!userId || !db) return;
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
-            onSnapshot(q, (snapshot) => {
-                allClientsData = {}; 
-                snapshot.forEach(doc => {
-                    allClientsData[doc.id] = { id: doc.id, ...doc.data() };
-                });
-            }, (e) => { handleFriendlyError("Erro Crítico: Falha ao carregar cache de clientes.", e.message, e); });
-        };
-
-        const loadClientsList = () => {
-            if (!userId || !db) return;
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
-            onSnapshot(q, (snapshot) => {
-                const tbody = document.getElementById('clients-list-table');
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-6 text-gray-500">Nenhum cliente cadastrado.</td></tr>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const client = doc.data();
-                    const statusColor = client.status === 'Ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm font-semibold text-gray-900">${client.nome}</p>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
-                                    ${client.status}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formatDate(client.dataTermino)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                <!-- CORREÇÃO: Cor da marca -->
-                                <button onclick="window.handleViewClient('${doc.id}')" class="text-rocket-yellow-600 hover:text-rocket-yellow-500">Ver Detalhes</button>
-                                <button onclick="window.handleDeleteClick('clients', '${doc.id}')" class="text-red-600 hover:text-red-800">Excluir</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }, (e) => { handleFriendlyError("Erro ao carregar lista de clientes.", e.message, e); });
-        };
-        
-        const openClientModal = async (clientId = null, initialData = null) => {
-            const form = document.getElementById('clientForm');
-            form.reset();
-            document.getElementById('clientId').value = '';
-            
-            // CORREÇÃO: Limpa o campo oculto
-            document.getElementById('conversionSource').value = '';
-            
-            document.getElementById('clientPaymentTypeInput').disabled = false;
-            document.getElementById('clientInstallmentsInput').disabled = true;
-            document.getElementById('clientInstallmentsInput').required = false;
-
-            if (clientId) {
-                // Modo Edição
-                document.getElementById('clientModalTitle').textContent = 'Editar Cliente';
-                try {
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    const clientDoc = await getDoc(doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`));
-                    const data = clientDoc.data(); // Mova para fora do 'if' se 'data' for usado em 'disabled'
-                    if (clientDoc.exists()) {
-                        document.getElementById('clientId').value = clientId;
-                        document.getElementById('clientNameInput').value = data.nome || '';
-                        document.getElementById('clientPhoneInput').value = data.telefone || '';
-                        document.getElementById('clientStartDateInput').value = data.dataInicio || '';
-                        document.getElementById('clientEndDateInput').value = data.dataTermino || '';
-                        document.getElementById('clientValueInput').value = data.valorTotal || 0;
-                        document.getElementById('clientStatusInput').value = data.status || 'Ativo';
-                    }
-                    // Lógica movida para fora para sempre ser executada na edição
-                    document.getElementById('clientPaymentTypeInput').value = (data && data.monthlyValue > 0) ? 'parcelado' : 'unico';
-                    document.getElementById('clientPaymentTypeInput').disabled = true;
-                    document.getElementById('clientInstallmentsInput').value = '';
-                    document.getElementById('clientInstallmentsInput').disabled = true;
-
-                } catch(e) { 
-                    console.error("Erro ao abrir modal de cliente:", e); 
-                    handleFriendlyError("Erro ao carregar dados do cliente.", e.message, e);
-                }
-            } else {
-                // Modo Novo
-                document.getElementById('clientModalTitle').textContent = 'Novo Cliente';
-                if (initialData) {
-                    document.getElementById('clientNameInput').value = initialData.nome || '';
-                    document.getElementById('clientPhoneInput').value = initialData.telefone || ''; 
-                }
-            }
-            showModal('clientModal');
-        };
-
-        const handleClientFormSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId) return;
-
-            // CORREÇÃO: Prevenir múltiplos envios
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = "A salvar...";
-            
-            const clientId = document.getElementById('clientId').value;
-            const clientData = {
-                nome: document.getElementById('clientNameInput').value,
-                telefone: document.getElementById('clientPhoneInput').value,
-                dataInicio: document.getElementById('clientStartDateInput').value,
-                dataTermino: document.getElementById('clientEndDateInput').value,
-                valorTotal: parseFloat(document.getElementById('clientValueInput').value),
-                status: document.getElementById('clientStatusInput').value,
-                ownerId: userId // Mantém o 'dono' para referência, mas o dado é público
-            };
-            const valorVenda = clientData.valorTotal;
-
-            // *** CORREÇÃO: Lógica de 'monthlyValue' (Valor Mensal) ***
-            let monthlyValue = 0;
-            const paymentType = document.getElementById('clientPaymentTypeInput').value;
-            const installments = parseInt(document.getElementById('clientInstallmentsInput').value) || 0;
-            
-            if (paymentType === 'parcelado' && installments > 0) {
-                monthlyValue = parseFloat((clientData.valorTotal / installments).toFixed(2));
-            }
-            clientData.monthlyValue = monthlyValue;
-            // *** Fim da Correção ***
-            
-            // CORREÇÃO: Verifica se é uma conversão de prospect
-            const conversionSource = document.getElementById('conversionSource').value;
-            document.getElementById('conversionSource').value = ''; // Reseta o campo
-
-            try {
-                let savedClientId = clientId; 
-                
-                if (clientId) {
-                    // Atualiza
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
-                    // Ao editar, preserva o 'monthlyValue' original se a regra de parcelamento não estiver disponível
-                    const oldDoc = await getDoc(clientRef);
-                    clientData.monthlyValue = clientData.monthlyValue || (oldDoc.exists() ? oldDoc.data().monthlyValue : 0) || 0;
-                    await updateDoc(clientRef, clientData);
-                } else {
-                    // Cria
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/clients`), clientData);
-                    savedClientId = docRef.id; 
-                    
-                    // CORREÇÃO: Define o tipo de venda (Prospecção ou Manual)
-                    const saleType = (conversionSource === 'prospect') ? 'Prospecção Fechada' : 'Novo Contrato Manual';
-                    
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
-                        tipo: saleType,
-                        valor: valorVenda,
-                        data: new Date().toISOString().split('T')[0], 
-                        clientId: savedClientId,
-                        ownerId: userId
-                    });
-                    
-                    // Lógica de Parcelas
-                    if (paymentType === 'parcelado' && installments > 0) {
-                        const totalValue = clientData.valorTotal;
-                        const installmentValue = monthlyValue; // Usa o valor mensal já calculado
-                        const startDate = new Date(clientData.dataInicio + "T12:00:00"); 
-                        
-                        const batch = writeBatch(db);
-                        
-                        for (let i = 1; i <= installments; i++) {
-                            const dueDate = new Date(startDate);
-                            dueDate.setMonth(startDate.getMonth() + (i - 1)); 
-                            
-                            const paymentData = {
-                                clientId: savedClientId,
-                                descricao: `Parcela ${i} de ${installments}`,
-                                valor: installmentValue,
-                                dataVencimento: dueDate.toISOString().split('T')[0], 
-                                status: 'Pendente',
-                                ownerId: userId
-                            };
-                            
-                            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                            const newPaymentRef = doc(collection(db, `/artifacts/${appId}/public/data/payments`));
-                            batch.set(newPaymentRef, paymentData);
-                        }
-                        
-                        await batch.commit(); 
-                    }
-                }
-                
-                hideModal('clientModal');
-                
-                if(currentClientId === savedClientId) { 
-                    loadClientDetail(savedClientId); 
-                }
-
-            } catch (e) {
-                console.error("Erro ao salvar cliente:", e);
-                // Não usamos alert()
-            } finally {
-                // CORREÇÃO: Re-abilita o botão
-                submitButton.disabled = false;
-                submitButton.textContent = "Salvar Cliente";
-            }
-        };
-
-        // --- DETALHE DO CLIENTE ---
-        
-        window.handleViewClient = (clientId) => {
-            currentClientId = clientId;
-            loadClientDetail(clientId);
-            showPage('clientDetailPage');
-            switchTab('financial', '.tab-link', '.tab-content'); 
-        };
-        
-        const loadClientDetail = (clientId) => {
-            if (!userId || !clientId || !db) return;
-            
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
-            onSnapshot(clientRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    document.getElementById('detail-client-name').textContent = data.nome;
-                    document.getElementById('detail-client-phone').textContent = data.telefone || 'N/A';
-                    document.getElementById('detail-client-value').textContent = formatCurrency(data.valorTotal);
-                    document.getElementById('detail-client-status').textContent = data.status;
-                    document.getElementById('detail-client-days').textContent = getDaysRemaining(data.dataTermino) + ' dias';
-                } else {
-                    console.error("Cliente não encontrado");
-                    showPage('clientsPage'); 
-                }
-            }, (e) => { handleFriendlyError("Erro ao carregar detalhe do cliente.", e.message, e); });
-            
-            loadClientPayments(clientId);
-            loadClientTasks(clientId);
-            loadClientCredentials(clientId);
-        };
-        
-        // --- Financeiro (Detalhe Cliente) ---
-        
-        const loadClientPayments = (clientId) => {
-            if (!userId || !db) return;
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const q = query(collection(db, `/artifacts/${appId}/public/data/payments`), where("clientId", "==", clientId));
-            onSnapshot(q, (snapshot) => {
-                const container = document.getElementById('payments-list');
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum pagamento registado.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    const statusColor = p.status === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
-                    
-                    let actionButton = '';
-                    if (p.status === 'Pendente') {
-                        actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pago')" class="text-sm font-medium text-green-600 hover:text-green-800">Marcar como Pago</button>`;
-                    } else {
-                        actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pendente')" class="text-sm font-medium text-gray-500 hover:text-gray-700">Desfazer</button>`;
-                    }
-                    
-                    container.innerHTML += `
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border rounded-md hover:bg-gray-50">
-                            <div>
-                                <p class="font-semibold text-gray-800">${p.descricao}</p>
-                                <p class="text-sm text-gray-600">${formatCurrency(p.valor)} - Venc: ${formatDate(p.dataVencimento)}</p>
-                            </div>
-                            <!-- CORREÇÃO: Responsividade de botões -->
-                            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
-                                    ${p.status}
-                                </span>
-                                ${actionButton}
-                                <button onclick="window.handleDeleteClick('payments', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                renderIcons();
-            }, (e) => { handleFriendlyError("Erro ao carregar pagamentos.", e.message, e); });
-        };
-        
-        window.markPaymentStatus = async (paymentId, newStatus) => {
-            if (!userId || !db) return;
-            try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                const paymentRef = doc(db, `/artifacts/${appId}/public/data/payments/${paymentId}`);
-                await updateDoc(paymentRef, { status: newStatus });
-            } catch(e) {
-                console.error("Erro ao atualizar status:", e);
-            }
-        };
-        
-        const handleAddPaymentSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-            
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = "A salvar...";
-
-            const data = {
-                clientId: currentClientId,
-                descricao: document.getElementById('paymentDesc').value,
-                valor: parseFloat(document.getElementById('paymentValue').value),
-                dataVencimento: document.getElementById('paymentDueDate').value,
-                status: 'Pendente',
-                ownerId: userId
-            };
-            
-            try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/payments`), data);
-                
-                const isUpsell = document.getElementById('paymentIsUpsell').checked;
-                if (isUpsell) {
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
-                        tipo: 'Upsell',
-                        valor: data.valor,
-                        data: new Date().toISOString().split('T')[0],
-                        clientId: currentClientId,
-                        ownerId: userId
-                    });
-                }
-                
-                document.getElementById('addPaymentForm').reset();
-                document.getElementById('paymentIsUpsell').checked = true;
-            } catch(e) { 
-                console.error("Erro ao adicionar pagamento:", e);
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = "Adicionar Serviço";
-            }
-        };
-        
-        // --- Tarefas (Detalhe Cliente) ---
-
-        const loadClientTasks = (clientId) => {
-             if (!userId || !db) return;
-             // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-             const q = query(collection(db, `/artifacts/${appId}/public/data/tasks`), where("clientId", "==", clientId));
-             onSnapshot(q, (snapshot) => {
-                const container = document.getElementById('tasks-list');
-                if (!container) return; 
-                container.innerHTML = '';
-                if(snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma tarefa registada.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const task = doc.data();
-                    const isDone = task.status === 'Feito';
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
-                            <div class="flex items-center gap-3">
-                                <!-- CORREÇÃO: Cor da marca -->
-                                <input type="checkbox" onchange="window.toggleTaskStatus('${doc.id}', ${isDone})" ${isDone ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300">
-                                <p class="${isDone ? 'line-through text-gray-500' : 'text-gray-800'}">${task.descricao}</p>
-                            </div>
-                            <button onclick="window.handleDeleteClick('tasks', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    `;
-                });
-                renderIcons();
-             }, (e) => { handleFriendlyError("Erro ao carregar tarefas.", e.message, e); });
-        };
-        
-        const handleAddTaskSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-            
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-
-            const desc = document.getElementById('taskDesc').value;
-            if(!desc) {
-                submitButton.disabled = false;
-                return;
-            }
-            
-            try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/tasks`), {
-                    clientId: currentClientId,
-                    descricao: desc,
-                    status: 'A Fazer',
-                    ownerId: userId
-                });
-                document.getElementById('addTaskForm').reset();
-            } catch (e) {
-                console.error("Erro ao adicionar tarefa:", e);
-            } finally {
-                submitButton.disabled = false;
-            }
-        };
-        
-        window.toggleTaskStatus = async (taskId, isDone) => {
-            if (!userId || !db) return;
-            const newStatus = isDone ? 'A Fazer' : 'Feito';
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            await updateDoc(doc(db, `/artifacts/${appId}/public/data/tasks/${taskId}`), { status: newStatus });
-        };
-        
-        // --- Senhas (Detalhe Cliente) ---
-        
-        const loadClientCredentials = (clientId) => {
-            if (!userId || !db) return;
-            // CORREÇÃO: Caminho do DB voltou para PÚBLICO
-            const q = query(collection(db, `/artifacts/${appId}/public/data/credentials`), where("clientId", "==", clientId));
-             onSnapshot(q, (snapshot) => {
-                const container = document.getElementById('credentials-list');
-                if (!container) return; 
-                container.innerHTML = '';
-                if(snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma credencial registada.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const cred = doc.data();
-                    container.innerHTML += `
-                        <div class="p-4 border rounded-md">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-semibold text-gray-800">${cred.servico}</h4>
-                                <button onclick="window.handleDeleteClick('credentials', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                            <div class="text-sm text-gray-600 mt-2">
-                                <p><strong>Login:</strong> ${cred.login}</p>
-                                <p><strong>Senha:</strong> <span id="pass-${doc.id}" data-pass="${cred.senha}">••••••••</span> 
-                                    <!-- CORREÇÃO: Cor da marca -->
-                                    <button onclick="window.togglePassword('pass-${doc.id}')" class="ml-2 text-rocket-yellow-600 text-xs">(Mostrar)</button>
-                                </p>
-                            </div>
-                        </div>
-                    `;
-                });
-                renderIcons();
-             }, (e) => { handleFriendlyError("Erro ao carregar credenciais.", e.message, e); });
-        };
-        
-        const handleAddCredentialSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-
-            try {
-                // CORREÇÃO: Caminho do DB voltou para PÚBLICO
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/credentials`), {
-                    clientId: currentClientId,
-                    servico: document.getElementById('credService').value,
-                    login: document.getElementById('credLogin').value,
-                    senha: document.getElementById('credPassword').value,
-                    ownerId: userId
-                });
-                document.getElementById('addCredentialForm').reset();
-            } catch (e) {
-                console.error("Erro ao adicionar credencial:", e);
-            } finally {
-                 submitButton.disabled = false;
-            }
-        };
-        
-        window.togglePassword = (elementId) => {
-            const el = document.getElementById(elementId);
-            const btn = el.nextElementSibling;
-            if (el.textContent === '••••••••') {
-                el.textContent = el.dataset.pass;
-                btn.textContent = "(Ocultar)";
-            } else {
-                el.textContent = '••••••••';
-                btn.textContent = "(Mostrar)";
-            }
-        };
-
-        // --- PROSPECÇÃO (LISTA) ---
-        
-        const KANBAN_COLUMNS = [ // Mantido para o dropdown de status
-            { id: 'prospeccao', title: 'Prospecção' },
-            { id: 'contato', title: 'Contato Feito' },
-            { id: 'negociando', title: 'Negociando' },
-            { id: 'fechado', title: 'Fechado' },
-            { id: 'perdido', title: 'Perdido' }
-        ];
-
-        // CORREÇÃO: Função reescrita para carregar uma LISTA, não um Kanban
-        const loadProspects = () => {
-            if (!userId || !db) return;
-            
-            const statusFilter = document.getElementById('prospectStatusFilter').value;
-            const searchTerm = document.getElementById('prospectSearchInput').value.toLowerCase();
-            const tableBody = document.getElementById('prospects-table-body');
-            
-            let q;
-            const baseQuery = collection(db, `/artifacts/${appId}/public/data/prospects`);
-            
-            // Lógica de Filtro
-            if (statusFilter === 'all') {
-                // 'all' = Todos os ATIVOS (não fechados, não perdidos)
-                q = query(baseQuery, where("status", "in", ["prospeccao", "contato", "negociando"]));
-            } else if (statusFilter === 'all-archived') {
-                // 'all-archived' = Todos os INATIVOS (fechados ou perdidos)
-                q = query(baseQuery, where("status", "in", ["fechado", "perdido"]));
-            } else {
-                // Filtro por status específico
-                q = query(baseQuery, where("status", "==", statusFilter));
-            }
-
-            onSnapshot(q, (snapshot) => {
-                tableBody.innerHTML = '';
-                let prospects = [];
-                snapshot.forEach(doc => {
-                    prospects.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Filtro de pesquisa (em JS, pós-query)
-                if (searchTerm) {
-                    prospects = prospects.filter(p => 
-                        (p.nome && p.nome.toLowerCase().includes(searchTerm)) ||
-                        (p.label && p.label.toLowerCase().includes(searchTerm))
-                    );
-                }
-
-                if (prospects.length === 0) {
-                     tableBody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-500">Nenhum prospect encontrado.</td></tr>';
-                     return;
-                }
-                
-                // Ordena (opcional, ex: por nome)
-                prospects.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                prospects.forEach(prospect => {
-                    const statusText = KANBAN_COLUMNS.find(c => c.id === prospect.status)?.title || prospect.status;
-                    const labelHtml = prospect.label ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>` : '';
-                    
-                    tableBody.innerHTML += `
-                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.openProspectDetailModal('${prospect.id}')">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm font-semibold text-gray-900">${prospect.nome}</p>
-                                <p class="text-sm text-gray-500">${prospect.email || 'Sem email'}</p>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                ${labelHtml}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${prospect.status === 'fechado' ? 'bg-green-100 text-green-800' : (prospect.status === 'perdido' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800')}">
-                                    ${statusText}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="text-rocket-yellow-600 hover:text-rocket-yellow-500">Ver Detalhes</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-             }, (e) => { handleFriendlyError("Erro ao carregar prospects.", e.message, e); });
-        };
-        
-        // REMOVIDO: handleProspectFormSubmit
-        // Substituído por:
-        const handleAddProspectFormSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-
-            try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                // CORREÇÃO: Adiciona 'createdAt' para a meta de "Novos Leads"
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
-                    nome: document.getElementById('prospectNameInput').value,
-                    email: document.getElementById('prospectEmailInput').value,
-                    origem: document.getElementById('prospectOriginInput').value,
-                    status: 'prospeccao', 
-                    createdAt: new Date().toISOString(), // NOVO: Para meta de "Novos Leads"
-                    label: '', // NOVO
-                    notes: '', // NOVO
-                    services: getSelectedServices('prospectServicesCheckboxes'), // NOVO
-                    ownerId: userId
-                });
-                hideModal('prospectModal');
-                document.getElementById('prospectForm').reset();
-            } catch (e) {
-                console.error("Erro ao salvar prospect:", e);
-            } finally {
-                submitButton.disabled = false;
-            }
-        };
-        
-        // NOVO: Abre o modal de detalhes do prospect
-        window.openProspectDetailModal = async (prospectId) => {
-            if (!prospectId) return;
-            currentProspectId = prospectId; // Salva o ID atual
-            
-            const form = document.getElementById('prospectDetailForm');
-            form.reset();
-            
-            try {
-                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
-                const docSnap = await getDoc(prospectRef);
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('prospectDetailId').value = prospectId;
-                    document.getElementById('prospectDetailName').value = data.nome || '';
-                    document.getElementById('prospectDetailEmail').value = data.email || '';
-                    document.getElementById('prospectDetailOrigin').value = data.origem || '';
-                    document.getElementById('prospectDetailLabel').value = data.label || '';
-                    document.getElementById('prospectDetailNotes').value = data.notes || '';
-                    
-                    // NOVO: Adiciona o status ao modal
-                    document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
-                    
-                    // NOVO: Renderiza checkboxes de serviços
-                    renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
-                    
-                    // NOVO: Mostra/Esconde o botão de converter
-                    const convertBtn = document.getElementById('convertProspectBtn');
-                    convertBtn.classList.toggle('hidden', data.status !== 'fechado');
-                    
-                    showModal('prospectDetailModal');
-                } else {
-                    console.error("Prospect não encontrado");
-                }
-            } catch(e) {
-                 handleFriendlyError("Erro ao carregar prospect.", e.message, e);
-            }
-        };
-
-        // NOVO: Salva as alterações do modal de detalhes do prospect
-        const handleProspectDetailFormSubmit = async (e) => {
-            e.preventDefault();
-            if (!currentProspectId) return;
-            
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            
-            const newStatus = document.getElementById('prospectDetailStatus').value;
-            
-            const dataToUpdate = {
-                nome: document.getElementById('prospectDetailName').value,
-                email: document.getElementById('prospectDetailEmail').value,
-                origem: document.getElementById('prospectDetailOrigin').value,
-                label: document.getElementById('prospectDetailLabel').value,
-                notes: document.getElementById('prospectDetailNotes').value,
-                status: newStatus, // NOVO: Salva o status
-                services: getSelectedServices('prospectDetailServicesCheckboxes'), // NOVO
-            };
-            
-            try {
-                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
-                await updateDoc(prospectRef, dataToUpdate);
-                
-                // NOVO: Mostra/Esconde o botão de converter
-                const convertBtn = document.getElementById('convertProspectBtn');
-                convertBtn.classList.toggle('hidden', newStatus !== 'fechado');
-                
-                hideModal('prospectDetailModal');
-                currentProspectId = null;
-            } catch (e) {
-                console.error("Erro ao atualizar prospect:", e);
-            } finally {
-                submitButton.disabled = false;
-            }
-        };
-
-        // REMOVIDO: initCardDragListeners() e initDragAndDrop()
-        
-        // Corrigido: Passa os dados do prospect para a função de conversão
-        window.convertProspectToClient = async (prospectId) => {
-             if (!userId || !db) return;
-             
-             try {
-                // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
-                const prospectDoc = await getDoc(prospectRef);
-                
-                if (!prospectDoc.exists()) {
-                     console.error("Prospect não encontrado para conversão");
-                     return;
-                }
-                
-                const prospect = prospectDoc.data();
-                const prospectName = prospect.nome;
-                const prospectContact = prospect.telefone || prospect.email || '';
-
-                // Não usamos confirm()
-                // Substituído por uma lógica de modal de confirmação (deleteModal)
-                document.getElementById('deleteModalText').textContent = `Deseja realmente converter o prospect "${prospectName}" em um novo cliente? O prospect será removido do funil.`;
-                currentDeleteInfo = { 
-                    collectionName: 'prospects-convert', // Tipo especial
-                    docId: prospectId, 
-                    data: { nome: prospectName, telefone: prospectContact } 
-                };
-                showModal('deleteModal');
-                
-                // O resto da lógica (abrir modal de cliente) acontecerá em `handleConfirmDelete`
-
-             } catch(e) {
-                 console.error("Erro ao buscar prospect para converter:", e);
-             }
-        };
-        
-        // --- CONTAS A RECEBER (Antigo Relatório Financeiro) ---
-         
-        const loadReceivablesReport = () => {
-            if (!userId || !db) return;
-
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`));
-            onSnapshot(paymentsQuery, (snapshot) => {
-                const lateContainer = document.getElementById('late-payments-list');
-                const upcomingContainer = document.getElementById('upcoming-payments-list');
-                const paidThisMonthContainer = document.getElementById('paid-this-month-list');
-                
-                if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return; // Sai se não estiver na página
-
-                lateContainer.innerHTML = '';
-                upcomingContainer.innerHTML = '';
-                paidThisMonthContainer.innerHTML = '';
-
-                let hasLate = false;
-                let hasUpcoming = false;
-                let hasPaidThisMonth = false;
-
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Zera a hora para comparação de data
-                const currentMonth = today.getMonth();
-                const currentYear = today.getFullYear();
-                
-                snapshot.forEach(doc => {
-                    const payment = doc.data();
-                    const dueDate = new Date(payment.dataVencimento + "T12:00:00"); 
-                    dueDate.setHours(0, 0, 0, 0); // Zera a hora
-                    const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
-
-                    const paymentHtml = `
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center p-3 border rounded-md hover:bg-gray-50">
-                            <div>
-                                <p class="font-semibold text-gray-800">${clientName} - ${payment.descricao}</p>
-                                <p class="text-sm text-gray-600">${formatCurrency(payment.valor)} - Venc: ${formatDate(payment.dataVencimento)}</p>
-                            </div>
-                            <!-- CORREÇÃO: Cor da marca -->
-                            <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-rocket-yellow-600 hover:underline mt-2 sm:mt-0">Ver Cliente</button>
-                        </div>
-                    `;
-
-                    if (payment.status === 'Pendente') {
-                        if (dueDate < today) {
-                            lateContainer.innerHTML += `<div class="bg-red-50">${paymentHtml}</div>`;
-                            hasLate = true;
-                        } else {
-                            upcomingContainer.innerHTML += `<div class="bg-blue-50">${paymentHtml}</div>`;
-                            hasUpcoming = true;
-                        }
-                    } else if (payment.status === 'Pago') {
-                        // Verifica se o pagamento foi feito (ou vencido) no mês/ano atual
-                        const paymentDate = new Date(payment.dataVencimento + "T12:00:00");
-                        if (paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear) {
-                           paidThisMonthContainer.innerHTML += `<div class="bg-green-50">${paymentHtml}</div>`;
-                           hasPaidThisMonth = true;
-                        }
-                    }
-                });
-
-                if (!hasLate) lateContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento atrasado.</p>';
-                if (!hasUpcoming) upcomingContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento previsto.</p>';
-                if (!hasPaidThisMonth) paidThisMonthContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento registado como pago este mês.</p>';
-                
-                renderIcons();
-            }, (e) => { handleFriendlyError("Erro ao carregar relatório financeiro.", e.message, e); });
-        };
-        
-        // --- NOVO: DESPESAS ---
-        
-        const loadExpensesPage = () => {
-            if (!userId || !db) return;
-            
-            const { start } = getCurrentMonthRange();
-            const q = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("data", ">=", start));
-            
-            onSnapshot(q, (snapshot) => {
-                const container = document.getElementById('expenses-list');
-                if (!container) return; // Sai se não estiver na página
-                container.innerHTML = '';
-                
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhuma despesa registada este mês.</p>';
-                    return;
-                }
-                
-                let totalExpenses = 0;
-                snapshot.forEach(doc => {
-                    const expense = doc.data();
-                    totalExpenses += expense.valor;
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border rounded-md hover:bg-gray-50">
-                            <div>
-                                <p class="font-semibold text-gray-800">${expense.descricao}</p>
-                                <p class="text-sm text-gray-600">${formatDate(expense.data)}</p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="font-semibold text-red-600">${formatCurrency(expense.valor)}</span>
-                                <button onclick="window.handleDeleteClick('expenses', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                renderIcons();
-            }, (e) => { handleFriendlyError("Erro ao carregar despesas.", e.message, e); });
-        };
-
-        const handleExpenseFormSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-            
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-
-            const data = {
-                descricao: document.getElementById('expenseDesc').value,
-                valor: parseFloat(document.getElementById('expenseValue').value),
-                data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0], // Pega data atual se vazia
-                ownerId: userId
-            };
-            
-            try {
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/expenses`), data);
-                document.getElementById('addExpenseForm').reset();
-            } catch (e) {
-                console.error("Erro ao adicionar despesa:", e);
-            } finally {
-                submitButton.disabled = false;
-            }
-        };
-
-        
-        // --- TAREFAS GLOBAIS ---
-        
-        const loadGlobalTasks = () => {
-            if (!userId || !db) return;
-
-            const clientFilterSelect = document.getElementById('globalTaskClientFilter');
-            const currentValue = clientFilterSelect.value; // Salva o filtro atual
-            clientFilterSelect.innerHTML = '<option value="all">Todos os Clientes</option>';
-            
-            // Ordena os clientes por nome para o dropdown
-            const sortedClients = Object.values(allClientsData).sort((a, b) => a.nome.localeCompare(b.nome));
-            
-            sortedClients.forEach(client => {
-                 clientFilterSelect.innerHTML += `<option value="${client.id}">${client.nome}</option>`;
-            });
-            
-            clientFilterSelect.value = currentValue; // Reaplica o filtro
-            
-            applyGlobalTaskFilters(); 
-        };
-
-        const applyGlobalTaskFilters = () => {
-            if (!userId || !db) return;
-
-            const selectedClient = document.getElementById('globalTaskClientFilter').value;
-            const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
-            const container = document.getElementById('global-tasks-list');
-            if (!container) return; // Sai se não estiver na página
-            container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>'; // Feedback de carregamento
-
-            // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-            let q = collection(db, `/artifacts/${appId}/public/data/tasks`);
-            let filters = [];
-
-            if (selectedClient !== 'all') {
-                filters.push(where("clientId", "==", selectedClient));
-            }
-            if (selectedStatus !== 'all') {
-                filters.push(where("status", "==", selectedStatus));
-            }
-            
-            const filteredQuery = query(q, ...filters);
-
-            onSnapshot(filteredQuery, (snapshot) => {
-                if (!container) return; // Verificação extra de segurança
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
-                    return;
-                }
-                
-                // Ordena as tarefas por cliente
-                const tasksData = [];
-                snapshot.forEach(doc => {
-                    tasksData.push({ id: doc.id, ...doc.data() });
-                });
-                
-                tasksData.sort((a, b) => {
-                    const clientNameA = allClientsData[a.clientId]?.nome || 'ZZZ';
-                    const clientNameB = allClientsData[b.clientId]?.nome || 'ZZZ';
-                    return clientNameA.localeCompare(clientNameB);
-                });
-
-                tasksData.forEach(task => {
-                    const isDone = task.status === 'Feito';
-                    const clientName = allClientsData[task.clientId]?.nome || "Cliente...";
-
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
-                            <div class="flex items-center gap-3 w-full min-w-0">
-                                <!-- CORREÇÃO: Cor da marca -->
-                                <input type="checkbox" onchange="window.toggleTaskStatus('${task.id}', ${isDone})" ${isDone ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300 flex-shrink-0">
-                                <p class="${isDone ? 'line-through text-gray-500' : 'text-gray-800'} flex-1 truncate" title="${task.descricao}">${task.descricao} <span class="text-xs text-gray-400 whitespace-nowrap">- ${clientName}</span></p>
-                            </div>
-                            <button onclick="window.handleDeleteClick('tasks', '${task.id}')" class="text-red-600 hover:text-red-800 flex-shrink-0 ml-4"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    `;
-                });
-                renderIcons();
-            }, (e) => { handleFriendlyError("Erro ao filtrar tarefas.", e.message, e); });
-        };
-        
-        // --- NOVO: RELATÓRIOS (MÊS ANTERIOR) ---
-        
-        const loadHistoricalReport = async () => {
-            if (!userId || !db) return;
-            
-            const loadingMsg = document.getElementById('report-loading-msg');
-            if (!loadingMsg) return; // Sai se não estiver na página
-            
-            loadingMsg.classList.remove('hidden');
-            
-            const { start, end } = getLastMonthRange();
-            
-            let bruto = 0;
-            let despesas = 0;
-            let novosLeads = 0; // CORREÇÃO: Nome da métrica
-            
-            try {
-                // 1. Faturamento Bruto
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
-                    where("data", ">=", start), 
-                    where("data", "<=", end)
-                );
-                const salesSnapshot = await getDocs(salesQuery);
-                salesSnapshot.forEach(doc => {
-                    bruto += doc.data().valor || 0;
-                });
-                
-                // 2. Despesas
-                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
-                    where("data", ">=", start), 
-                    where("data", "<=", end)
-                );
-                const expensesSnapshot = await getDocs(expensesQuery);
-                expensesSnapshot.forEach(doc => {
-                    despesas += doc.data().valor || 0;
-                });
-                
-                // 3. Novos Leads (Prospects)
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
-                    where("createdAt", ">=", start), 
-                    where("createdAt", "<=", end)
-                );
-                const prospectsSnapshot = await getDocs(prospectsQuery);
-                novosLeads = prospectsSnapshot.size;
-                
-                
-                // 4. Atualizar UI
-                document.getElementById('report-faturamento-bruto').textContent = formatCurrency(bruto);
-                document.getElementById('report-despesas').textContent = formatCurrency(despesas);
-                document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto - despesas); // Líquido = Bruto - Despesas
-                document.getElementById('report-novos-leads').textContent = novosLeads; // CORREÇÃO: Nome do ID
-                
-            } catch (e) {
-                handleFriendlyError("Erro ao carregar relatório histórico", e.message, e);
-                document.getElementById('report-faturamento-bruto').textContent = "Erro";
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        };
-
-        
-        // --- NOVO: RELATÓRIO DE FATURAMENTO POR CLIENTE ---
-        
-        const loadClientRevenueReport = async () => {
-            if (!userId || !db) return;
-
-            const container = document.getElementById('client-revenue-list');
-            const loadingMsg = document.getElementById('client-revenue-loading');
-            
-            if (!container || !loadingMsg) return; // Sai se não estiver na página de relatórios
-
-            loadingMsg.classList.remove('hidden');
-            container.innerHTML = ''; // Limpa a lista antiga
-
-            try {
-                // 1. Pega todas as vendas
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`));
-                const salesSnapshot = await getDocs(salesQuery);
-                
-                if (salesSnapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
-                    loadingMsg.classList.add('hidden');
-                    return;
-                }
-                
-                // 2. Agrupa o faturamento por cliente
-                const revenueMap = {};
-                salesSnapshot.forEach(doc => {
-                    const sale = doc.data();
-                    if (sale.clientId && sale.valor) {
-                        revenueMap[sale.clientId] = (revenueMap[sale.clientId] || 0) + sale.valor;
-                    }
-                });
-
-                if (Object.keys(revenueMap).length === 0) {
-                     container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
-                     loadingMsg.classList.add('hidden');
-                     return;
-                }
-
-                // 3. Ordena por maior faturamento
-                const sortedRevenue = Object.entries(revenueMap).sort((a, b) => b[1] - a[1]); // [clientId, total]
-
-                // 4. Exibe na tela usando o cache de nomes de cliente
-                sortedRevenue.forEach(([clientId, total]) => {
-                    const clientName = allClientsData[clientId]?.nome || 'Cliente Excluído';
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center p-3 border rounded-md hover:bg-gray-50">
-                            <p class="font-semibold text-gray-800">${clientName}</p>
-                            <p class="font-bold text-gray-900">${formatCurrency(total)}</p>
-                        </div>
-                    `;
-                });
-
-            } catch (e) {
-                 handleFriendlyError("Erro ao carregar faturação por cliente", e.message, e);
-                 container.innerHTML = '<p class="text-red-500">Erro ao carregar relatório.</p>';
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        };
-        
-        // NOVO: Gera o relatório de faturação personalizado
-        const handleGenerateCustomReport = async () => {
-            if (!userId || !db) return;
-            
-            const period = document.getElementById('reportPeriodSelect').value;
-            const dateRange = getReportDateRange(period);
-            
-            if (period === 'custom' && !dateRange) {
-                alert("Por favor, selecione as datas de início e fim.");
-                return;
-            }
-            
-            const loadingMsg = document.getElementById('custom-report-loading');
-            const resultsContainer = document.getElementById('customReportResults');
-            loadingMsg.classList.remove('hidden');
-            resultsContainer.classList.add('hidden');
-            
-            const { start, end } = dateRange;
-            
-            let bruto = 0;
-            let despesas = 0;
-            let novosLeads = 0;
-
-            try {
-                // 1. Faturamento Bruto
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
-                    where("data", ">=", start), 
-                    where("data", "<=", end)
-                );
-                const salesSnapshot = await getDocs(salesQuery);
-                salesSnapshot.forEach(doc => {
-                    bruto += doc.data().valor || 0;
-                });
-                
-                // 2. Despesas
-                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
-                    where("data", ">=", start), 
-                    where("data", "<=", end)
-                );
-                const expensesSnapshot = await getDocs(expensesQuery);
-                expensesSnapshot.forEach(doc => {
-                    despesas += doc.data().valor || 0;
-                });
-                
-                // 3. Novos Leads (Prospects)
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
-                    where("createdAt", ">=", start), 
-                    where("createdAt", "<=", end)
-                );
-                const prospectsSnapshot = await getDocs(prospectsQuery);
-                novosLeads = prospectsSnapshot.size;
-                
-                // 4. Atualizar UI
-                document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
-                document.getElementById('custom-report-despesas').textContent = formatCurrency(despesas);
-                document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto - despesas);
-                document.getElementById('custom-report-leads').textContent = novosLeads;
-                
-                resultsContainer.classList.remove('hidden');
-
-            } catch (e) {
-                handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        };
-
-        // --- MINHA EMPRESA (METAS) ---
-        
-        const handleGoalsFormSubmit = async (e) => {
-            e.preventDefault();
-            if (!userId || !db) return;
-
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-
-            const data = {
-                faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
-                prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
-                ownerId: userId // Mantém o 'dono'
-            };
-            
-            try {
-                await setDoc(goalsDocRef(), data, { merge: true });
-                // Não usamos alert()
-                loadCompanyGoalsPage(); 
-            } catch(e) {
-                console.error("Erro ao salvar metas:", e);
-                // Não usamos alert()
-            } finally {
-                submitButton.disabled = false;
-            }
-        };
-
-        // --- EXCLUSÃO GENÉRICA (MODAL) ---
-        
-        window.handleDeleteClick = (collectionName, docId) => {
-            let data = null; // Inicializa data como null
-            if (collectionName === 'clients') {
-                 document.getElementById('deleteModalText').textContent = "Tem certeza? Excluir um cliente também excluirá TODOS os seus pagamentos, tarefas e senhas associados. Esta ação é irreversível.";
-            } else {
-                 document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
-            }
-            
-            // Lógica de `convertProspectToClient` já define `currentDeleteInfo` corretamente.
-            // Esta chamada é para exclusões normais.
-            if (collectionName !== 'prospects-convert') {
-                 currentDeleteInfo = { collectionName, docId, data: null };
-                 showModal('deleteModal');
-            }
-        };
-        
-        const handleConfirmDelete = async () => {
-            if (!currentDeleteInfo || !userId || !db) return;
-            
-            const { collectionName, docId, data } = currentDeleteInfo;
-            
-            try {
-                if (collectionName === 'clients') {
-                    // Excluir Cliente e todos os sub-dados
-                    const batch = writeBatch(db);
-                    
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    batch.delete(doc(db, `/artifacts/${appId}/public/data/clients/${docId}`));
-                    
-                    const subCollections = ['payments', 'tasks', 'credentials', 'sales', 'expenses']; // Adiciona expenses
-                    for (const subCol of subCollections) {
-                        // CORREÇÃO: Caminho do DB voltou para PÚBLICO
-                        let subColPath;
-                        // if (subCol === 'credentials') { // REMOVIDO - Senhas são públicas
-                        //     subColPath = `/artifacts/${appId}/users/${userId}/${subCol}`;
-                        // } else {
-                            subColPath = `/artifacts/${appId}/public/data/${subCol}`;
-                        // }
-                        const q = query(collection(db, subColPath), where("clientId", "==", docId));
-                        const snapshot = await getDocs(q);
-                        snapshot.forEach(doc => batch.delete(doc.ref));
-                    }
-                    
-                    await batch.commit();
-                    
-                    if (currentClientId === docId) {
-                        showPage('clientsPage');
-                    }
-                } else if (collectionName === 'prospects-convert') {
-                    // Converter Prospect para Cliente
-                    // CORREÇÃO: Adiciona o 'conversionSource' antes de abrir o modal
-                    document.getElementById('conversionSource').value = 'prospect';
-                    
-                    // FECHA o modal de detalhes do prospect ANTES de abrir o de cliente
-                    hideModal('prospectDetailModal'); 
-                    
-                    await openClientModal(null, data); // Abre o modal de cliente com os dados
-                    // CORREÇÃO: Caminho do DB mudou para PÚBLICO
-                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`)); // Deleta o prospect
-                
-                } else {
-                    // Exclusão simples (payments, tasks, credentials, prospects, expenses)
-                    // CORREÇÃO: Caminho do DB voltou para PÚBLICO
-                    let docPath;
-                    // if (collectionName === 'credentials') { // REMOVIDO
-                    //     docPath = `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`;
-                    // } else {
-                        docPath = `/artifacts/${appId}/public/data/${collectionName}/${docId}`;
-                    // }
-                    await deleteDoc(doc(db, docPath));
-                }
-                
-                hideModal('deleteModal');
-                currentDeleteInfo = null;
-                
-            } catch (e) {
-                console.error("Erro ao excluir/converter:", e);
-                // Não usamos alert()
-                hideModal('deleteModal');
-                currentDeleteInfo = null;
-            }
-        };
-        
-
-        // --- INICIALIZAÇÃO DOS EVENT LISTENERS ---
-        
-        const initEventListeners = () => {
-            
-            // Previne múltiplos listeners se onAuthStateChanged disparar mais de uma vez
-            if (document.body.dataset.listenersAttached === 'true') {
-                return;
-            }
-            document.body.dataset.listenersAttached = 'true';
-            
-            // Listener para todos os links de navegação (desktop e mobile)
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const pageId = e.currentTarget.dataset.page;
-                    if (pageId === 'clientsPage') {
-                        currentClientId = null;
-                    }
-                    showPage(pageId);
-                });
-            });
-            
-            // NOVO: Listeners do Menu Mobile (Movidos para fora)
-            // document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            //     document.getElementById('mobileMenu').classList.remove('hidden');
-            //     renderIcons(); // Garante que ícones no menu mobile sejam renderizados
-            // });
-            // document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
-            //     document.getElementById('mobileMenu').classList.add('hidden');
-            // });
-
-            // Modais de Cliente
-            document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
-            document.getElementById('editClientBtn').addEventListener('click', () => openClientModal(currentClientId));
-            document.getElementById('closeClientModalBtn').addEventListener('click', () => hideModal('clientModal'));
-            document.getElementById('clientForm').addEventListener('submit', handleClientFormSubmit);
-            document.getElementById('clientPaymentTypeInput').addEventListener('change', (e) => {
-                const installmentsInput = document.getElementById('clientInstallmentsInput');
-                if (e.target.value === 'parcelado') {
-                    installmentsInput.disabled = false;
-                    installmentsInput.required = true;
-                } else {
-                    installmentsInput.disabled = true;
-                    installmentsInput.required = false;
-                    installmentsInput.value = '';
-                }
-            });
-
-            // Modais de Prospect
-            document.getElementById('showAddProspectModalBtn').addEventListener('click', () => {
-                renderServicesCheckboxes('prospectServicesCheckboxes'); // NOVO: Renderiza checkboxes
-                showModal('prospectModal');
-            });
-            document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
-            document.getElementById('prospectForm').addEventListener('submit', handleAddProspectFormSubmit); // CORREÇÃO: Chama a função certa
-            
-            // NOVO: Listeners do Modal de Detalhe do Prospect
-            document.getElementById('prospectDetailForm').addEventListener('submit', handleProspectDetailFormSubmit);
-            document.getElementById('closeProspectDetailModalBtn').addEventListener('click', () => hideModal('prospectDetailModal'));
-            document.getElementById('deleteProspectBtn').addEventListener('click', () => {
-                // Reutiliza o modal de deleção
-                hideModal('prospectDetailModal');
-                handleDeleteClick('prospects', currentProspectId);
-            });
-            // NOVO: Listener para o botão de converter
-            document.getElementById('convertProspectBtn').addEventListener('click', () => {
-                 window.convertProspectToClient(currentProspectId);
-            });
-            // NOVO: Listeners para os filtros de prospecção
-            document.getElementById('prospectStatusFilter').addEventListener('change', loadProspects);
-            document.getElementById('prospectSearchInput').addEventListener('input', loadProspects); // 'input' é melhor que 'change' para pesquisa
-
-
-            // Abas (Detalhe Cliente)
-            document.querySelectorAll('.tab-link').forEach(link => {
-                link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.tab-link', '.tab-content'));
-            });
-
-            // Abas (Contas a Receber)
-            document.querySelectorAll('.finance-tab-link').forEach(link => {
-                link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.finance-tab-link', '.finance-tab-content'));
-            });
-
-            // Forms de Detalhe Cliente
-            document.getElementById('addPaymentForm').addEventListener('submit', handleAddPaymentSubmit);
-            document.getElementById('addTaskForm').addEventListener('submit', handleAddTaskSubmit);
-            document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredentialSubmit);
-            
-            // NOVO: Form de Despesa
-            document.getElementById('addExpenseForm').addEventListener('submit', handleExpenseFormSubmit);
-
-            // Filtros de Tarefas Globais
-            document.getElementById('globalTaskClientFilter').addEventListener('change', applyGlobalTaskFilters);
-            document.getElementById('globalTaskStatusFilter').addEventListener('change', applyGlobalTaskFilters);
-
-            // Form de Metas
-            document.getElementById('goalsForm').addEventListener('submit', handleGoalsFormSubmit);
-
-            // Modal de Exclusão
-            document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-                currentDeleteInfo = null;
-                hideModal('deleteModal');
-            });
-            document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
-            
-            // NOVO: Listeners do Filtro de Relatório
-            document.getElementById('reportPeriodSelect').addEventListener('change', (e) => {
-                const customRange = document.getElementById('customDateRange');
-                customRange.classList.toggle('hidden', e.target.value !== 'custom');
-                customRange.classList.toggle('md:flex', e.target.value === 'custom');
-            });
-            document.getElementById('generateCustomReportBtn').addEventListener('click', handleGenerateCustomReport);
-
-        };
-        
-        // --- INICIALIZAÇÃO DA PÁGINA ---
-        window.addEventListener('load', () => {
-            renderIcons(); 
-            
-            // NOVO: Listeners do Menu Mobile por Delegação (Conserto Definitivo)
-            // Anexados ao 'document' para garantir que funcionem
-            // independentemente do estado de login ou de quando o JS é carregado.
-            document.addEventListener('click', (e) => {
-                // Botão de Abrir
-                if (e.target.closest('#mobileMenuBtn')) {
-                    document.getElementById('mobileMenu').classList.remove('hidden');
-                    renderIcons();
-                }
-                // Botão de Fechar
-                if (e.target.closest('#closeMobileMenuBtn')) {
-                    document.getElementById('mobileMenu').classList.add('hidden');
-                }
-            });
-        }); 
-        
-    </script>
 </body>
 </html>
-
