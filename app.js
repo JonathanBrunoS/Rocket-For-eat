@@ -1,3 +1,5 @@
+// app.js (COMPLETO - 1544 Linhas)
+// Começa aqui
 // Importações do Firebase (ESM - Módulos)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { 
@@ -1176,4 +1178,880 @@ const handleAddProspectFormSubmit = async (e) => {
             origem: document.getElementById('prospectOriginInput').value,
             services: getSelectedServices('prospectServicesCheckboxes'),
             status: 'prospeccao', 
-            createdAt: new Date().
+            createdAt: new Date().toISOString(), 
+            label: '', 
+            // NOVO: Adiciona campos do Super-Modal como vazios
+            notes: [], // Agora é um array para o histórico
+            interestLevel: 'Nenhum',
+            nextAction: '',
+            nextActionDate: '',
+            instaLink: '',
+            gmnLink: '',
+            ownerId: userId
+        });
+        hideModal('prospectModal');
+        document.getElementById('prospectForm').reset();
+    } catch (e) {
+        console.error("Erro ao salvar prospect:", e);
+    } finally {
+        submitButton.disabled = false;
+    }
+};
+
+// ATUALIZAÇÃO: Abre o "Super-Modal"
+window.openProspectDetailModal = async (prospectId) => {
+    if (!prospectId) return;
+    currentProspectId = prospectId; 
+    
+    // Reseta o formulário e as abas
+    const form = document.getElementById('prospectDetailForm');
+    form.reset();
+    document.getElementById('addProspectNoteForm').reset();
+    document.getElementById('geminiAnalysisResult').innerHTML = '<p class="text-gray-500 text-sm">A análise da IA aparecerá aqui...</p>';
+    // Ativa a primeira aba (Detalhes) por padrão
+    switchTab('details', '.modal-tab-link', '.modal-tab-content');
+    
+    try {
+        const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
+        const docSnap = await getDoc(prospectRef);
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            // Aba 1: Detalhes
+            document.getElementById('prospectDetailId').value = prospectId;
+            document.getElementById('prospectDetailModalTitle').textContent = data.nome || 'Detalhes do Prospect';
+            document.getElementById('prospectDetailName').value = data.nome || '';
+            document.getElementById('prospectDetailEmail').value = data.email || '';
+            document.getElementById('prospectDetailOrigin').value = data.origem || '';
+            document.getElementById('prospectDetailLabel').value = data.label || '';
+            document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
+            // Novos Campos
+            document.getElementById('prospectDetailInterestLevel').value = data.interestLevel || 'Nenhum';
+            document.getElementById('prospectDetailNextAction').value = data.nextAction || '';
+            document.getElementById('prospectDetailActionDate').value = data.nextActionDate || '';
+            document.getElementById('prospectDetailInstaLink').value = data.instaLink || '';
+            document.getElementById('prospectDetailGMNLink').value = data.gmnLink || '';
+            
+            renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
+            
+            // Aba 2: Histórico
+            loadProspectNotes(data.notes || []); // Carrega os comentários
+
+            // Aba 3: IA (Carrega API Key salva localmente)
+            document.getElementById('geminiApiKeyInput').value = localStorage.getItem('geminiApiKey') || '';
+
+            // Botão de Converter
+            const convertBtn = document.getElementById('convertProspectBtn');
+            convertBtn.classList.toggle('hidden', data.status !== 'fechado');
+            
+            showModal('prospectDetailModal');
+        } else {
+            console.error("Prospect não encontrado");
+        }
+    } catch(e) {
+         handleFriendlyError("Erro ao carregar prospect.", e.message, e);
+    }
+};
+
+// ATUALIZAÇÃO: Salva os dados do "Super-Modal"
+const handleProspectDetailFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentProspectId) return;
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    
+    const newStatus = document.getElementById('prospectDetailStatus').value;
+    
+    const dataToUpdate = {
+        nome: document.getElementById('prospectDetailName').value,
+        email: document.getElementById('prospectDetailEmail').value,
+        origem: document.getElementById('prospectDetailOrigin').value,
+        label: document.getElementById('prospectDetailLabel').value,
+        status: newStatus,
+        services: getSelectedServices('prospectDetailServicesCheckboxes'),
+        // Novos Campos
+        interestLevel: document.getElementById('prospectDetailInterestLevel').value,
+        nextAction: document.getElementById('prospectDetailNextAction').value,
+        nextActionDate: document.getElementById('prospectDetailActionDate').value,
+        instaLink: document.getElementById('prospectDetailInstaLink').value,
+        gmnLink: document.getElementById('prospectDetailGMNLink').value,
+    };
+    
+    try {
+        const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
+        await updateDoc(prospectRef, dataToUpdate);
+        
+        const convertBtn = document.getElementById('convertProspectBtn');
+        convertBtn.classList.toggle('hidden', newStatus !== 'fechado');
+        
+        hideModal('prospectDetailModal');
+        currentProspectId = null;
+    } catch (e) {
+        console.error("Erro ao atualizar prospect:", e);
+    } finally {
+        submitButton.disabled = false;
+    }
+};
+
+// NOVO: Carrega o histórico de comentários
+const loadProspectNotes = (notesArray) => {
+    const container = document.getElementById('prospectDetailNotesList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (!notesArray || notesArray.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum comentário adicionado.</p>';
+        return;
+    }
+    
+    // Ordena do mais novo para o mais antigo
+    notesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    notesArray.forEach(note => {
+        container.innerHTML += `
+            <div class="comment-item">
+                <p>${note.text}</p>
+                <span class="block text-right">${formatDateTime(note.date)}</span>
+            </div>
+        `;
+    });
+};
+
+// NOVO: Adiciona um novo comentário ao histórico
+const handleAddProspectNoteSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentProspectId) return;
+
+    const newNoteText = document.getElementById('prospectDetailNewNote').value;
+    if (!newNoteText.trim()) return;
+
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    const note = {
+        text: newNoteText,
+        date: new Date().toISOString()
+    };
+
+    try {
+        const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
+        const docSnap = await getDoc(prospectRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const existingNotes = data.notes || [];
+            const updatedNotes = [...existingNotes, note];
+            
+            await updateDoc(prospectRef, { notes: updatedNotes });
+            
+            // Atualiza a UI
+            loadProspectNotes(updatedNotes);
+            document.getElementById('addProspectNoteForm').reset();
+        }
+    } catch (e) {
+        console.error("Erro ao adicionar nota:", e);
+        handleFriendlyError("Erro ao salvar comentário", e.message, e);
+    } finally {
+        submitButton.disabled = false;
+    }
+};
+
+ 
+// Corrigido: Passa os dados do prospect para a função de conversão
+window.convertProspectToClient = async (prospectId) => {
+     if (!userId || !db) return;
+     
+     try {
+         const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
+         const prospectDoc = await getDoc(prospectRef);
+         
+         if (!prospectDoc.exists()) {
+             console.error("Prospect não encontrado para conversão");
+             return;
+         }
+         
+         const prospect = prospectDoc.data();
+         const prospectName = prospect.nome;
+         const prospectContact = prospect.telefone || prospect.email || '';
+
+         document.getElementById('deleteModalText').textContent = `Deseja realmente converter o prospect "${prospectName}" em um novo cliente? O prospect será removido do funil.`;
+         currentDeleteInfo = { 
+             collectionName: 'prospects-convert', 
+             docId: prospectId, 
+             data: { nome: prospectName, telefone: prospectContact } 
+         };
+         showModal('deleteModal');
+         
+     } catch(e) {
+         console.error("Erro ao buscar prospect para converter:", e);
+     }
+};
+
+// --- NOVO: LÓGICA DA IA (GEMINI) ---
+
+// Salva a API Key no Local Storage (seguro apenas no navegador do usuário)
+const handleApiKeySave = () => {
+    const apiKey = document.getElementById('geminiApiKeyInput').value;
+    if (apiKey) {
+        localStorage.setItem('geminiApiKey', apiKey);
+    }
+};
+
+// Função principal da IA
+const handleGeminiAnalysis = async () => {
+    const apiKey = document.getElementById('geminiApiKeyInput').value;
+    if (!apiKey) {
+        alert("Por favor, insira a sua Chave da API do Gemini.");
+        return;
+    }
+    
+    // Salva a chave para uso futuro
+    handleApiKeySave();
+
+    // Verifica se a biblioteca foi importada
+    if (typeof GoogleGenerativeAI === 'undefined') {
+        alert("Erro: A biblioteca do GoogleGenerativeAI não foi carregada. Descomente a linha 'import' no início do <script>.");
+        return;
+    }
+    
+    const resultContainer = document.getElementById('geminiAnalysisResult');
+    const generateBtn = document.getElementById('generateGeminiAnalysisBtn');
+    resultContainer.innerHTML = '<p class="text-gray-700 text-sm">A analisar... Por favor, aguarde. Isto pode demorar alguns segundos.</p>';
+    generateBtn.disabled = true;
+
+    // Pega os dados do prospect dos campos
+    const nome = document.getElementById('prospectDetailName').value;
+    const instaLink = document.getElementById('prospectDetailInstaLink').value;
+    const gmnLink = document.getElementById('prospectDetailGMNLink').value;
+
+    if (!instaLink && !gmnLink) {
+         resultContainer.innerHTML = '<p class="text-red-500 text-sm">Erro: Preencha pelo menos o Link do Instagram ou do Google Meu Negócio na aba "Detalhes" para a análise.</p>';
+         generateBtn.disabled = false;
+         return;
+    }
+
+    const prompt = `
+         Você é um especialista em marketing digital para pizzarias (Rocket for Eat).
+         Analise o posicionamento digital do prospect abaixo e gere uma breve análise (máximo 3 parágrafos) focada em PONTOS DE MELHORIA e OPORTUNIDADES que a Rocket for Eat pode vender.
+
+         Seja direto e acionável.
+
+         Prospect: ${nome}
+         Instagram: ${instaLink || 'Não fornecido'}
+         Google Meu Negócio: ${gmnLink || 'Não fornecido'}
+
+         Estruture a resposta:
+         1.  **Análise Rápida:** (O que você vê de bom ou ruim)
+         2.  **Pontos de Melhoria:** (O que está faltando)
+         3.  **Oportunidades (Serviços):** (O que a Rocket for Eat pode oferecer)
+     `;
+
+    try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        
+        // Formata o texto da IA para HTML (substitui quebras de linha e negrito)
+        let htmlText = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negrito
+            .replace(/\n/g, '<br>'); // Quebra de linha
+
+        resultContainer.innerHTML = `<div class="text-sm text-gray-800 space-y-2">${htmlText}</div>`;
+
+    } catch (e) {
+        console.error("Erro na API do Gemini:", e);
+        resultContainer.innerHTML = `<p class="text-red-500 text-sm">Erro ao gerar análise: ${e.message}. Verifique sua API Key ou o console.</p>`;
+    } finally {
+        generateBtn.disabled = false;
+    }
+};
+
+ 
+// --- CONTAS A RECEBER ---
+
+const loadReceivablesReport = () => {
+    if (!userId || !db) return;
+
+    // ATENÇÃO: Também aplica a ordenação por data aqui
+    const paymentsQuery = query(
+        collection(db, `/artifacts/${appId}/public/data/payments`),
+        orderBy("dataVencimento", "asc") 
+    );
+    
+    onSnapshot(paymentsQuery, (snapshot) => {
+        const lateContainer = document.getElementById('late-payments-list');
+        const upcomingContainer = document.getElementById('upcoming-payments-list');
+        const paidThisMonthContainer = document.getElementById('paid-this-month-list');
+        
+        if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return; 
+
+        lateContainer.innerHTML = '';
+        upcomingContainer.innerHTML = '';
+        paidThisMonthContainer.innerHTML = '';
+
+        let hasLate = false, hasUpcoming = false, hasPaidThisMonth = false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        
+        snapshot.forEach(doc => {
+            const payment = doc.data();
+            const dueDate = new Date(payment.dataVencimento + "T12:00:00"); 
+            dueDate.setHours(0, 0, 0, 0); 
+            const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
+
+            const paymentHtml = `
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center p-3 border rounded-md hover:bg-gray-50">
+                    <div>
+                        <p class="font-semibold text-gray-800">${clientName} - ${payment.descricao}</p>
+                        <p class="text-sm text-gray-600">${formatCurrency(payment.valor)} - Venc: ${formatDate(payment.dataVencimento)}</p>
+                    </div>
+                    <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-rocket-yellow-600 hover:underline mt-2 sm:mt-0">Ver Cliente</button>
+                </div>
+            `;
+
+            if (payment.status === 'Pendente') {
+                if (dueDate < today) {
+                    lateContainer.innerHTML += `<div class="bg-red-50">${paymentHtml}</div>`;
+                    hasLate = true;
+                } else {
+                    upcomingContainer.innerHTML += `<div class="bg-blue-50">${paymentHtml}</div>`;
+                    hasUpcoming = true;
+                }
+            } else if (payment.status === 'Pago') {
+                const paymentDate = new Date(payment.dataVencimento + "T12:00:00");
+                if (paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear) {
+                   paidThisMonthContainer.innerHTML += `<div class="bg-green-50">${paymentHtml}</div>`;
+                   hasPaidThisMonth = true;
+                }
+            }
+        });
+
+        if (!hasLate) lateContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento atrasado.</p>';
+        if (!hasUpcoming) upcomingContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento previsto.</p>';
+        if (!hasPaidThisMonth) paidThisMonthContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento registado como pago este mês.</p>';
+        
+        renderIcons();
+    }, (e) => { handleFriendlyError("Erro ao carregar relatório financeiro (Verifique o índice no Firebase).", e.message, e); });
+};
+
+// --- DESPESAS ---
+
+const loadExpensesPage = () => {
+    if (!userId || !db) return;
+    
+    const { start } = getCurrentMonthRange();
+    const q = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("data", ">=", start));
+    
+    onSnapshot(q, (snapshot) => {
+        const container = document.getElementById('expenses-list');
+        if (!container) return; 
+        container.innerHTML = '';
+        
+        if (snapshot.empty) {
+            container.innerHTML = '<p class="text-gray-500">Nenhuma despesa registada este mês.</p>';
+            return;
+        }
+        
+        snapshot.forEach(doc => {
+            const expense = doc.data();
+            container.innerHTML += `
+                <div class="flex justify-between items-center p-4 border rounded-md hover:bg-gray-50">
+                    <div>
+                        <p class="font-semibold text-gray-800">${expense.descricao}</p>
+                        <p class="text-sm text-gray-600">${formatDate(expense.data)}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold text-red-600">${formatCurrency(expense.valor)}</span>
+                        <button onclick="window.handleDeleteClick('expenses', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+        renderIcons();
+    }, (e) => { handleFriendlyError("Erro ao carregar despesas.", e.message, e); });
+};
+
+const handleExpenseFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!userId || !db) return;
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    const data = {
+        descricao: document.getElementById('expenseDesc').value,
+        valor: parseFloat(document.getElementById('expenseValue').value),
+        data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0], 
+        ownerId: userId
+    };
+    
+    try {
+        await addDoc(collection(db, `/artifacts/${appId}/public/data/expenses`), data);
+        document.getElementById('addExpenseForm').reset();
+    } catch (e) {
+        console.error("Erro ao adicionar despesa:", e);
+    } finally {
+        submitButton.disabled = false;
+    }
+};
+
+ 
+// --- TAREFAS GLOBAIS ---
+
+const loadGlobalTasks = () => {
+    if (!userId || !db) return;
+
+    const clientFilterSelect = document.getElementById('globalTaskClientFilter');
+    const currentValue = clientFilterSelect.value; 
+    clientFilterSelect.innerHTML = '<option value="all">Todos os Clientes</option>';
+    
+    const sortedClients = Object.values(allClientsData).sort((a, b) => a.nome.localeCompare(b.nome));
+    
+    sortedClients.forEach(client => {
+         clientFilterSelect.innerHTML += `<option value="${client.id}">${client.nome}</option>`;
+    });
+    
+    clientFilterSelect.value = currentValue; 
+    
+    applyGlobalTaskFilters(); 
+};
+
+const applyGlobalTaskFilters = () => {
+    if (!userId || !db) return;
+
+    const selectedClient = document.getElementById('globalTaskClientFilter').value;
+    const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
+    const container = document.getElementById('global-tasks-list');
+    if (!container) return; 
+    container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>'; 
+
+    let q = collection(db, `/artifacts/${appId}/public/data/tasks`);
+    let filters = [];
+
+    if (selectedClient !== 'all') {
+        filters.push(where("clientId", "==", selectedClient));
+    }
+    if (selectedStatus !== 'all') {
+        filters.push(where("status", "==", selectedStatus));
+    }
+    
+    const filteredQuery = query(q, ...filters);
+
+    onSnapshot(filteredQuery, (snapshot) => {
+        if (!container) return; 
+        container.innerHTML = '';
+        if (snapshot.empty) {
+            container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
+            return;
+        }
+        
+        const tasksData = [];
+        snapshot.forEach(doc => {
+            tasksData.push({ id: doc.id, ...doc.data() });
+        });
+        
+        tasksData.sort((a, b) => {
+            const clientNameA = allClientsData[a.clientId]?.nome || 'ZZZ';
+            const clientNameB = allClientsData[b.clientId]?.nome || 'ZZZ';
+            return clientNameA.localeCompare(clientNameB);
+        });
+
+        tasksData.forEach(task => {
+            const isDone = task.status === 'Feito';
+            const clientName = allClientsData[task.clientId]?.nome || "Cliente...";
+
+            container.innerHTML += `
+                <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
+                    <div class="flex items-center gap-3 w-full min-w-0">
+                        <input type="checkbox" onchange="window.toggleTaskStatus('${task.id}', ${isDone})" ${isDone ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300 flex-shrink-0">
+                        <p class="${isDone ? 'line-through text-gray-500' : 'text-gray-800'} flex-1 truncate" title="${task.descricao}">${task.descricao} <span class="text-xs text-gray-400 whitespace-nowrap">- ${clientName}</span></p>
+                    </div>
+                    <button onclick="window.handleDeleteClick('tasks', '${task.id}')" class="text-red-600 hover:text-red-800 flex-shrink-0 ml-4"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            `;
+        });
+        renderIcons();
+    }, (e) => { handleFriendlyError("Erro ao filtrar tarefas.", e.message, e); });
+};
+
+// --- RELATÓRIOS (MÊS ANTERIOR) ---
+
+const loadHistoricalReport = async () => {
+    if (!userId || !db) return;
+    
+    const loadingMsg = document.getElementById('report-loading-msg');
+    if (!loadingMsg) return; 
+    
+    loadingMsg.classList.remove('hidden');
+    
+    const { start, end } = getLastMonthRange();
+    
+    let bruto = 0, despesas = 0, novosLeads = 0;
+    
+    try {
+        const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
+            where("data", ">=", start), where("data", "<=", end)
+        );
+        const salesSnapshot = await getDocs(salesQuery);
+        salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
+        
+        const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
+            where("data", ">=", start), where("data", "<=", end)
+        );
+        const expensesSnapshot = await getDocs(expensesQuery);
+        expensesSnapshot.forEach(doc => { despesas += doc.data().valor || 0; });
+        
+        const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+            where("createdAt", ">=", start), where("createdAt", "<=", end)
+        );
+        const prospectsSnapshot = await getDocs(prospectsQuery);
+        novosLeads = prospectsSnapshot.size;
+        
+        document.getElementById('report-faturamento-bruto').textContent = formatCurrency(bruto);
+        document.getElementById('report-despesas').textContent = formatCurrency(despesas);
+        document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto - despesas);
+        document.getElementById('report-novos-leads').textContent = novosLeads; 
+        
+    } catch (e) {
+        handleFriendlyError("Erro ao carregar relatório histórico", e.message, e);
+        document.getElementById('report-faturamento-bruto').textContent = "Erro";
+    } finally {
+        loadingMsg.classList.add('hidden');
+    }
+};
+
+ 
+// --- RELATÓRIO DE FATURAMENTO POR CLIENTE ---
+
+const loadClientRevenueReport = async () => {
+    if (!userId || !db) return;
+
+    const container = document.getElementById('client-revenue-list');
+    const loadingMsg = document.getElementById('client-revenue-loading');
+    
+    if (!container || !loadingMsg) return; 
+
+    loadingMsg.classList.remove('hidden');
+    container.innerHTML = ''; 
+
+    try {
+        const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`));
+        const salesSnapshot = await getDocs(salesQuery);
+        
+        if (salesSnapshot.empty) {
+            container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
+            loadingMsg.classList.add('hidden');
+            return;
+        }
+        
+        const revenueMap = {};
+        salesSnapshot.forEach(doc => {
+            const sale = doc.data();
+            if (sale.clientId && sale.valor) {
+                revenueMap[sale.clientId] = (revenueMap[sale.clientId] || 0) + sale.valor;
+            }
+        });
+
+        if (Object.keys(revenueMap).length === 0) {
+             container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
+             loadingMsg.classList.add('hidden');
+             return;
+        }
+
+        const sortedRevenue = Object.entries(revenueMap).sort((a, b) => b[1] - a[1]); 
+
+        sortedRevenue.forEach(([clientId, total]) => {
+            const clientName = allClientsData[clientId]?.nome || 'Cliente Excluído';
+            container.innerHTML += `
+                <div class="flex justify-between items-center p-3 border rounded-md hover:bg-gray-50">
+                    <p class="font-semibold text-gray-800">${clientName}</p>
+                    <p class="font-bold text-gray-900">${formatCurrency(total)}</p>
+                </div>
+            `;
+        });
+
+    } catch (e) {
+         handleFriendlyError("Erro ao carregar faturação por cliente", e.message, e);
+         container.innerHTML = '<p class="text-red-500">Erro ao carregar relatório.</p>';
+    } finally {
+        loadingMsg.classList.add('hidden');
+    }
+};
+
+// Gera o relatório de faturação personalizado
+const handleGenerateCustomReport = async () => {
+    if (!userId || !db) return;
+    
+    const period = document.getElementById('reportPeriodSelect').value;
+    const dateRange = getReportDateRange(period);
+    
+    if (period === 'custom' && !dateRange) {
+        alert("Por favor, selecione as datas de início e fim.");
+        return;
+    }
+    
+    const loadingMsg = document.getElementById('custom-report-loading');
+    const resultsContainer = document.getElementById('customReportResults');
+    loadingMsg.classList.remove('hidden');
+    resultsContainer.classList.add('hidden');
+    
+    const { start, end } = dateRange;
+    
+    let bruto = 0, despesas = 0, novosLeads = 0;
+
+    try {
+        const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
+            where("data", ">=", start), where("data", "<=", end)
+        );
+        const salesSnapshot = await getDocs(salesQuery);
+        salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
+        
+        const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
+            where("data", ">=", start), where("data", "<=", end)
+        );
+        const expensesSnapshot = await getDocs(expensesQuery);
+        expensesSnapshot.forEach(doc => { despesas += doc.data().valor || 0; });
+        
+        const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+            where("createdAt", ">=", start), where("createdAt", "<=", end)
+        );
+        const prospectsSnapshot = await getDocs(prospectsQuery);
+        novosLeads = prospectsSnapshot.size;
+        
+        document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
+        document.getElementById('custom-report-despesas').textContent = formatCurrency(despesas);
+        document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto - despesas);
+        document.getElementById('custom-report-leads').textContent = novosLeads;
+        
+        resultsContainer.classList.remove('hidden');
+
+    } catch (e) {
+        handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
+    } finally {
+        loadingMsg.classList.add('hidden');
+    }
+};
+
+// --- MINHA EMPRESA (METAS) ---
+
+const handleGoalsFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!userId || !db) return;
+
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    const data = {
+        faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
+        prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
+        ownerId: userId 
+    };
+    
+    try {
+        await setDoc(goalsDocRef(), data, { merge: true });
+        loadCompanyGoalsPage(); 
+    } catch(e) {
+        console.error("Erro ao salvar metas:", e);
+    } finally {
+        submitButton.disabled = false;
+    }
+};
+
+// --- EXCLUSÃO GENÉRICA (MODAL) ---
+
+window.handleDeleteClick = (collectionName, docId) => {
+    let data = null; 
+    if (collectionName === 'clients') {
+         document.getElementById('deleteModalText').textContent = "Tem certeza? Excluir um cliente também excluirá TODOS os seus pagamentos, tarefas e senhas associados. Esta ação é irreversível.";
+    } else {
+         document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
+    }
+    
+    if (collectionName !== 'prospects-convert') {
+         currentDeleteInfo = { collectionName, docId, data: null };
+         showModal('deleteModal');
+    }
+};
+
+const handleConfirmDelete = async () => {
+    if (!currentDeleteInfo || !userId || !db) return;
+    
+    const { collectionName, docId, data } = currentDeleteInfo;
+    
+    try {
+        if (collectionName === 'clients') {
+            // Excluir Cliente e todos os sub-dados
+            const batch = writeBatch(db);
+            
+            batch.delete(doc(db, `/artifacts/${appId}/public/data/clients/${docId}`));
+            
+            const subCollections = ['payments', 'tasks', 'credentials', 'sales', 'expenses']; 
+            for (const subCol of subCollections) {
+                let subColPath = `/artifacts/${appId}/public/data/${subCol}`;
+                const q = query(collection(db, subColPath), where("clientId", "==", docId));
+                const snapshot = await getDocs(q);
+                snapshot.forEach(doc => batch.delete(doc.ref));
+            }
+            
+            await batch.commit();
+            
+            if (currentClientId === docId) {
+                showPage('clientsPage');
+            }
+        } else if (collectionName === 'prospects-convert') {
+            // Converter Prospect para Cliente
+            document.getElementById('conversionSource').value = 'prospect';
+            hideModal('prospectDetailModal'); 
+            await openClientModal(null, data); 
+            await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`)); 
+        
+        } else {
+            // Exclusão simples (payments, tasks, credentials, prospects, expenses)
+            let docPath = `/artifacts/${appId}/public/data/${collectionName}/${docId}`;
+            await deleteDoc(doc(db, docPath));
+        }
+        
+        hideModal('deleteModal');
+        currentDeleteInfo = null;
+        
+    } catch (e) {
+        console.error("Erro ao excluir/converter:", e);
+        hideModal('deleteModal');
+        currentDeleteInfo = null;
+    }
+};
+
+
+// --- INICIALIZAÇÃO DOS EVENT LISTENERS ---
+
+const initEventListeners = () => {
+    
+    if (document.body.dataset.listenersAttached === 'true') {
+        return;
+    }
+    document.body.dataset.listenersAttached = 'true';
+    
+    // Navegação (Sidebar e Voltar)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const pageId = e.currentTarget.dataset.page;
+            if (pageId === 'clientsPage') {
+                currentClientId = null;
+            }
+            showPage(pageId);
+        });
+    });
+
+    // Modais de Cliente
+    document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
+    document.getElementById('editClientBtn').addEventListener('click', () => openClientModal(currentClientId));
+    document.getElementById('closeClientModalBtn').addEventListener('click', () => hideModal('clientModal'));
+    document.getElementById('clientForm').addEventListener('submit', handleClientFormSubmit);
+    document.getElementById('clientPaymentTypeInput').addEventListener('change', (e) => {
+        const installmentsInput = document.getElementById('clientInstallmentsInput');
+        const isParcelado = e.target.value === 'parcelado';
+        installmentsInput.disabled = !isParcelado;
+        installmentsInput.required = isParcelado;
+        if (!isParcelado) installmentsInput.value = '';
+    });
+
+    // Modais de Prospect (Adicionar)
+    document.getElementById('showAddProspectModalBtn').addEventListener('click', () => {
+        renderServicesCheckboxes('prospectServicesCheckboxes');
+        showModal('prospectModal');
+    });
+    document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
+    document.getElementById('prospectForm').addEventListener('submit', handleAddProspectFormSubmit);
+    
+    // NOVO: Listeners do "Super-Modal" de Prospect (Detalhes)
+    document.getElementById('prospectDetailForm').addEventListener('submit', handleProspectDetailFormSubmit);
+    document.getElementById('closeProspectDetailModalBtn').addEventListener('click', () => hideModal('prospectDetailModal'));
+    document.getElementById('deleteProspectBtn').addEventListener('click', () => {
+        hideModal('prospectDetailModal');
+        handleDeleteClick('prospects', currentProspectId);
+    });
+    document.getElementById('convertProspectBtn').addEventListener('click', () => {
+         window.convertProspectToClient(currentProspectId);
+    });
+    
+    // NOVO: Listeners das Abas do Super-Modal
+    document.querySelectorAll('.modal-tab-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            switchTab(e.currentTarget.dataset.tab, '.modal-tab-link', '.modal-tab-content');
+            renderIcons(); // Renderiza ícones caso a aba de IA os tenha
+        });
+    });
+    
+    // NOVO: Listener do Form de Comentários
+    document.getElementById('addProspectNoteForm').addEventListener('submit', handleAddProspectNoteSubmit);
+
+    // NOVO: Listeners da IA (Gemini)
+    document.getElementById('generateGeminiAnalysisBtn').addEventListener('click', handleGeminiAnalysis);
+    document.getElementById('geminiApiKeyInput').addEventListener('change', handleApiKeySave);
+
+
+    // Abas (Detalhe Cliente)
+    document.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.tab-link', '.tab-content'));
+    });
+
+    // Abas (Contas a Receber)
+    document.querySelectorAll('.finance-tab-link').forEach(link => {
+        link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.finance-tab-link', '.finance-tab-content'));
+    });
+
+    // Forms de Detalhe Cliente
+    document.getElementById('addPaymentForm').addEventListener('submit', handleAddPaymentSubmit);
+    document.getElementById('addTaskForm').addEventListener('submit', handleAddTaskSubmit);
+    document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredentialSubmit);
+    
+    // Form de Despesa
+    document.getElementById('addExpenseForm').addEventListener('submit', handleExpenseFormSubmit);
+
+    // Filtros de Tarefas Globais
+    document.getElementById('globalTaskClientFilter').addEventListener('change', applyGlobalTaskFilters);
+    document.getElementById('globalTaskStatusFilter').addEventListener('change', applyGlobalTaskFilters);
+
+    // Form de Metas
+    document.getElementById('goalsForm').addEventListener('submit', handleGoalsFormSubmit);
+
+    // Modal de Exclusão
+    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+        currentDeleteInfo = null;
+        hideModal('deleteModal');
+    });
+    document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
+    
+    // Listeners do Filtro de Relatório
+    document.getElementById('reportPeriodSelect').addEventListener('change', (e) => {
+        const customRange = document.getElementById('customDateRange');
+        customRange.classList.toggle('hidden', e.target.value !== 'custom');
+        customRange.classList.toggle('md:flex', e.target.value === 'custom');
+    });
+    document.getElementById('generateCustomReportBtn').addEventListener('click', handleGenerateCustomReport);
+
+};
+
+// --- INICIALIZAÇÃO DA PÁGINA ---
+window.addEventListener('load', () => {
+    renderIcons(); 
+    
+    // Listeners do Menu Mobile (Delegação)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#mobileMenuBtn')) {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+            renderIcons();
+        }
+        if (e.target.closest('#closeMobileMenuBtn')) {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+    });
+});
+// Fim do ficheiro app.js
