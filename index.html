@@ -551,64 +551,26 @@
                                 <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
                                 <p id="report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
-                                <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                            </div>
-                             <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
-                                <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                            </div>
-                        </div>
-                        <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
-                        <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
-                            <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="companyPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
-                            <form id="goalsForm" class="space-y-4">
-                                <div>
-                                    <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
-                                    <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
-                                </div>
-                                <div>
-                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
-                                    <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
-                                </div>
-                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
-                            </form>
-                        </div>
-                        
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                        <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                            <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-4">
+                                            <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                        <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                            <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-4">
+                                            <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -676,6 +638,7 @@
             </form>
         </div>
     </div>
+
     <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <form id="prospectForm">
@@ -708,11 +671,14 @@
             </form>
         </div>
     </div>
+    
     <div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            
             <div class="p-6 border-b">
                 <h3 id="prospectDetailModalTitle" class="text-xl font-semibold text-gray-800">Detalhes do Prospect</h3>
             </div>
+
             <div class="px-6 border-b border-gray-200">
                 <nav class="flex space-x-4 -mb-px" aria-label="Tabs">
                     <button data-tab="details" class="modal-tab-link active-tab">Detalhes</button>
@@ -720,10 +686,13 @@
                     <button data-tab="ai" class="modal-tab-link">Análise IA</button>
                 </nav>
             </div>
+
             <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                
                 <div id="detailsTab" class="modal-tab-content active space-y-4">
                     <form id="prospectDetailForm" class="space-y-4">
                         <input type="hidden" id="prospectDetailId">
+                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nome</label>
@@ -749,6 +718,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Próxima Ação</label>
@@ -759,6 +729,7 @@
                                 <input type="date" id="prospectDetailActionDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             </div>
                         </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Link Instagram</label>
@@ -769,10 +740,12 @@
                                 <input type="url" id="prospectDetailGMNLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://maps.app.goo.gl/...">
                             </div>
                         </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
                             <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
+                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Origem</label>
@@ -783,6 +756,7 @@
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
                             </div>
                         </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
                             <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -790,17 +764,20 @@
                         </div>
                     </form>
                 </div>
+
                 <div id="historyTab" class="modal-tab-content space-y-4">
                     <form id="addProspectNoteForm">
                         <label class="block text-sm font-medium text-gray-700">Adicionar Comentário</label>
                         <textarea id="prospectDetailNewNote" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Liguei, não atendeu. Tentar novamente amanhã."></textarea>
                         <button type="submit" class="mt-2 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg text-sm">Adicionar Comentário</button>
                     </form>
+                    
                     <h4 class="text-md font-semibold text-gray-800 border-t pt-4">Histórico de Atividades</h4>
                     <div id="prospectDetailNotesList" class="space-y-3 max-h-64 overflow-y-auto">
                         <p class="text-gray-500 text-sm">Nenhum comentário adicionado.</p>
                         </div>
                 </div>
+
                 <div id="aiTab" class="modal-tab-content space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Sua Chave da API (Gemini)</label>
@@ -815,7 +792,9 @@
                         <p class="text-gray-500 text-sm">A análise da IA aparecerá aqui. Certifique-se de que os links do Instagram e GMN estão preenchidos na aba "Detalhes".</p>
                     </div>
                 </div>
+
             </div>
+
             <div class="bg-gray-50 p-4 flex justify-between gap-3 border-t">
                 <div>
                     <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
@@ -828,6 +807,7 @@
             </div>
         </div>
     </div>
+    
     <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6 text-center">
