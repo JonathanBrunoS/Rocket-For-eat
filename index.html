@@ -25,7 +25,7 @@
         }
     </script>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css"> 
     
 </head>
 <body class="bg-gray-100">
@@ -41,545 +41,773 @@
     </div>
 
     <div id="app-page" class="page">
-        <div class="flex h-screen bg-gray-100">
-            
-            <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
-                <div class="p-4 rounded-lg mb-8">
-                    <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
-                </div>
-
-                <nav class="flex-1 space-y-2">
-                    <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="layout-dashboard"></i>
-                        <span>Dashboard</span>
-                    </button>
-                    <button data-page="prospectsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="kanban-square"></i>
-                        <span>Prospeção</span>
-                    </button>
-                    <button data-page="clientsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="users"></i>
-                        <span>Clientes</span>
-                    </button>
-                    <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="dollar-sign"></i>
-                        <span>Contas a Receber</span>
-                    </button>
-                    <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="trending-down"></i>
-                        <span>Despesas</span>
-                    </button>
-                    <button data-page="globalTasksPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="check-square"></i>
-                        <span>Tarefas Globais</span>
-                    </button>
-                    <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="archive"></i>
-                        <span>Relatórios</span>
-                    </button>
-                    <button data-page="companyPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                        <i data-lucide="target"></i>
-                        <span>Minha Empresa</span>
-                    </button>
-                </nav>
-
-                <div class="mt-auto">
-                </div>
-            </aside>
-            
-            <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
-                 <div class="flex justify-between items-center mb-8">
-                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
-                    <button id="closeMobileMenuBtn">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                 </div>
-                 <nav class="flex-1 space-y-2">
-                     <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="layout-dashboard"></i>
-                         <span>Dashboard</span>
-                     </button>
-                     <button data-page="prospectsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="kanban-square"></i>
-                         <span>Prospeção</span>
-                     </button>
-                     <button data-page="clientsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="users"></i>
-                         <span>Clientes</span>
-                     </button>
-                     <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="dollar-sign"></i>
-                         <span>Contas a Receber</span>
-                     </button>
-                     <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="trending-down"></i>
-                         <span>Despesas</span>
-                     </button>
-                     <button data-page="globalTasksPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="check-square"></i>
-                         <span>Tarefas Globais</span>
-                     </button>
-                     <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="archive"></i>
-                         <span>Relatórios</span>
-                     </button>
-                     <button data-page="companyPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                         <i data-lucide="target"></i>
-                         <span>Minha Empresa</span>
-                     </button>
-                 </nav>
+        <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
+            <div class="p-4 rounded-lg mb-8">
+                <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
             </div>
+            <nav class="flex-1 space-y-2">
+                <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button data-page="prospectsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="kanban-square"></i>
+                    <span>Prospeção</span>
+                </button>
+                <button data-page="clientsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="users"></i>
+                    <span>Clientes</span>
+                </button>
+                <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Contas a Receber</span>
+                </button>
+                <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="trending-down"></i>
+                    <span>Despesas</span>
+                </button>
+                <button data-page="globalTasksPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="check-square"></i>
+                    <span>Tarefas Globais</span>
+                </button>
+                <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="archive"></i>
+                    <span>Relatórios</span>
+                </button>
+                <button data-page="companyPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                    <i data-lucide="target"></i>
+                    <span>Minha Empresa</span>
+                </button>
+            </nav>
+            <div class="mt-auto">
+            </div>
+        </aside>
+        
+        <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
+             <div class="flex justify-between items-center mb-8">
+                 <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
+                <button id="closeMobileMenuBtn">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+             </div>
+             <nav class="flex-1 space-y-2">
+                 <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="layout-dashboard"></i>
+                     <span>Dashboard</span>
+                 </button>
+                 <button data-page="prospectsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="kanban-square"></i>
+                     <span>Prospeção</span>
+                 </button>
+                 <button data-page="clientsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="users"></i>
+                     <span>Clientes</span>
+                 </button>
+                 <button data-page="receivablesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="dollar-sign"></i>
+                     <span>Contas a Receber</span>
+                 </button>
+                 <button data-page="expensesPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="trending-down"></i>
+                     <span>Despesas</span>
+                 </button>
+                 <button data-page="globalTasksPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="check-square"></i>
+                     <span>Tarefas Globais</span>
+                 </button>
+                 <button data-page="reportsPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="archive"></i>
+                     <span>Relatórios</span>
+                 </button>
+                 <button data-page="companyPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                     <i data-lucide="target"></i>
+                     <span>Minha Empresa</span>
+                 </button>
+             </nav>
+        </div>
 
-            <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
-                
-                <div class="md:hidden flex justify-between items-center mb-4">
-                    <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
-                    <button id="mobileMenuBtn">
-                        <i data-lucide="menu" class="w-6 h-6 text-rocket-dark"></i>
+        <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="md:hidden flex justify-between items-center mb-4">
+                <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
+                <button id="mobileMenuBtn">
+                    <i data-lucide="menu" class="w-6 h-6 text-rocket-dark"></i>
+                </button>
+            </div>
+            <div id="dashboardPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
+                                <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
+                                <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
+                        <p id="kpi-faturamento-liquido" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta (Mês)</h3>
+                        <p id="kpi-faturamento-bruto" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 uppercase">Despesas (Mês)</h3>
+                        <p id="kpi-despesas" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 uppercase">Clientes Ativos</h3>
+                        <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos a Vencer (30 dias)</h3>
+                        <div id="alertas-contratos" class="space-y-3 max-h-48 overflow-y-auto">
+                            <p class="text-gray-500">Nenhum contrato a vencer.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos a Vencer (7 dias)</h3>
+                        <div id="alertas-pagamentos" class="space-y-3 max-h-48 overflow-y-auto">
+                            <p class="text-gray-500">Nenhum pagamento a vencer esta semana.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="prospectsPage" class="page-content"> 
+                <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
+                    <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
+                        <i data-lucide="plus"></i>
+                        <span>Novo Prospect</span>
                     </button>
                 </div>
-
-                <div id="dashboardPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-100 rounded-lg shadow-inner">
+                        <div class="p-4 border-b-2 border-gray-300">
+                            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="search-check" class="w-5 h-5 text-blue-600"></i>
+                                Prospecção
+                                <span id="kanban-count-prospeccao" class="text-sm font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">0</span>
+                            </h3>
+                        </div>
+                        <div id="kanban-col-prospeccao" class="p-4 space-y-4">
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg shadow-inner">
+                        <div class="p-4 border-b-2 border-gray-300">
+                            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="phone-outgoing" class="w-5 h-5 text-yellow-600"></i>
+                                Contato Feito
+                                <span id="kanban-count-contato" class="text-sm font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">0</span>
+                            </h3>
+                        </div>
+                        <div id="kanban-col-contato" class="p-4 space-y-4">
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg shadow-inner">
+                        <div class="p-4 border-b-2 border-gray-300">
+                            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="handshake" class="w-5 h-5 text-green-600"></i>
+                                Negociando
+                                <span id="kanban-count-negociando" class="text-sm font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">0</span>
+                            </h3>
+                        </div>
+                        <div id="kanban-col-negociando" class="p-4 space-y-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="clientsPage" class="page-content">
+                <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
+                    <button id="showAddClientModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
+                        <i data-lucide="user-plus"></i>
+                        <span>Novo Cliente (Manual)</span>
+                    </button>
+                </div>
+                <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Término do Contrato</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-list-table" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="clientDetailPage" class="page-content">
+                <button data-page="clientsPage" class="nav-link text-rocket-yellow-600 hover:text-rocket-yellow-500 font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="arrow-left"></i>
+                    Voltar para Clientes
+                </button>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 id="detail-client-name" class="text-3xl font-bold text-gray-800">Nome do Cliente</h2>
+                            <p id="detail-client-phone" class="text-gray-600 mt-1"></p>
+                        </div>
+                        <button id="editClientBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="edit-2"></i>
+                            <span>Editar</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 border-t pt-4">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Status</h4>
+                            <p id="detail-client-status" class="text-lg font-semibold text-green-600">Ativo</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Valor do Projeto</h4>
+                            <p id="detail-client-value" class="text-lg font-semibold text-gray-800">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Dias Restantes</h4>
+                            <p id="detail-client-days" class="text-lg font-semibold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-6 border-b border-gray-200">
+                    <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
+                        <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Financeiro</button>
+                        <button data-tab="tasks" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Tarefas</button>
+                        <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
+                    </nav>
+                </div>
+                <div id="financialTab" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Histórico de Pagamentos</h3>
+                            <div id="payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Adicionar Serviço (Upsell)</h3>
+                            <form id="addPaymentForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
+                                    <input type="text" id="paymentDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Consultoria SEO" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                    <input type="number" step="0.01" id="paymentValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Data Vencimento</label>
+                                    <input type="date" id="paymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+                                <div class="flex items-center pt-2">
+                                    <input type="checkbox" id="paymentIsUpsell" class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300" checked>
+                                    <label for="paymentIsUpsell" class="ml-2 block text-sm text-gray-700">Registar como Venda (Upsell)</label>
+                                </div>
+                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Serviço</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="tasksTab" class="tab-content hidden">
+                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Checklist de Tarefas</h3>
+                            <div id="tasks-list" class="space-y-3">
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Tarefa</h3>
+                            <form id="addTaskForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                                    <input type="text" id="taskDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Tarefa</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="credentialsTab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Credenciais e Senhas</h3>
+                            <div id="credentials-list" class="space-y-3">
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Credencial</h3>
+                            <form id="addCredentialForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Serviço</label>
+                                    <input type="text" id="credService" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hospedagem, Google" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Login</label>
+                                    <input type="text" id="credLogin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Senha</label>
+                                    <input type="text" id="credPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Senha</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="receivablesPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Contas a Receber</h2>
+                <div class="mb-6 border-b border-gray-200">
+                    <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
+                        <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Contas a Receber</button>
+                        <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
+                    </nav>
+                </div>
+                <div id="accountsReceivableTab" class="finance-tab-content">
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Atrasados</h3>
+                            <div id="late-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Nenhum pagamento atrasado.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Previstos</h3>
+                            <div id="upcoming-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Nenhum pagamento previsto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="paidThisMonthTab" class="finance-tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Confirmados (Mês Atual)</h3>
+                        <div id="paid-this-month-list" class="space-y-3 max-h-96 overflow-y-auto">
+                            <p class="text-gray-500">Nenhum pagamento registado como pago este mês.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="expensesPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Controlo de Despesas</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Despesas (Mês Atual)</h3>
+                        <div id="expenses-list" class="space-y-3 max-h-96 overflow-y-auto">
+                            <p class="text-gray-500">Nenhuma despesa registada este mês.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Registar Despesa</h3>
+                        <form id="addExpenseForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                                <input type="text" id="expenseDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Imposto, Ferramenta SaaS" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                <input type="number" step="0.01" id="expenseValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Data da Despesa</label>
+                                <input type="date" id="expenseDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Registar Despesa</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="globalTasksPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Todas as Tarefas</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Checklist Completo</h3>
+                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                            <select id="globalTaskClientFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
+                                <option value="all">Todos os Clientes</option>
+                            </select>
+                            <select id="globalTaskStatusFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
+                                <option value="all">Todos os Status</option>
+                                <option value="A Fazer">A Fazer</option>
+                                <option value="Feito">Feito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="global-tasks-list" class="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto">
+                        <p class="text-gray-500">Nenhuma tarefa encontrada.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="reportsPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Relatório de Faturação Personalizado</h3>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="reportPeriodSelect" class="block text-sm font-medium text-gray-700">Período</label>
+                            <select id="reportPeriodSelect" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="today">Hoje</option>
+                                <option value="last7">Últimos 7 dias</option>
+                                <option value="thisMonth" selected>Este Mês</option>
+                                <option value="lastMonth">Mês Anterior</option>
+                                <option value="thisYear">Este Ano</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                        <div id="customDateRange" class="hidden md:flex flex-col md:flex-row gap-4 flex-1">
+                            <div class="w-full">
+                                <label for="reportStartDate" class="block text-sm font-medium text-gray-700">De</label>
+                                <input type="date" id="reportStartDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="w-full">
+                                <label for="reportEndDate" class="block text-sm font-medium text-gray-700">Até</label>
+                                <input type="date" id="reportEndDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="generateCustomReportBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg w-full md:w-auto">Gerar</button>
+                        </div>
+                    </div>
+                    <div id="customReportResults" class="hidden mt-6 space-y-4">
+                        <h4 class="font-semibold text-gray-800">Resultados para o período:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta</h4>
+                                <p id="custom-report-bruto" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
+                                <p id="custom-report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
+                                <p id="custom-report-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                            </div>
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
+                                <p id="custom-report-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="custom-report-loading" class="text-gray-500 hidden mt-4">A gerar relatório...</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Resumo do Mês Anterior</h3>
+                    <div id="lastMonthReport" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta</h4>
+                            <p id="report-faturamento-bruto" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
+                            <p id="report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
+                            <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        </div>
+                         <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
+                            <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                        </div>
+                    </div>
+                    <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
+                    <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+                        <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="companyPage" class="page-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
+                        <form id="goalsForm" class="space-y-4">
+                            <div>
+                                <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
+                                <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
+                            </div>
+                            <div>
+                                <label for="goal-prospeccao" class="block text-sm font-medium text-gray-700">Meta de Prospeção (Novos Leads)</label>
+                                <input type="number" id="goal-prospeccao" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="5">
+                            </div>
+                            <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
+                        </form>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
                         <div class="space-y-6">
                             <div>
                                 <div class="flex justify-between items-end mb-1">
                                     <span class="text-sm font-medium text-gray-700">Faturação Bruta</span>
-                                    <span id="faturamento-label-dash" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
+                                    <span id="faturamento-label" class="text-sm font-medium text-gray-900">R$ 0,00 / R$ 0,00</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div id="faturamento-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                    <div id="faturamento-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex justify-between items-end mb-1">
                                     <span class="text-sm font-medium text-gray-700">Novos Leads (Mês)</span>
-                                    <span id="prospeccao-label-dash" class="text-sm font-medium text-gray-900">0 / 0</span>
+                                    <span id="prospeccao-label" class="text-sm font-medium text-gray-900">0 / 0</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div id="prospeccao-progress-dash" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                                    <div id="prospeccao-progress" class="bg-rocket-yellow-400 h-4 rounded-full" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </main>
+        
+    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
-                            <p id="kpi-faturamento-liquido" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+    <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <form id="clientForm">
+                <input type="hidden" id="clientId">
+                <input type="hidden" id="conversionSource" value="">
+                <div class="p-6">
+                    <h3 id="clientModalTitle" class="text-xl font-semibold text-gray-800 mb-4">Novo Cliente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Nome da Empresa</label>
+                            <input type="text" id="clientNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta (Mês)</h3>
-                            <p id="kpi-faturamento-bruto" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" id="clientPhoneInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase">Despesas (Mês)</h3>
-                            <p id="kpi-despesas" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Início</label>
+                            <input type="date" id="clientStartDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase">Clientes Ativos</h3>
-                            <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Término</label>
+                            <input type="date" id="clientEndDateInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos a Vencer (30 dias)</h3>
-                            <div id="alertas-contratos" class="space-y-3 max-h-48 overflow-y-auto">
-                                <p class="text-gray-500">Nenhum contrato a vencer.</p>
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Valor Total (Projeto)</label>
+                            <input type="number" step="0.01" id="clientValueInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos a Vencer (7 dias)</h3>
-                            <div id="alertas-pagamentos" class="space-y-3 max-h-48 overflow-y-auto">
-                                <p class="text-gray-500">Nenhum pagamento a vencer esta semana.</p>
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="clientStatusInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pausado">Pausado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tipo de Pagamento</label>
+                            <select id="clientPaymentTypeInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="unico">Valor Único</option>
+                                <option value="parcelado">Parcelado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nº de Parcelas</label>
+                            <input type="number" id="clientInstallmentsInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: 12" disabled>
                         </div>
                     </div>
                 </div>
-
-                <div id="prospectsPage" class="page-content"> 
-                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
-                        <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
-                        <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
-                            <i data-lucide="plus"></i>
-                            <span>Novo Prospect</span>
-                        </button>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-gray-100 rounded-lg shadow-inner">
-                            <div class="p-4 border-b-2 border-gray-300">
-                                <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                                    <i data-lucide="search-check" class="w-5 h-5 text-blue-600"></i>
-                                    Prospecção
-                                    <span id="kanban-count-prospeccao" class="text-sm font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">0</span>
-                                </h3>
-                            </div>
-                            <div id="kanban-col-prospeccao" class="p-4 space-y-4">
-                            </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeClientModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <form id="prospectForm">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Novo Prospect</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nome</label>
+                            <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
-                        <div class="bg-gray-100 rounded-lg shadow-inner">
-                            <div class="p-4 border-b-2 border-gray-300">
-                                <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                                    <i data-lucide="phone-outgoing" class="w-5 h-5 text-yellow-600"></i>
-                                    Contato Feito
-                                    <span id="kanban-count-contato" class="text-sm font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">0</span>
-                                </h3>
-                            </div>
-                            <div id="kanban-col-contato" class="p-4 space-y-4">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
-                        <div class="bg-gray-100 rounded-lg shadow-inner">
-                            <div class="p-4 border-b-2 border-gray-300">
-                                <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                                    <i data-lucide="handshake" class="w-5 h-5 text-green-600"></i>
-                                    Negociando
-                                    <span id="kanban-count-negociando" class="text-sm font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">0</span>
-                                </h3>
-                            </div>
-                            <div id="kanban-col-negociando" class="p-4 space-y-4">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Origem</label>
+                            <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
                         </div>
-                    </div>
-                    </div>
-
-                <div id="clientsPage" class="page-content">
-                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
-                        <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
-                        <button id="showAddClientModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
-                            <i data-lucide="user-plus"></i>
-                            <span>Novo Cliente (Manual)</span>
-                        </button>
-                    </div>
-                    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Término do Contrato</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clients-list-table" class="bg-white divide-y divide-gray-200">
-                            </tbody>
-                        </table>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                </div>
+                        </div>
                     </div>
                 </div>
-
-                <div id="clientDetailPage" class="page-content">
-                    <button data-page="clientsPage" class="nav-link text-rocket-yellow-600 hover:text-rocket-yellow-500 font-semibold mb-4 flex items-center gap-2">
-                        <i data-lucide="arrow-left"></i>
-                        Voltar para Clientes
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeProspectModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Prospect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-6 border-b">
+                <h3 id="prospectDetailModalTitle" class="text-xl font-semibold text-gray-800">Detalhes do Prospect</h3>
+            </div>
+            <div class="px-6 border-b border-gray-200">
+                <nav class="flex space-x-4 -mb-px" aria-label="Tabs">
+                    <button data-tab="details" class="modal-tab-link active-tab">Detalhes</button>
+                    <button data-tab="history" class="modal-tab-link">Histórico</button>
+                    <button data-tab="ai" class="modal-tab-link">Análise IA</button>
+                </nav>
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div id="detailsTab" class="modal-tab-content active space-y-4">
+                    <form id="prospectDetailForm" class="space-y-4">
+                        <input type="hidden" id="prospectDetailId">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nome</label>
+                                <input type="text" id="prospectDetailName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="prospectDetailStatus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="prospeccao">Prospeção</option>
+                                    <option value="contato">Contato Feito</option>
+                                    <option value="negociando">Negociando</option>
+                                    <option value="fechado">Fechado</option>
+                                    <option value="perdido">Perdido</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nível de Interesse</label>
+                                <select id="prospectDetailInterestLevel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="Nenhum">Nenhum</option>
+                                    <option value="Frio">Frio ❄️</option>
+                                    <option value="Morno">Morno 🔥</option>
+                                    <option value="Quente">Quente 🔥🔥</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Próxima Ação</label>
+                                <input type="text" id="prospectDetailNextAction" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Ligar para follow-up">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Data da Ação</label>
+                                <input type="date" id="prospectDetailActionDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Link Instagram</label>
+                                <input type="url" id="prospectDetailInstaLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://instagram.com/...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Link Google Meu Negócio</label>
+                                <input type="url" id="prospectDetailGMNLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://maps.app.goo.gl/...">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Origem</label>
+                                <input type="text" id="prospectDetailOrigin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Etiqueta (Tag)</label>
+                                <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
+                            <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="historyTab" class="modal-tab-content space-y-4">
+                    <form id="addProspectNoteForm">
+                        <label class="block text-sm font-medium text-gray-700">Adicionar Comentário</label>
+                        <textarea id="prospectDetailNewNote" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Liguei, não atendeu. Tentar novamente amanhã."></textarea>
+                        <button type="submit" class="mt-2 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg text-sm">Adicionar Comentário</button>
+                    </form>
+                    <h4 class="text-md font-semibold text-gray-800 border-t pt-4">Histórico de Atividades</h4>
+                    <div id="prospectDetailNotesList" class="space-y-3 max-h-64 overflow-y-auto">
+                        <p class="text-gray-500 text-sm">Nenhum comentário adicionado.</p>
+                        </div>
+                </div>
+                <div id="aiTab" class="modal-tab-content space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Sua Chave da API (Gemini)</label>
+                        <input type="password" id="geminiApiKeyInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Cole a sua API Key aqui">
+                        <p class="text-xs text-gray-500 mt-1">Sua chave é salva localmente e usada apenas para esta análise.</p>
+                    </div>
+                    <button id="generateGeminiAnalysisBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                        <i data-lucide="sparkles"></i>
+                        <span>Analisar Posicionamento</span>
                     </button>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h2 id="detail-client-name" class="text-3xl font-bold text-gray-800">Nome do Cliente</h2>
-                                <p id="detail-client-phone" class="text-gray-600 mt-1"></p>
-                            </div>
-                            <button id="editClientBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
-                                <i data-lucide="edit-2"></i>
-                                <span>Editar</span>
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 border-t pt-4">
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Status</h4>
-                                <p id="detail-client-status" class="text-lg font-semibold text-green-600">Ativo</p>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Valor do Projeto</h4>
-                                <p id="detail-client-value" class="text-lg font-semibold text-gray-800">R$ 0,00</p>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Dias Restantes</h4>
-                                <p id="detail-client-days" class="text-lg font-semibold text-gray-800">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6 border-b border-gray-200">
-                        <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
-                            <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Financeiro</button>
-                            <button data-tab="tasks" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Tarefas</button>
-                            <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
-                        </nav>
-                    </div>
-
-                    <div id="financialTab" class="tab-content">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Histórico de Pagamentos</h3>
-                                <div id="payments-list" class="space-y-3 max-h-96 overflow-y-auto">
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Adicionar Serviço (Upsell)</h3>
-                                <form id="addPaymentForm" class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
-                                        <input type="text" id="paymentDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Consultoria SEO" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
-                                        <input type="number" step="0.01" id="paymentValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Data Vencimento</label>
-                                        <input type="date" id="paymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                    </div>
-                                    <div class="flex items-center pt-2">
-                                        <input type="checkbox" id="paymentIsUpsell" class="h-4 w-4 rounded border-gray-300 text-rocket-yellow-400 focus:ring-rocket-yellow-300" checked>
-                                        <label for="paymentIsUpsell" class="ml-2 block text-sm text-gray-700">Registar como Venda (Upsell)</label>
-                                    </div>
-                                    <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Serviço</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="tasksTab" class="tab-content hidden">
-                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Checklist de Tarefas</h3>
-                                <div id="tasks-list" class="space-y-3">
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Tarefa</h3>
-                                <form id="addTaskForm" class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
-                                        <input type="text" id="taskDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                    </div>
-                                    <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Adicionar Tarefa</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="credentialsTab" class="tab-content hidden">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Credenciais e Senhas</h3>
-                                <div id="credentials-list" class="space-y-3">
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Nova Credencial</h3>
-                                <form id="addCredentialForm" class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Serviço</label>
-                                        <input type="text" id="credService" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hospedagem, Google" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Login</label>
-                                        <input type="text" id="credLogin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Senha</label>
-                                        <input type="text" id="credPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                    </div>
-                                    <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Senha</button>
-                                </form>
-                            </div>
-                        </div>
+                    <div id="geminiAnalysisResult" class="p-4 bg-gray-50 rounded-md border min-h-[150px] overflow-y-auto">
+                        <p class="text-gray-500 text-sm">A análise da IA aparecerá aqui. Certifique-se de que os links do Instagram e GMN estão preenchidos na aba "Detalhes".</p>
                     </div>
                 </div>
-
-                <div id="receivablesPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Contas a Receber</h2>
-
-                    <div class="mb-6 border-b border-gray-200">
-                        <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
-                            <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Contas a Receber</button>
-                            <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
-                        </nav>
-                    </div>
-
-                    <div id="accountsReceivableTab" class="finance-tab-content">
-                        <div class="grid grid-cols-1 gap-6">
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Atrasados</h3>
-                                <div id="late-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
-                                    <p class="text-gray-500">Nenhum pagamento atrasado.</p>
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Previstos</h3>
-                                <div id="upcoming-payments-list" class="space-y-3 max-h-96 overflow-y-auto">
-                                    <p class="text-gray-500">Nenhum pagamento previsto.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="paidThisMonthTab" class="finance-tab-content hidden">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Confirmados (Mês Atual)</h3>
-                            <div id="paid-this-month-list" class="space-y-3 max-h-96 overflow-y-auto">
-                                <p class="text-gray-500">Nenhum pagamento registado como pago este mês.</p>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <div class="bg-gray-50 p-4 flex justify-between gap-3 border-t">
+                <div>
+                    <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+                    <button type="button" id="convertProspectBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg hidden">Converter em Cliente</button>
                 </div>
-                
-                <div id="expensesPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Controlo de Despesas</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Despesas (Mês Atual)</h3>
-                            <div id="expenses-list" class="space-y-3 max-h-96 overflow-y-auto">
-                                <p class="text-gray-500">Nenhuma despesa registada este mês.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md h-fit">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Registar Despesa</h3>
-                            <form id="addExpenseForm" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Descrição</label>
-                                    <input type="text" id="expenseDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Imposto, Ferramenta SaaS" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
-                                    <input type="number" step="0.01" id="expenseValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Data da Despesa</label>
-                                    <input type="date" id="expenseDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                                </div>
-                                <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Registar Despesa</button>
-                            </form>
-                        </div>
-                    </div>
+                <div>
+                    <button type="button" id="closeProspectDetailModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" form="prospectDetailForm" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar Alterações</button>
                 </div>
-
-                <div id="globalTasksPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Todas as Tarefas</h2>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Checklist Completo</h3>
-                            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                                <select id="globalTaskClientFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
-                                    <option value="all">Todos os Clientes</option>
-                                </select>
-                                <select id="globalTaskStatusFilter" class="p-2 border border-gray-300 rounded-md text-sm w-full">
-                                    <option value="all">Todos os Status</option>
-                                    <option value="A Fazer">A Fazer</option>
-                                    <option value="Feito">Feito</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="global-tasks-list" class="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto">
-                            <p class="text-gray-500">Nenhuma tarefa encontrada.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="reportsPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Relatório de Faturação Personalizado</h3>
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div class="flex-1">
-                                <label for="reportPeriodSelect" class="block text-sm font-medium text-gray-700">Período</label>
-                                <select id="reportPeriodSelect" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="today">Hoje</option>
-                                    <option value="last7">Últimos 7 dias</option>
-                                    <option value="thisMonth" selected>Este Mês</option>
-                                    <option value="lastMonth">Mês Anterior</option>
-                                    <option value="thisYear">Este Ano</option>
-                                    <option value="custom">Personalizado</option>
-                                </select>
-                            </div>
-                            <div id="customDateRange" class="hidden md:flex flex-col md:flex-row gap-4 flex-1">
-                                <div class="w-full">
-                                    <label for="reportStartDate" class="block text-sm font-medium text-gray-700">De</label>
-                                    <input type="date" id="reportStartDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                </div>
-                                <div class="w-full">
-                                    <label for="reportEndDate" class="block text-sm font-medium text-gray-700">Até</label>
-                                    <input type="date" id="reportEndDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                </div>
-                            </div>
-                            <div class="flex items-end">
-                                <button id="generateCustomReportBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg w-full md:w-auto">Gerar</button>
-                            </div>
-                        </div>
-                        <div id="customReportResults" class="hidden mt-6 space-y-4">
-                            <h4 class="font-semibold text-gray-800">Resultados para o período:</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta</h4>
-                                    <p id="custom-report-bruto" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
-                                    <p id="custom-report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
-                                    <p id="custom-report-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                                </div>
-                                 <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
-                                    <p id="custom-report-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p id="custom-report-loading" class="text-gray-500 hidden mt-4">A gerar relatório...</p>
-                    </div>
-
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Resumo do Mês Anterior</h3>
-                        <div id="lastMonthReport" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta</h4>
-                                <p id="report-faturamento-bruto" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Despesas</h4>
-                                <p id="report-despesas" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida</h4>
-                                <p id="report-faturamento-liquido" class="text-2xl font-bold text-gray-900 mt-2">R$ 0,00</p>
-                            </div>
-                             <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-500 uppercase">Novos Leads</h4>
-                                <p id="report-novos-leads" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                            </div>
-                        </div>
-                        <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
-                        <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
-                            <p id="client-revenue-loading" class="text-gray-500">A calcular faturação por cliente...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="companyPage" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
-                            <form id="goalsForm" class="space-y-4">
-                                <div>
-                                    <label for="goal-faturamento" class="block text-sm font-medium text-gray-700">Meta de Faturação Bruta (R$)</label>
-                                    <input type="number" id="goal-faturamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="20000">
-                                </div>
-                                <div>
-                                    <label for="goal-prospeccao" class="block text-sm font-medium text-gray-7
+            </div>
+        </div>
+    </div>
+    <div id="deleteModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-6 text-center">
+                <i data-lucide="alert-triangle" class="mx-auto h-12 w-12 text-red-500"></i>
+                <h3 class="text-lg font-medium text-gray-900 mt-4">Confirmar Exclusão</h3>
+                <p id="deleteModalText" class="text-sm text-gray-500 mt-2">Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="bg-gray-50 p-4 flex justify-center gap-3">
+                <button type="button" id="cancelDeleteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="./app.js"></script>
+    
+</body>
+</html>
