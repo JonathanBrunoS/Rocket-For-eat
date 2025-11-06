@@ -1016,7 +1016,7 @@
         let currentProspectId = null; 
         let currentDeleteInfo = null; 
         let allClientsData = {}; 
-        let dashTotals = { bruto: 0, despesas: 0, recebido: 0 }; 
+        let dashTotals = { bruto: 0, despesas: 0, recebido: 0, novosClientes: 0, novosLeads: 0, valorNovosClientes: 0, clientesAtivos: 0, clientesInativos: 0 }; 
 
         // --- FUNÇÕES DE UTILIDADE ---
         
@@ -2115,8 +2115,10 @@
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
-                    telefone: document.getElementById('prospectPhoneInput').value, // NOVO: Telefone/WhatsApp
-                    observacoes: document.getElementById('prospectNotesInput').value, // NOVO: Observações
+                    telefone: document.getElementById('prospectPhoneInput').value,
+                    segmento: document.getElementById('prospectSegmentInput').value, // NOVO: Segmento
+                    faturamentoEstimado: parseFloat(document.getElementById('prospectEstimatedValueInput').value) || 0, // NOVO: Faturamento Estimado
+                    observacoes: document.getElementById('prospectNotesInput').value,
                     origem: document.getElementById('prospectOriginInput').value,
                     services: getSelectedServices('prospectServicesCheckboxes'),
                     status: 'prospeccao', 
@@ -2163,7 +2165,9 @@
                     document.getElementById('prospectDetailId').value = prospectId;
                     document.getElementById('prospectDetailModalTitle').textContent = data.nome || 'Detalhes do Prospect';
                     document.getElementById('prospectDetailName').value = data.nome || '';
-                    document.getElementById('prospectDetailPhone').value = data.telefone || ''; // NOVO: Telefone/WhatsApp
+                    document.getElementById('prospectDetailPhone').value = data.telefone || '';
+                    document.getElementById('prospectDetailSegment').value = data.segmento || ''; // NOVO: Segmento
+                    document.getElementById('prospectDetailEstimatedValue').value = data.faturamentoEstimado || 0; // NOVO: Faturamento Estimado
                     document.getElementById('prospectDetailOrigin').value = data.origem || '';
                     document.getElementById('prospectDetailLabel').value = data.label || '';
                     document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
@@ -2173,7 +2177,7 @@
                     document.getElementById('prospectDetailActionDate').value = data.nextActionDate || '';
                     document.getElementById('prospectDetailInstaLink').value = data.instaLink || '';
                     document.getElementById('prospectDetailGMNLink').value = data.gmnLink || '';
-                    document.getElementById('prospectDetailNotes').value = data.observacoes || ''; // NOVO: Observações
+                    document.getElementById('prospectDetailNotes').value = data.observacoes || '';
                     
                     renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
                     
@@ -2208,7 +2212,9 @@
             
             const dataToUpdate = {
                 nome: document.getElementById('prospectDetailName').value,
-                telefone: document.getElementById('prospectDetailPhone').value, // NOVO: Telefone/WhatsApp
+                telefone: document.getElementById('prospectDetailPhone').value,
+                segmento: document.getElementById('prospectDetailSegment').value, // NOVO: Segmento
+                faturamentoEstimado: parseFloat(document.getElementById('prospectDetailEstimatedValue').value) || 0, // NOVO: Faturamento Estimado
                 origem: document.getElementById('prospectDetailOrigin').value,
                 label: document.getElementById('prospectDetailLabel').value,
                 status: newStatus,
@@ -2219,7 +2225,7 @@
                 nextActionDate: document.getElementById('prospectDetailActionDate').value,
                 instaLink: document.getElementById('prospectDetailInstaLink').value,
                 gmnLink: document.getElementById('prospectDetailGMNLink').value,
-                observacoes: document.getElementById('prospectDetailNotes').value, // NOVO: Observações
+                observacoes: document.getElementById('prospectDetailNotes').value,
             };
             
             try {
