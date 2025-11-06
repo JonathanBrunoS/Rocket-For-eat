@@ -2115,14 +2115,15 @@
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
-                    email: document.getElementById('prospectEmailInput').value,
+                    telefone: document.getElementById('prospectPhoneInput').value, // NOVO: Telefone/WhatsApp
+                    observacoes: document.getElementById('prospectNotesInput').value, // NOVO: Observações
                     origem: document.getElementById('prospectOriginInput').value,
                     services: getSelectedServices('prospectServicesCheckboxes'),
                     status: 'prospeccao', 
                     createdAt: new Date().toISOString(), 
                     label: '', 
-                    // NOVO: Adiciona campos do Super-Modal como vazios
-                    notes: [], // Agora é um array para o histórico
+                    // Campos do Super-Modal
+                    notes: [], 
                     interestLevel: 'Nenhum',
                     nextAction: '',
                     nextActionDate: '',
@@ -2162,7 +2163,7 @@
                     document.getElementById('prospectDetailId').value = prospectId;
                     document.getElementById('prospectDetailModalTitle').textContent = data.nome || 'Detalhes do Prospect';
                     document.getElementById('prospectDetailName').value = data.nome || '';
-                    document.getElementById('prospectDetailEmail').value = data.email || '';
+                    document.getElementById('prospectDetailPhone').value = data.telefone || ''; // NOVO: Telefone/WhatsApp
                     document.getElementById('prospectDetailOrigin').value = data.origem || '';
                     document.getElementById('prospectDetailLabel').value = data.label || '';
                     document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
@@ -2172,6 +2173,7 @@
                     document.getElementById('prospectDetailActionDate').value = data.nextActionDate || '';
                     document.getElementById('prospectDetailInstaLink').value = data.instaLink || '';
                     document.getElementById('prospectDetailGMNLink').value = data.gmnLink || '';
+                    document.getElementById('prospectDetailNotes').value = data.observacoes || ''; // NOVO: Observações
                     
                     renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
                     
@@ -2206,7 +2208,7 @@
             
             const dataToUpdate = {
                 nome: document.getElementById('prospectDetailName').value,
-                email: document.getElementById('prospectDetailEmail').value,
+                telefone: document.getElementById('prospectDetailPhone').value, // NOVO: Telefone/WhatsApp
                 origem: document.getElementById('prospectDetailOrigin').value,
                 label: document.getElementById('prospectDetailLabel').value,
                 status: newStatus,
@@ -2217,6 +2219,7 @@
                 nextActionDate: document.getElementById('prospectDetailActionDate').value,
                 instaLink: document.getElementById('prospectDetailInstaLink').value,
                 gmnLink: document.getElementById('prospectDetailGMNLink').value,
+                observacoes: document.getElementById('prospectDetailNotes').value, // NOVO: Observações
             };
             
             try {
