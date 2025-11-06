@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM Rocket</title>
+    <!-- Tailwind via CDN (apenas para desenvolvimento) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
    
@@ -115,7 +116,7 @@
 </head>
 <body class="bg-gray-100">
 
-    <!-- Tela de Login (simulada) -->
+    <!-- Tela de Carregamento -->
     <div id="auth-page" class="page active">
         <div class="flex min-h-screen items-center justify-center bg-rocket-dark text-white p-4">
             <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
@@ -126,9 +127,9 @@
     </div>
 
     <!-- App Principal -->
-    <div id="app-page" class="page hidden">
+    <div id="app-page" class="page">
         <div class="flex h-screen">
-            <!-- Sidebar -->
+            <!-- Sidebar Desktop -->
             <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
                 <div class="p-4 rounded-lg mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo" class="w-auto h-12 mx-auto">
@@ -146,7 +147,7 @@
                 </nav>
             </aside>
 
-            <!-- Mobile Menu -->
+            <!-- Menu Mobile -->
             <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
                 <div class="flex justify-between items-center mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo" class="w-auto h-10">
@@ -159,7 +160,7 @@
                 </nav>
             </div>
 
-            <!-- Main Content -->
+            <!-- Conteúdo -->
             <main class="flex-1 overflow-y-auto p-4 md:p-8">
                 <div class="md:hidden flex justify-between items-center mb-4">
                     <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
@@ -170,8 +171,7 @@
                 <div id="dashboardPage" class="page-content active">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                     <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-lg font-semibold mb-4">Bem-vindo de volta!</h3>
-                        <p>Tudo funcionando. Clique em "Prospecção" para começar.</p>
+                        <p class="text-lg">Tudo funcionando! Clique em <strong>Prospecção</strong> para começar.</p>
                     </div>
                 </div>
 
@@ -185,21 +185,22 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto">
-                        <div id="kanban-col-novo" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                        <div class="kanban-column bg-gray-50 p-4 rounded-lg">
                             <h3 class="font-semibold text-gray-700 mb-3">Novo</h3>
-                            <div class="space-y-3" id="col-novo"></div>
+                            <div id="col-novo" class="space-y-3"></div>
                         </div>
-                        <div id="kanban-col-contato" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                        <div class="kanban-column bg-gray-50 p-4 rounded-lg">
                             <h3 class="font-semibold text-gray-700 mb-3">Contato Inicial</h3>
-                            <div class="space-y-3" id="col-contato"></div>
+                            <div id="col-contato" class="space-y-3"></div>
                         </div>
-                        <div id="kanban-col-proposta" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                        <div class="kanban-column bg-gray-50 p-4 rounded-lg">
                             <h3 class="font-semibold text-gray-700 mb-3">Proposta Enviada</h3>
-                            <div class="space-y-3" id="col-proposta"></div>
+                            <div id="col-proposta" class="space-y-3"></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Clientes -->
                 <div id="clientsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6">Clientes</h2>
                     <p>Em breve...</p>
@@ -209,7 +210,7 @@
     </div>
 
     <!-- Modal Prospect -->
-    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center hidden">
+    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto m-4">
             <div class="p-6 border-b">
                 <div class="flex justify-between items-center">
@@ -231,12 +232,12 @@
                     <form id="prospectForm">
                         <input type="hidden" id="prospectId">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <input type="text" id="prospectName" placeholder="Nome" class="px-3 py-2 border rounded-md" required>
-                            <input type="text" id="prospectCompany" placeholder="Empresa" class="px-3 py-2 border rounded-md">
-                            <input type="email" id="prospectEmail" placeholder="Email" class="px-3 py-2 border rounded-md">
-                            <input type="tel" id="prospectPhone" placeholder="Telefone" class="px-3 py-2 border rounded-md">
-                            <input type="number" id="prospectValue" placeholder="Valor Estimado" step="0.01" class="px-3 py-2 border rounded-md">
-                            <select id="prospectStatus" class="px-3 py-2 border rounded-md">
+                            <input type="text" id="prospectName" placeholder="Nome" class="px-3 py-2 border rounded-md w-full" required>
+                            <input type="text" id="prospectCompany" placeholder="Empresa" class="px-3 py-2 border rounded-md w-full">
+                            <input type="email" id="prospectEmail" placeholder="Email" class="px-3 py-2 border rounded-md w-full">
+                            <input type="tel" id="prospectPhone" placeholder="Telefone" class="px-3 py-2 border rounded-md w-full">
+                            <input type="number" id="prospectValue" placeholder="Valor Estimado" step="0.01" class="px-3 py-2 border rounded-md w-full">
+                            <select id="prospectStatus" class="px-3 py-2 border rounded-md w-full">
                                 <option value="novo">Novo</option>
                                 <option value="contato">Contato Inicial</option>
                                 <option value="proposta">Proposta Enviada</option>
@@ -244,7 +245,7 @@
                         </div>
                         <div class="flex justify-end gap-3">
                             <button type="button" id="cancelBtn" class="px-4 py-2 border rounded-md">Cancelar</button>
-                            <button type="submit" id="saveBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">
+                            <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">
                                 Salvar
                             </button>
                         </div>
@@ -257,46 +258,44 @@
                         <textarea id="newNote" placeholder="Escreva uma nota..." class="w-full px-3 py-2 border rounded-md" rows="3"></textarea>
                         <button id="addNoteBtn" class="mt-2 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Adicionar</button>
                     </div>
-                    <div id="notesContainer"></div>
+                    <div id="notesContainer" class="space-y-3"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Dados mockados (seus dados "antigos")
-        let prospects = [
+        // Dados locais (seus prospects)
+        let prospects = JSON.parse(localStorage.getItem('crm-prospects')) || [
             { id: 1, name: "João Silva", company: "TechCorp", email: "joao@tech.com", phone: "(11) 98765-4321", value: 5000, status: "novo", notes: [] },
             { id: 2, name: "Maria Oliveira", company: "Inova Ltda", email: "maria@inova.com", phone: "(19) 91234-5678", value: 12000, status: "contato", notes: [{ text: "Interessada no plano premium", date: new Date().toISOString() }] }
         ];
 
         let currentProspect = null;
 
-        // DOM Loaded
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
 
-            // Simula login
+            // Simula carregamento
             setTimeout(() => {
-                document.getElementById('auth-page').classList.add('hidden');
-                document.getElementById('app-page').classList.remove('hidden');
+                document.getElementById('auth-page').classList.remove('active');
+                document.getElementById('app-page').classList.add('active');
                 loadProspects();
-            }, 1000);
+                activatePage('dashboardPage');
+            }, 800);
 
-            setupNavigation();
-            setupModal();
-            setupKanban();
+            setupEvents();
         });
 
-        function setupNavigation() {
+        function setupEvents() {
+            // Navegação
             document.querySelectorAll('.nav-link').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const page = btn.dataset.page;
-                    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-                    document.getElementById(page).classList.add('active');
-                    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active-nav'));
-                    btn.classList.add('active-nav');
-                    if (window.innerWidth < 768) document.getElementById('mobileMenu').classList.add('hidden');
+                    activatePage(page);
+                    if (window.innerWidth < 768) {
+                        document.getElementById('mobileMenu').classList.add('hidden');
+                    }
                 });
             });
 
@@ -306,15 +305,12 @@
             document.getElementById('closeMobileMenuBtn')?.addEventListener('click', () => {
                 document.getElementById('mobileMenu').classList.add('hidden');
             });
-        }
 
-        function setupModal() {
+            // Modal
             const modal = document.getElementById('prospectModal');
-            const close = () => modal.classList.remove('active');
-
-            document.getElementById('closeProspectModal').onclick = close;
-            document.getElementById('cancelBtn').onclick = close;
-            modal.onclick = (e) => { if (e.target === modal) close(); };
+            document.getElementById('closeProspectModal').onclick = () => modal.classList.remove('active');
+            document.getElementById('cancelBtn').onclick = () => modal.classList.remove('active');
+            modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('active'); };
 
             // Abas
             document.querySelectorAll('.modal-tab-link').forEach(tab => {
@@ -326,7 +322,7 @@
                 };
             });
 
-            // Novo prospect
+            // Novo Prospect
             document.getElementById('addProspectBtn').onclick = () => openProspectModal();
 
             // Salvar
@@ -347,19 +343,28 @@
                 if (index >= 0) prospects[index] = data;
                 else prospects.push(data);
 
+                localStorage.setItem('crm-prospects', JSON.stringify(prospects));
                 loadProspects();
-                close();
+                modal.classList.remove('active');
             };
 
-            // Adicionar nota
+            // Nota
             document.getElementById('addNoteBtn').onclick = () => {
                 const text = document.getElementById('newNote').value.trim();
                 if (text && currentProspect) {
                     currentProspect.notes.push({ text, date: new Date().toISOString() });
+                    localStorage.setItem('crm-prospects', JSON.stringify(prospects));
                     loadNotes();
                     document.getElementById('newNote').value = '';
                 }
             };
+        }
+
+        function activatePage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active-nav'));
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active-nav');
         }
 
         function openProspectModal(prospect = null) {
@@ -380,8 +385,7 @@
         function loadNotes() {
             const container = document.getElementById('notesContainer');
             container.innerHTML = '';
-            const notes = currentProspect?.notes || [];
-            notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const notes = (currentProspect?.notes || []).sort((a, b) => new Date(b.date) - new Date(a.date));
             notes.forEach(note => {
                 const div = document.createElement('div');
                 div.className = 'comment-item';
@@ -390,30 +394,23 @@
             });
         }
 
-        function setupKanban() {
-            prospects.forEach(p => {
-                const card = createCard(p);
-                document.getElementById(`col-${p.status}`).appendChild(card);
-            });
-        }
-
-        function createCard(p) {
-            const card = document.createElement('div');
-            card.className = 'bg-white p-4 rounded-lg shadow cursor-pointer hover:shadow-md';
-            card.innerHTML = `
-                <h4 class="font-semibold">${p.name}</h4>
-                <p class="text-sm text-gray-600">${p.company}</p>
-                <p class="text-sm font-medium text-rocket-yellow-600">R$ ${p.value.toFixed(2)}</p>
-            `;
-            card.onclick = () => openProspectModal(p);
-            return card;
-        }
-
         function loadProspects() {
-            document.querySelectorAll('[id^="col-"]').forEach(col => col.innerHTML = '');
-            prospects.forEach(p => {
-                const card = createCard(p);
-                document.getElementById(`col-${p.status}`).appendChild(card);
+            ['novo', 'contato', 'proposta'].forEach(status => {
+                const col = document.getElementById(`col-${status}`);
+                col.innerHTML = '';
+                prospects
+                    .filter(p => p.status === status)
+                    .forEach(p => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-4 rounded-lg shadow cursor-pointer hover:shadow-md';
+                        card.innerHTML = `
+                            <h4 class="font-semibold">${p.name}</h4>
+                            <p class="text-sm text-gray-600">${p.company}</p>
+                            <p class="text-sm font-medium text-rocket-yellow-600">R$ ${p.value.toFixed(2)}</p>
+                        `;
+                        card.onclick = () => openProspectModal(p);
+                        col.appendChild(card);
+                    });
             });
         }
     </script>
