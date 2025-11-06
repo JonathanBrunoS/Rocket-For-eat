@@ -792,10 +792,6 @@
                             <input type="text" id="prospectNameInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="prospectEmailInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-700">Origem</label>
                             <input type="text" id="prospectOriginInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: LinkedIn, Indicação">
                         </div>
@@ -803,6 +799,18 @@
                             <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
                             <div id="prospectServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Endereço para Visita</label>
+                            <input type="text" id="prospectAddressInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Rua Exemplo, 123, Bairro, Cidade">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Observações/Insights para Reunião</label>
+                            <textarea id="prospectInsightsInput" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Cardápio desatualizado, baixa presença online, concorrente fraco..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Imagens (cole links separados por vírgula)</label>
+                            <input type="text" id="prospectImagesInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: https://exemplo.com/imagem1.jpg, https://exemplo.com/imagem2.jpg">
                         </div>
                     </div>
                 </div>
@@ -866,21 +874,6 @@
                                 <input type="date" id="prospectDetailActionDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Link Instagram</label>
-                                <input type="url" id="prospectDetailInstaLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://instagram.com/...">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Link Google Meu Negócio</label>
-                                <input type="url" id="prospectDetailGMNLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://maps.app.goo.gl/...">
-                            </div>
-                        </div>
-                       
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        </div>
                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -905,6 +898,10 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Observações/Insights para Reunião</label>
                             <textarea id="prospectDetailInsights" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Cardápio desatualizado, baixa presença online, concorrente fraco..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Imagens (cole links separados por vírgula)</label>
+                            <input type="text" id="prospectDetailImages" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: https://exemplo.com/imagem1.jpg, https://exemplo.com/imagem2.jpg">
                         </div>
                     </form>
                 </div>
@@ -987,9 +984,6 @@
         import {
             getAuth,
             onAuthStateChanged,
-            signInWithEmailAndPassword,
-            signOut,
-            signInWithCustomToken,
             signInAnonymously
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import {
@@ -1005,19 +999,9 @@
             collection,
             query,
             where,
-            orderBy, // NOVO: Para ordenar pagamentos
-            Timestamp,
+            orderBy,
             writeBatch
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // **********************************************************
-        // ***** ATENÇÃO: INTEGRAÇÃO DA API DO GEMINI *****
-        // **********************************************************
-        // Para a Análise de IA funcionar, descomente a linha abaixo
-        // e certifique-se de que a API Key está correta.
-       
-        // import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-       
-        // **********************************************************
         // --- VARIÁVEIS DE AMBIENTE (INJETADAS) ---
         const appId = 'crm-rocket-data';
        
@@ -1088,14 +1072,12 @@
         };
         const formatDate = (dateStr) => {
             if (!dateStr) return 'N/A';
-            // Trata data completa (ISO 2024-11-04T10:00:00) ou simples (YYYY-MM-DD)
             const cleanDateStr = dateStr.split('T')[0];
             const [year, month, day] = cleanDateStr.split('-');
             if (!year || !month || !day) return 'Data Inválida';
             return `${day}/${month}/${year}`;
         };
        
-        // NOVO: Formata Data e Hora (para comentários)
         const formatDateTime = (isoString) => {
             if (!isoString) return 'N/A';
             try {
@@ -2102,7 +2084,6 @@
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
-                    email: document.getElementById('prospectEmailInput').value,
                     origem: document.getElementById('prospectOriginInput').value,
                     services: getSelectedServices('prospectServicesCheckboxes'),
                     status: 'prospeccao',
@@ -2113,10 +2094,9 @@
                     interestLevel: 'Nenhum',
                     nextAction: '',
                     nextActionDate: '',
-                    instaLink: '',
-                    gmnLink: '',
-                    address: '',
-                    insights: '',
+                    address: document.getElementById('prospectAddressInput').value,
+                    insights: document.getElementById('prospectInsightsInput').value,
+                    images: document.getElementById('prospectImagesInput').value.split(',').map(img => img.trim()).filter(img => img),
                     ownerId: userId
                 });
                 hideModal('prospectModal');
@@ -2150,7 +2130,6 @@
                     document.getElementById('prospectDetailId').value = prospectId;
                     document.getElementById('prospectDetailModalTitle').textContent = data.nome || 'Detalhes do Prospect';
                     document.getElementById('prospectDetailName').value = data.nome || '';
-                    document.getElementById('prospectDetailEmail').value = data.email || '';
                     document.getElementById('prospectDetailOrigin').value = data.origem || '';
                     document.getElementById('prospectDetailLabel').value = data.label || '';
                     document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
@@ -2158,10 +2137,9 @@
                     document.getElementById('prospectDetailInterestLevel').value = data.interestLevel || 'Nenhum';
                     document.getElementById('prospectDetailNextAction').value = data.nextAction || '';
                     document.getElementById('prospectDetailActionDate').value = data.nextActionDate || '';
-                    document.getElementById('prospectDetailInstaLink').value = data.instaLink || '';
-                    document.getElementById('prospectDetailGMNLink').value = data.gmnLink || '';
                     document.getElementById('prospectDetailAddress').value = data.address || '';
                     document.getElementById('prospectDetailInsights').value = data.insights || '';
+                    document.getElementById('prospectDetailImages').value = data.images ? data.images.join(', ') : '';
                    
                     renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
                    
@@ -2191,7 +2169,6 @@
            
             const dataToUpdate = {
                 nome: document.getElementById('prospectDetailName').value,
-                email: document.getElementById('prospectDetailEmail').value,
                 origem: document.getElementById('prospectDetailOrigin').value,
                 label: document.getElementById('prospectDetailLabel').value,
                 status: newStatus,
@@ -2200,10 +2177,9 @@
                 interestLevel: document.getElementById('prospectDetailInterestLevel').value,
                 nextAction: document.getElementById('prospectDetailNextAction').value,
                 nextActionDate: document.getElementById('prospectDetailActionDate').value,
-                instaLink: document.getElementById('prospectDetailInstaLink').value,
-                gmnLink: document.getElementById('prospectDetailGMNLink').value,
                 address: document.getElementById('prospectDetailAddress').value,
-                insights: document.getElementById('prospectDetailInsights').value
+                insights: document.getElementById('prospectDetailInsights').value,
+                images: document.getElementById('prospectDetailImages').value.split(',').map(img => img.trim()).filter(img => img)
             };
            
             try {
