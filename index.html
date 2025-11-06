@@ -89,7 +89,6 @@
             color: #9ca3af;
         }
        
-        /* Mobile Otimizações */
         @media (max-width: 768px) {
             .grid-cols-1.md\\:grid-cols-3 {
                 grid-template-columns: repeat(3, minmax(250px, 1fr));
@@ -118,6 +117,7 @@
     </style>
 </head>
 <body class="bg-gray-100">
+    <!-- Tela de Autenticação -->
     <div id="auth-page" class="page active">
         <div class="flex min-h-screen items-center justify-center bg-rocket-dark text-white p-4">
             <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
@@ -127,8 +127,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Aplicação Principal -->
     <div id="app-page" class="page">
         <div class="flex h-screen">
+            <!-- Sidebar Desktop -->
             <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
                 <div class="p-4 rounded-lg mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
@@ -170,6 +173,7 @@
                 <div class="mt-auto"></div>
             </aside>
            
+            <!-- Menu Mobile -->
             <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
                  <div class="flex justify-between items-center mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
@@ -212,15 +216,19 @@
                     </button>
                  </nav>
             </div>
+
+            <!-- Conteúdo Principal -->
             <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
-               
+                <!-- Header Mobile -->
                 <div class="md:hidden flex justify-between items-center mb-4">
                     <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
                     <button id="mobileMenuBtn">
                         <i data-lucide="menu" class="w-6 h-6 text-rocket-dark"></i>
                     </button>
                 </div>
-                <div id="dashboardPage" class="page-content">
+
+                <!-- Dashboard -->
+                <div id="dashboardPage" class="page-content active">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
                    
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -246,6 +254,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
@@ -255,4 +264,312 @@
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Bruta (Mês)</h3>
                             <p id="kpi-faturamento-bruto" class="text-3xl font-bold text-gray-900 mt-2">R$ 0,00</p>
                         </div>
-                        <div class="bg-white p
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Leads Convertidos</h3>
+                            <p id="kpi-leads-convertidos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 uppercase">Tarefas Pendentes</h3>
+                            <p id="kpi-tarefas-pendentes" class="text-3xl font-bold text-gray-900 mt-2">0</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Atividade Recente</h3>
+                            <div id="recent-activity" class="space-y-3 text-sm text-gray-600">
+                                <p>Nenhuma atividade recente.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Próximas Tarefas</h3>
+                            <div id="upcoming-tasks" class="space-y-3 text-sm text-gray-600">
+                                <p>Nenhuma tarefa próxima.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prospecção -->
+                <div id="prospectsPage" class="page-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">Prospecção</h2>
+                        <button id="addProspectBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="plus"></i> Novo Prospect
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto">
+                        <div id="kanban-col-novo" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Novo</h3>
+                            <div class="space-y-3"></div>
+                        </div>
+                        <div id="kanban-col-contato" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Contato Inicial</h3>
+                            <div class="space-y-3"></div>
+                        </div>
+                        <div id="kanban-col-proposta" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Proposta Enviada</h3>
+                            <div class="space-y-3"></div>
+                        </div>
+                        <div id="kanban-col-negociacao" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Negociação</h3>
+                            <div class="space-y-3"></div>
+                        </div>
+                        <div id="kanban-col-fechado" class="kanban-column bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Fechado</h3>
+                            <div class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outras Páginas (esqueleto) -->
+                <div id="clientsPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Clientes</h2>
+                    <p>Lista de clientes será carregada aqui.</p>
+                </div>
+
+                <div id="receivablesPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Contas a Receber</h2>
+                    <p>Contas a receber serão listadas aqui.</p>
+                </div>
+
+                <div id="expensesPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Despesas</h2>
+                    <p>Despesas serão listadas aqui.</p>
+                </div>
+
+                <div id="globalTasksPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Tarefas Globais</h2>
+                    <p>Tarefas globais serão exibidas aqui.</p>
+                </div>
+
+                <div id="reportsPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Relatórios</h2>
+                    <p>Relatórios analíticos serão gerados aqui.</p>
+                </div>
+
+                <div id="companyPage" class="page-content">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Minha Empresa</h2>
+                    <p>Configurações da empresa serão exibidas aqui.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Prospect -->
+    <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 id="modalTitle" class="text-xl font-semibold text-gray-800">Novo Prospect</h3>
+                    <button id="closeProspectModal" class="text-gray-500 hover:text-gray-700">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="flex space-x-4 mb-6 border-b border-gray-200">
+                    <button class="modal-tab-link active-tab" data-tab="details">Detalhes</button>
+                    <button class="modal-tab-link" data-tab="notes">Notas</button>
+                    <button class="modal-tab-link" data-tab="tasks">Tarefas</button>
+                </div>
+
+                <!-- Aba Detalhes -->
+                <div id="tab-details" class="modal-tab-content active">
+                    <form id="prospectDetailForm">
+                        <input type="hidden" id="prospectId">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                                <input type="text" id="prospectName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+                                <input type="text" id="prospectCompany" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" id="prospectEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                                <input type="tel" id="prospectPhone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Estimado</label>
+                                <input type="number" id="prospectValue" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <select id="prospectStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400">
+                                    <option value="novo">Novo</option>
+                                    <option value="contato">Contato Inicial</option>
+                                    <option value="proposta">Proposta Enviada</option>
+                                    <option value="negociacao">Negociação</option>
+                                    <option value="fechado">Fechado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" id="cancelProspectBtn" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+                            <button type="submit" id="salvar-prospecto-novo" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">
+                                Salvar Prospect
+                            </button>
+                            <button type="submit" id="salvar-prospecto-editar" form="prospectDetailForm" class="hidden bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">
+                                Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Aba Notas -->
+                <div id="tab-notes" class="modal-tab-content">
+                    <div class="mb-4">
+                        <textarea id="newNote" placeholder="Escreva uma nota..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rocket-yellow-400" rows="3"></textarea>
+                        <button id="addNoteBtn" class="mt-2 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Adicionar Nota</button>
+                    </div>
+                    <div id="notesContainer" class="space-y-3"></div>
+                </div>
+
+                <!-- Aba Tarefas -->
+                <div id="tab-tasks" class="modal-tab-content">
+                    <p>Funcionalidade de tarefas em desenvolvimento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Inicialização do Lucide
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
+        // Navegação
+        document.querySelectorAll('.nav-link').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.dataset.page;
+                document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active-nav'));
+                btn.classList.add('active-nav');
+                if (window.innerWidth < 768) {
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Menu Mobile
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        });
+        document.getElementById('closeMobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        });
+
+        // Modal de Prospect
+        const modal = document.getElementById('prospectModal');
+        const closeModal = () => modal.classList.remove('active');
+        document.getElementById('closeProspectModal').addEventListener('click', closeModal);
+        document.getElementById('cancelProspectBtn').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.getElementById('addProspectBtn').addEventListener('click', () => {
+            openProspectModal();
+        });
+
+        function openProspectModal(prospect = null) {
+            document.getElementById('modalTitle').textContent = prospect ? 'Editar Prospect' : 'Novo Prospect';
+            document.getElementById('prospectId').value = prospect?.id || '';
+            document.getElementById('prospectName').value = prospect?.name || '';
+            document.getElementById('prospectCompany').value = prospect?.company || '';
+            document.getElementById('prospectEmail').value = prospect?.email || '';
+            document.getElementById('prospectPhone').value = prospect?.phone || '';
+            document.getElementById('prospectValue').value = prospect?.value || '';
+            document.getElementById('prospectStatus').value = prospect?.status || 'novo';
+
+            document.getElementById('salvar-prospecto-novo').classList.toggle('hidden', !!prospect);
+            document.getElementById('salvar-prospecto-editar').classList.toggle('hidden', !prospect);
+
+            loadProspectNotes(prospect?.notes || []);
+            modal.classList.add('active');
+            switchTab('details');
+        }
+
+        // Abas do Modal
+        document.querySelectorAll('.modal-tab-link').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.modal-tab-link').forEach(t => t.classList.remove('active-tab'));
+                document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active-tab');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.modal-tab-link').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active-tab');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Notas do Prospect
+        function loadProspectNotes(notesArray) {
+            const container = document.getElementById('notesContainer');
+            container.innerHTML = '';
+
+            // CORREÇÃO CRÍTICA: Verifica se é array
+            if (!Array.isArray(notesArray)) {
+                console.warn('notesArray não é um array:', notesArray);
+                notesArray = [];
+            }
+
+            // Ordena por data (mais recente primeiro)
+            notesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            notesArray.forEach(note => {
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = `
+                    <p>${note.text}</p>
+                    <span>${new Date(note.date).toLocaleString('pt-BR')}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        document.getElementById('addNoteBtn').addEventListener('click', () => {
+            const text = document.getElementById('newNote').value.trim();
+            if (text) {
+                const note = { text, date: new Date().toISOString() };
+                const prospectId = document.getElementById('prospectId').value;
+                // Aqui você faria uma chamada à API
+                console.log('Nova nota:', { prospectId, note });
+                document.getElementById('newNote').value = '';
+                loadProspectNotes([...(window.currentProspectNotes || []), note]);
+            }
+        });
+
+        // Salvar Prospect
+        document.getElementById('prospectDetailForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            console.log('Salvando prospect:', data);
+            closeModal();
+        });
+
+        // Simulação de carregamento inicial
+        setTimeout(() => {
+            document.getElementById('auth-page').classList.remove('active');
+            document.getElementById('app-page').classList.add('active');
+            document.querySelector('[data-page="dashboardPage"]').classList.add('active-nav');
+        }, 1500);
+    </script>
+</body>
+</html>
