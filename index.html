@@ -6,17 +6,17 @@
     <title>CRM Rocket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide-react@0.395.0/dist/umd/lucide.min.js"></script>
-    
+   
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         'rocket-yellow': {
-                            '300': '#FDE68A', 
-                            '400': '#FDE047', 
-                            '500': '#FACC15', 
-                            '600': '#EAB308', 
+                            '300': '#FDE68A',
+                            '400': '#FDE047',
+                            '500': '#FACC15',
+                            '600': '#EAB308',
                         },
                         'rocket-dark': '#111827' // Tailwind Gray 950
                     }
@@ -24,7 +24,7 @@
             }
         }
     </script>
-    
+   
     <style>
         /* CSS mínimo */
         body {
@@ -32,7 +32,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         /* Controlo de Páginas e Modais */
         .page, .page-content, .modal, .modal-tab-content {
             display: none;
@@ -44,30 +43,26 @@
             display: flex;
         }
         .hidden { display: none; }
-
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
+       
         button:disabled { opacity: 0.6; cursor: not-allowed; }
-
         /* NavLink Ativo (Sidebar) */
         .nav-link.active-nav {
             background-color: #FACC15; /* rocket-yellow-500 */
             color: #111827; /* rocket-dark */
             font-weight: 600;
         }
-        
+       
         /* Colunas do Kanban (Scroll individual) */
         [id^="kanban-col-"] {
             min-height: 200px;
             max-height: calc(100vh - 300px); /* Ajuste de altura para scroll */
             overflow-y: auto;
         }
-
         /* --- NOVO: Estilos para o "Super-Modal" --- */
-
         /* Abas dentro do Modal (Detalhes, Histórico, IA) */
         .modal-tab-link {
             padding: 8px 12px;
@@ -84,7 +79,6 @@
         .modal-tab-content.active {
             display: block;
         }
-
         /* Lista de Comentários (Histórico) */
         .comment-item {
             background-color: #f9fafb; /* gray-50 */
@@ -103,11 +97,41 @@
             color: #9ca3af; /* gray-400 */
         }
         /* --- Fim dos Novos Estilos --- */
-        
+       
+        /* Mobile Otimizações */
+        @media (max-width: 768px) {
+            .grid-cols-1 md\\:grid-cols-3 { /* Para o Kanban */
+                grid-template-columns: repeat(3, minmax(250px, 1fr)); /* Colunas mín 250px */
+                overflow-x: auto; /* Scroll horizontal suave */
+                gap: 1rem;
+            }
+            .kanban-column {
+                min-width: 250px; /* Evita colapso */
+            }
+            button, input, select, textarea {
+                padding: 0.75rem; /* Maior para touch */
+                font-size: 1rem;
+            }
+            .modal {
+                padding: 1rem;
+            }
+            .page-content {
+                padding: 1rem;
+            }
+            /* Sidebar escondida por padrão em mobile */
+            aside { display: none; }
+            /* Cards truncados */
+            .text-sm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        }
+
+        /* Touch para drag-and-drop */
+        .draggable {
+            touch-action: none; /* Evita scroll durante drag */
+        }
+       
     </style>
 </head>
 <body class="bg-gray-100">
-
     <div id="auth-page" class="page active">
         <div class="flex min-h-screen items-center justify-center bg-rocket-dark text-white p-4">
             <div class="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-xl text-center">
@@ -117,14 +141,12 @@
             </div>
         </div>
     </div>
-
     <div id="app-page" class="page">
         <div class="flex h-screen bg-gray-100">
             <aside class="w-64 bg-rocket-dark text-white hidden md:flex flex-col p-4">
                 <div class="p-4 rounded-lg mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-12 mx-auto" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
                 </div>
-
                 <nav class="flex-1 space-y-2">
                     <button data-page="dashboardPage" class="nav-link flex items-center gap-3 w-full p-3 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
                         <i data-lucide="layout-dashboard"></i>
@@ -159,11 +181,10 @@
                         <span>Minha Empresa</span>
                     </button>
                 </nav>
-
                 <div class="mt-auto">
                 </div>
             </aside>
-            
+           
             <div id="mobileMenu" class="fixed inset-0 bg-rocket-dark text-white z-50 hidden flex-col p-4">
                  <div class="flex justify-between items-center mb-8">
                     <img src="https://placehold.co/200x50/111827/FDE047?text=Rocket+For+Eat" alt="Logo da Empresa" class="w-auto h-10" onerror="this.src='https://placehold.co/200x50/111827/FDE047?text=Sua+Logo'; this.onerror=null;">
@@ -206,19 +227,17 @@
                     </button>
                  </nav>
             </div>
-
             <main class="w-full flex-1 overflow-y-auto p-4 md:p-8">
-                
+               
                 <div class="md:hidden flex justify-between items-center mb-4">
                     <h1 class="text-xl font-bold text-rocket-dark">CRM Rocket</h1>
                     <button id="mobileMenuBtn">
                         <i data-lucide="menu" class="w-6 h-6 text-rocket-dark"></i>
                     </button>
                 </div>
-
                 <div id="dashboardPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Dashboard</h2>
-                    
+                   
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
                         <div class="space-y-6">
@@ -242,7 +261,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 uppercase">Faturação Líquida (Mês)</h3>
@@ -261,7 +279,6 @@
                             <p id="kpi-ativos" class="text-3xl font-bold text-gray-900 mt-2">0</p>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Contratos a Vencer (30 dias)</h3>
@@ -277,8 +294,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div id="prospectsPage" class="page-content"> 
+                <div id="prospectsPage" class="page-content">
                     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                         <h2 class="text-3xl font-bold text-gray-800">Funil de Prospeção</h2>
                         <button id="showAddProspectModalBtn" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center">
@@ -286,9 +302,27 @@
                             <span>Novo Prospect</span>
                         </button>
                     </div>
-                    
+                   
+                    <div class="mb-4 flex flex-col md:flex-row gap-4">
+                        <input type="text" id="prospectSearchInput" placeholder="Buscar por nome ou email..." class="p-2 border border-gray-300 rounded-md flex-1">
+                        <select id="prospectFilterLabel" class="p-2 border border-gray-300 rounded-md">
+                            <option value="all">Todas Etiquetas</option>
+                            <!-- Preencher dinamicamente no JS -->
+                        </select>
+                        <select id="prospectFilterInterest" class="p-2 border border-gray-300 rounded-md">
+                            <option value="all">Todos Níveis de Interesse</option>
+                            <option value="Quente">Quente 🔥🔥</option>
+                            <option value="Morno">Morno 🔥</option>
+                            <option value="Frio">Frio ❄️</option>
+                            <option value="Nenhum">Nenhum</option>
+                        </select>
+                        <select id="prospectFilterAction" class="p-2 border border-gray-300 rounded-md">
+                            <option value="all">Todas Ações</option>
+                            <option value="pending">Ações Pendentes</option>
+                            <option value="overdue">Ações Atrasadas</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                         <div class="bg-gray-100 rounded-lg shadow-inner">
                             <div class="p-4 border-b-2 border-gray-300">
                                 <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -297,10 +331,9 @@
                                     <span id="kanban-count-prospeccao" class="text-sm font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">0</span>
                                 </h3>
                             </div>
-                            <div id="kanban-col-prospeccao" class="p-4 space-y-4">
+                            <div id="kanban-col-prospeccao" class="p-4 space-y-4 kanban-column" data-status="prospeccao">
                                 </div>
                         </div>
-
                         <div class="bg-gray-100 rounded-lg shadow-inner">
                             <div class="p-4 border-b-2 border-gray-300">
                                 <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -309,10 +342,9 @@
                                     <span id="kanban-count-contato" class="text-sm font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">0</span>
                                 </h3>
                             </div>
-                            <div id="kanban-col-contato" class="p-4 space-y-4">
+                            <div id="kanban-col-contato" class="p-4 space-y-4 kanban-column" data-status="contato">
                                 </div>
                         </div>
-
                         <div class="bg-gray-100 rounded-lg shadow-inner">
                             <div class="p-4 border-b-2 border-gray-300">
                                 <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -321,13 +353,20 @@
                                     <span id="kanban-count-negociando" class="text-sm font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">0</span>
                                 </h3>
                             </div>
-                            <div id="kanban-col-negociando" class="p-4 space-y-4">
+                            <div id="kanban-col-negociando" class="p-4 space-y-4 kanban-column" data-status="negociando">
                                 </div>
                         </div>
-
+                    </div>
+                    <!-- Nova Seção de Roteiro -->
+                    <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Roteiro do Dia (Visitas Presenciais)</h3>
+                        <p class="text-sm text-gray-600 mb-2">Selecione prospects abaixo e gere uma rota otimizada no Google Maps.</p>
+                        <div id="roteiro-list" class="space-y-3 max-h-48 overflow-y-auto"></div> <!-- Lista com checkboxes -->
+                        <button id="generateRoteiroBtn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="map-pin"></i> Gerar Roteiro
+                        </button>
                     </div>
                     </div>
-
                 <div id="clientsPage" class="page-content">
                     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                         <h2 class="text-3xl font-bold text-gray-800">Todos os Clientes</h2>
@@ -351,13 +390,12 @@
                         </table>
                     </div>
                 </div>
-
                 <div id="clientDetailPage" class="page-content">
                     <button data-page="clientsPage" class="nav-link text-rocket-yellow-600 hover:text-rocket-yellow-500 font-semibold mb-4 flex items-center gap-2">
                         <i data-lucide="arrow-left"></i>
                         Voltar para Clientes
                     </button>
-                    
+                   
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <div class="flex justify-between items-start">
                             <div>
@@ -384,7 +422,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="mb-6 border-b border-gray-200">
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
                             <button data-tab="financial" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Financeiro</button>
@@ -392,7 +429,6 @@
                             <button data-tab="credentials" class="tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Senhas</button>
                         </nav>
                     </div>
-
                     <div id="financialTab" class="tab-content">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
@@ -424,7 +460,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                   
                     <div id="tasksTab" class="tab-content hidden">
                          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
@@ -444,7 +480,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                   
                     <div id="credentialsTab" class="tab-content hidden">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
@@ -473,17 +509,14 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="receivablesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Contas a Receber</h2>
-
                     <div class="mb-6 border-b border-gray-200">
                         <nav class="flex space-x-8 -mb-px overflow-x-auto" aria-label="Tabs">
                             <button data-tab="accountsReceivable" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-rocket-yellow-400 text-rocket-yellow-500">Contas a Receber</button>
                             <button data-tab="paidThisMonth" class="finance-tab-link whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pagos (Mês Atual)</button>
                         </nav>
                     </div>
-
                     <div id="accountsReceivableTab" class="finance-tab-content">
                         <div class="grid grid-cols-1 gap-6">
                             <div class="bg-white p-6 rounded-lg shadow-md">
@@ -500,7 +533,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="paidThisMonthTab" class="finance-tab-content hidden">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Pagamentos Confirmados (Mês Atual)</h3>
@@ -510,7 +542,7 @@
                         </div>
                     </div>
                 </div>
-                
+               
                 <div id="expensesPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Controlo de Despesas</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -540,10 +572,8 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="globalTasksPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Todas as Tarefas</h2>
-
                     <div class="bg-white p-6 rounded-lg shadow-md">
                         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                             <h3 class="text-lg font-semibold text-gray-800">Checklist Completo</h3>
@@ -563,10 +593,10 @@
                         </div>
                     </div>
                 </div>
-                
+               
                 <div id="reportsPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Relatórios</h2>
-                    
+                   
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Relatório de Faturação Personalizado</h3>
                         <div class="flex flex-col md:flex-row gap-4">
@@ -618,8 +648,7 @@
                         </div>
                         <p id="custom-report-loading" class="text-gray-500 hidden mt-4">A gerar relatório...</p>
                     </div>
-
-                    
+                   
                     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Resumo do Mês Anterior</h3>
                         <div id="lastMonthReport" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -642,7 +671,6 @@
                         </div>
                         <p id="report-loading-msg" class="text-gray-500 hidden">A carregar relatório...</p>
                     </div>
-
                     <div class="bg-white p-6 rounded-lg shadow-md mt-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Faturação Bruta por Cliente (Todo o Período)</h3>
                         <div id="client-revenue-list" class="space-y-3 max-h-[500px] overflow-y-auto">
@@ -650,10 +678,9 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="companyPage" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6 hidden md:block">Metas da Empresa</h2>
-                    
+                   
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Definir Metas Mensais</h3>
@@ -669,7 +696,7 @@
                                 <button type="submit" class="w-full p-3 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark rounded-md font-semibold">Salvar Metas</button>
                             </form>
                         </div>
-                        
+                       
                         <div class="bg-white p-6 rounded-lg shadow-md">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Progresso do Mês</h3>
                             <div class="space-y-6">
@@ -695,11 +722,9 @@
                         </div>
                     </div>
                 </div>
-
             </main>
         </div>
     </div>
-
     <div id="clientModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <form id="clientForm">
@@ -756,7 +781,6 @@
             </form>
         </div>
     </div>
-
     <div id="prospectModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <form id="prospectForm">
@@ -789,28 +813,24 @@
             </form>
         </div>
     </div>
-    
+   
     <div id="prospectDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-            
             <div class="p-6 border-b">
                 <h3 id="prospectDetailModalTitle" class="text-xl font-semibold text-gray-800">Detalhes do Prospect</h3>
             </div>
-
             <div class="px-6 border-b border-gray-200">
                 <nav class="flex space-x-4 -mb-px" aria-label="Tabs">
                     <button data-tab="details" class="modal-tab-link active-tab">Detalhes</button>
                     <button data-tab="history" class="modal-tab-link">Histórico</button>
-                    <button data-tab="ai" class="modal-tab-link">Análise IA</button>
                 </nav>
             </div>
-
             <div class="p-6 space-y-4 overflow-y-auto flex-1">
-                
+               
                 <div id="detailsTab" class="modal-tab-content active space-y-4">
                     <form id="prospectDetailForm" class="space-y-4">
                         <input type="hidden" id="prospectDetailId">
-                        
+                       
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nome</label>
@@ -836,7 +856,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Próxima Ação</label>
@@ -847,7 +866,6 @@
                                 <input type="date" id="prospectDetailActionDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Link Instagram</label>
@@ -858,12 +876,12 @@
                                 <input type="url" id="prospectDetailGMNLink" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="https://maps.app.goo.gl/...">
                             </div>
                         </div>
-                        
+                       
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
                             <input type="email" id="prospectDetailEmail" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                         </div>
-                        
+                       
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Origem</label>
@@ -874,45 +892,35 @@
                                 <input type="text" id="prospectDetailLabel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Hot Lead, Standby">
                             </div>
                         </div>
-                        
+                       
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Serviços de Interesse</label>
                             <div id="prospectDetailServicesCheckboxes" class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 </div>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Endereço para Visita</label>
+                            <input type="text" id="prospectDetailAddress" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Rua Exemplo, 123, Bairro, Cidade">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Observações/Insights para Reunião</label>
+                            <textarea id="prospectDetailInsights" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Cardápio desatualizado, baixa presença online, concorrente fraco..."></textarea>
+                        </div>
                     </form>
                 </div>
-
                 <div id="historyTab" class="modal-tab-content space-y-4">
                     <form id="addProspectNoteForm">
                         <label class="block text-sm font-medium text-gray-700">Adicionar Comentário</label>
                         <textarea id="prospectDetailNewNote" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Liguei, não atendeu. Tentar novamente amanhã."></textarea>
                         <button type="submit" class="mt-2 bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg text-sm">Adicionar Comentário</button>
                     </form>
-                    
+                   
                     <h4 class="text-md font-semibold text-gray-800 border-t pt-4">Histórico de Atividades</h4>
                     <div id="prospectDetailNotesList" class="space-y-3 max-h-64 overflow-y-auto">
                         <p class="text-gray-500 text-sm">Nenhum comentário adicionado.</p>
                         </div>
                 </div>
-
-                <div id="aiTab" class="modal-tab-content space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Sua Chave da API (Gemini)</label>
-                        <input type="password" id="geminiApiKeyInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Cole a sua API Key aqui">
-                        <p class="text-xs text-gray-500 mt-1">Sua chave é salva localmente e usada apenas para esta análise.</p>
-                    </div>
-                    <button id="generateGeminiAnalysisBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
-                        <i data-lucide="sparkles"></i>
-                        <span>Analisar Posicionamento</span>
-                    </button>
-                    <div id="geminiAnalysisResult" class="p-4 bg-gray-50 rounded-md border min-h-[150px] overflow-y-auto">
-                        <p class="text-gray-500 text-sm">A análise da IA aparecerá aqui. Certifique-se de que os links do Instagram e GMN estão preenchidos na aba "Detalhes".</p>
-                    </div>
-                </div>
-
             </div>
-
             <div class="bg-gray-50 p-4 flex justify-between gap-3 border-t">
                 <div>
                     <button type="button" id="deleteProspectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg">Excluir</button>
@@ -938,48 +946,81 @@
             </div>
         </div>
     </div>
+    <div id="editPaymentModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <form id="editPaymentForm">
+                <input type="hidden" id="editPaymentId">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Editar Pagamento</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                            <input type="text" id="editPaymentDesc" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                            <input type="number" step="0.01" id="editPaymentValue" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Data Vencimento</label>
+                            <input type="date" id="editPaymentDueDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="editPaymentStatus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Pago">Pago</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 flex justify-end gap-3">
+                    <button type="button" id="closeEditPaymentModalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-rocket-yellow-400 hover:bg-rocket-yellow-500 text-rocket-dark font-semibold py-2 px-4 rounded-lg">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 <script type="module">
         // Importações do Firebase (ESM - Módulos)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword, 
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
             signOut,
             signInWithCustomToken,
             signInAnonymously
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
+        import {
+            getFirestore,
+            doc,
+            getDoc,
             getDocs,
-            setDoc, 
-            addDoc, 
-            updateDoc, 
-            deleteDoc, 
-            onSnapshot, 
-            collection, 
-            query, 
+            setDoc,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            collection,
+            query,
             where,
             orderBy, // NOVO: Para ordenar pagamentos
             Timestamp,
             writeBatch
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
         // **********************************************************
         // ***** ATENÇÃO: INTEGRAÇÃO DA API DO GEMINI *****
         // **********************************************************
-        // Para a Análise de IA funcionar, descomente a linha abaixo 
+        // Para a Análise de IA funcionar, descomente a linha abaixo
         // e certifique-se de que a API Key está correta.
-        
+       
         // import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-        
+       
         // **********************************************************
-
         // --- VARIÁVEIS DE AMBIENTE (INJETADAS) ---
-        const appId = 'crm-rocket-data'; 
-        
+        const appId = 'crm-rocket-data';
+       
         // --- CHAVES DO FIREBASE INSERIDAS DIRETAMENTE ---
         const firebaseConfig = {
           apiKey: "AIzaSyCjOOO8BjKHSl_4a8yU9Y6ggyVsKvIdT00",
@@ -989,7 +1030,7 @@
           messagingSenderId: "395158203315",
           appId: "1:395158203315:web:93adeda54e40734d1c39c6"
         };
-        
+       
         // --- INICIALIZAÇÃO DO FIREBASE ---
         let app, auth, db;
         try {
@@ -1009,26 +1050,23 @@
                  document.body.innerHTML = `<h1 style='text-align: center; margin-top: 50px;'>Erro de Configuração do Firebase: ${e.message}. Verifique o console.</h1>`;
             }
         }
-
         // --- ESTADO GLOBAL DA APLICAÇÃO ---
-        let userId = null; 
-        let currentClientId = null; 
-        let currentProspectId = null; 
-        let currentDeleteInfo = null; 
-        let allClientsData = {}; 
-        let dashTotals = { bruto: 0, despesas: 0, recebido: 0, novosClientes: 0, novosLeads: 0, valorNovosClientes: 0, clientesAtivos: 0, clientesInativos: 0 }; 
-
+        let userId = null;
+        let currentClientId = null;
+        let currentProspectId = null;
+        let currentDeleteInfo = null;
+        let allClientsData = {};
+        let dashTotals = { bruto: 0, despesas: 0, recebido: 0 };
         // --- FUNÇÕES DE UTILIDADE ---
-        
+       
         const prospectServices = [
-            "Cardápio 99Food", 
-            "Cardápio iFood", 
-            "Cardápio Próprio", 
-            "Google Meu Negócio (GMN)", 
-            "Otimização Instagram", 
+            "Cardápio 99Food",
+            "Cardápio iFood",
+            "Cardápio Próprio",
+            "Google Meu Negócio (GMN)",
+            "Otimização Instagram",
             "Otimização de Cardápio"
         ];
-
         const renderIcons = () => {
             if (typeof lucide !== 'undefined') {
                 try {
@@ -1038,19 +1076,16 @@
                 console.warn("Lucide ainda não definido.");
             }
         };
-
         const formatCurrency = (value) => {
             return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         };
-
         const getDaysRemaining = (dateStr) => {
             if (!dateStr) return 0;
             const today = new Date();
-            const endDate = new Date(dateStr + "T23:59:59"); 
+            const endDate = new Date(dateStr + "T23:59:59");
             const diffTime = endDate.getTime() - today.getTime();
             return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
         };
-
         const formatDate = (dateStr) => {
             if (!dateStr) return 'N/A';
             // Trata data completa (ISO 2024-11-04T10:00:00) ou simples (YYYY-MM-DD)
@@ -1059,7 +1094,7 @@
             if (!year || !month || !day) return 'Data Inválida';
             return `${day}/${month}/${year}`;
         };
-        
+       
         // NOVO: Formata Data e Hora (para comentários)
         const formatDateTime = (isoString) => {
             if (!isoString) return 'N/A';
@@ -1076,7 +1111,6 @@
                 return 'Data Inválida';
             }
         };
-
         const getCurrentMonthRange = () => {
             const today = new Date();
             const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1086,7 +1120,7 @@
                 end: lastDay.toISOString().split('T')[0]
             };
         };
-        
+       
         const getLastMonthRange = () => {
             const today = new Date();
             const lastDay = new Date(today.getFullYear(), today.getMonth(), 0);
@@ -1096,33 +1130,32 @@
                 end: lastDay.toISOString().split('T')[0]
             };
         };
-        
+       
         const getReportDateRange = (period) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             let start, end;
-            
+           
             end = new Date();
-            end.setHours(23, 59, 59, 999); 
-
+            end.setHours(23, 59, 59, 999);
             switch(period) {
                 case 'today':
                     start = new Date(today);
                     break;
                 case 'last7':
                     start = new Date(today);
-                    start.setDate(start.getDate() - 6); 
+                    start.setDate(start.getDate() - 6);
                     break;
                 case 'thisMonth':
                     start = new Date(today.getFullYear(), today.getMonth(), 1);
                     break;
                 case 'lastMonth':
-                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); 
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
                     start = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1);
                     end = lastMonth;
                     break;
                 case 'thisYear':
-                    start = new Date(today.getFullYear(), 0, 1); 
+                    start = new Date(today.getFullYear(), 0, 1);
                     break;
                 case 'custom':
                     const startDateEl = document.getElementById('reportStartDate');
@@ -1131,19 +1164,19 @@
                         start = new Date(startDateEl.value + "T00:00:00");
                         end = new Date(endDateEl.value + "T23:59:59");
                     } else {
-                        return null; 
+                        return null;
                     }
                     break;
                 default:
-                    return getCurrentMonthRange(); 
+                    return getCurrentMonthRange();
             }
-            
+           
             return {
                 start: start.toISOString().split('T')[0],
                 end: end.toISOString().split('T')[0]
             };
         };
-        
+       
         function renderServicesCheckboxes(containerId, savedServices = []) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1158,24 +1191,20 @@
                 `;
             });
         }
-        
+       
         function getSelectedServices(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return [];
             const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
             return Array.from(checkboxes).map(cb => cb.value);
         }
-
-
         const showPage = (pageId) => {
             document.querySelectorAll('.page-content, #auth-page, #app-page').forEach(page => {
                 page.classList.remove('active');
             });
-
             const mainElement = document.querySelector('main');
             mainElement.classList.add('overflow-y-auto');
-            mainElement.classList.remove('overflow-hidden'); 
-
+            mainElement.classList.remove('overflow-hidden');
             if (pageId === 'auth-page') {
                 document.getElementById('auth-page').classList.add('active');
             } else {
@@ -1183,39 +1212,38 @@
                 if (document.getElementById(pageId)) {
                     document.getElementById(pageId).classList.add('active');
                 } else {
-                    document.getElementById('dashboardPage').classList.add('active'); 
+                    document.getElementById('dashboardPage').classList.add('active');
                 }
             }
-            
+           
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.toggle('active-nav', link.dataset.page === pageId);
             });
-            
+           
             document.getElementById('mobileMenu').classList.add('hidden');
-            
+           
             switch(pageId) {
                 case 'dashboardPage': loadDashboardData(); break;
                 case 'prospectsPage': loadProspects(); break;
                 case 'clientsPage': loadClientsList(); break;
-                case 'receivablesPage': loadReceivablesReport(); break; 
-                case 'expensesPage': loadExpensesPage(); break; 
-                case 'globalTasksPage': loadGlobalTasks(); break; 
+                case 'receivablesPage': loadReceivablesReport(); break;
+                case 'expensesPage': loadExpensesPage(); break;
+                case 'globalTasksPage': loadGlobalTasks(); break;
                 case 'reportsPage':
                     loadHistoricalReport();
-                    loadClientRevenueReport(); 
-                    break; 
+                    loadClientRevenueReport();
+                    break;
                 case 'companyPage': loadCompanyGoalsPage(); break;
             }
         };
-        
+       
         const showModal = (modalId) => {
             document.getElementById(modalId)?.classList.add('active');
         };
-
         const hideModal = (modalId) => {
             document.getElementById(modalId)?.classList.remove('active');
         };
-        
+       
         const switchTab = (tabName, tabContainerClass, contentContainerClass) => {
             document.querySelectorAll(contentContainerClass).forEach(content => {
                 content.classList.toggle('active', content.id === `${tabName}Tab`);
@@ -1224,7 +1252,7 @@
                 const isTarget = link.dataset.tab === tabName;
                 link.classList.toggle('active-tab', isTarget);
                 // Ajuste para as classes específicas de cada tipo de tab
-                if (tabContainerClass === '.tab-link') { 
+                if (tabContainerClass === '.tab-link') {
                     link.classList.toggle('border-rocket-yellow-400', isTarget);
                     link.classList.toggle('text-rocket-yellow-500', isTarget);
                     link.classList.toggle('border-transparent', !isTarget);
@@ -1238,16 +1266,14 @@
                 }
             });
         };
-
         // Trata erros amigáveis
         const handleFriendlyError = (title, message, error) => {
-            console.error(title, error || message); 
+            console.error(title, error || message);
             const authPage = document.getElementById('auth-page');
             const authError = document.getElementById('authError');
-
             if (message.includes("Missing or insufficient permissions")) {
                  title = "Erro de Permissão do Banco de Dados.";
-                 message = "As suas 'Regras' do Firestore estão a bloquear a app. Por favor, vá a 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/crm-rocket-data/public/data/{collection}/{docId} {\n      allow read, write: if request.auth != null;\n    }\n    match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}</pre>";
+                 message = "As suas 'Regras' do Firestore estão a bloquear a app. Por favor, vá a 'Cloud Firestore' > 'Regras', cole o texto abaixo e clique em 'Publicar':\n\n<pre class='text-left text-xs bg-gray-800 p-2 rounded'>rules_version = '2';\nservice cloud.firestore {\n match /databases/{database}/documents {\n match /artifacts/crm-rocket-data/public/data/{collection}/{docId} {\n allow read, write: if request.auth != null;\n }\n match /artifacts/crm-rocket-data/users/{userId}/{document=**} {\n allow read, write: if request.auth != null && request.auth.uid == userId;\n }\n }\n}</pre>";
             }
             else if (message.includes("offline") || message.includes("Failed to get document")) {
                  title = "Erro de Banco de Dados: Client Offline.";
@@ -1257,8 +1283,6 @@
                  title = "Falha no Login: Configuração não encontrada.";
                  message = "Isto significa que ativou a 'Autenticação' no Firebase, mas esqueceu-se de ativar o provedor 'Anónimo'. Por favor, vá a 'Authentication' > 'Método de Login' > 'Adicionar provedor' e ative 'Anónimo'.";
             }
-
-
             if (authPage && authError) {
                 authError.innerHTML = `
                     <strong class="text-lg">${title}</strong><br>
@@ -1266,19 +1290,18 @@
                 `;
                 authError.classList.remove('hidden');
                 authError.classList.add('text-left', 'bg-red-900', 'p-4', 'rounded-md');
-                showPage('auth-page'); 
+                showPage('auth-page');
             }
         };
-
         // --- AUTENTICAÇÃO ---
-        
+       
         if (auth) {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    userId = user.uid; 
-                    initEventListeners(); 
+                    userId = user.uid;
+                    initEventListeners();
                     await loadAllClientsToCache();
-                    showPage('dashboardPage'); 
+                    showPage('dashboardPage');
                 } else {
                     userId = null;
                     autoLogin();
@@ -1287,7 +1310,6 @@
                 handleFriendlyError("Erro na Autenticação", error.message, error);
             });
         }
-
         const autoLogin = async () => {
              if (!auth) {
                  console.error("Autenticação do Firebase não inicializada.");
@@ -1300,14 +1322,12 @@
                  handleFriendlyError("Falha no login automático", error.message, error);
              }
         };
-
         // --- METAS (Definição) ---
-        
+       
         const goalsDocRef = () => doc(db, `/artifacts/${appId}/public/data/company/goals`);
-        
+       
         const loadCompanyGoalsData = async () => {
             if (!userId || !db) return;
-
             let metaFaturamento = 0;
             let metaProspeccao = 0;
             try {
@@ -1317,53 +1337,48 @@
                     metaFaturamento = goals.faturamento || 0;
                     metaProspeccao = goals.prospeccao || 0;
                 }
-            } catch (e) { 
+            } catch (e) {
                 handleFriendlyError("Erro ao carregar metas", e.message, e);
-                return; 
+                return;
             }
-
             try {
                 const { start } = getCurrentMonthRange();
-                
+               
                 const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start));
                 let faturamentoAtual = 0;
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => {
                     faturamentoAtual += doc.data().valor || 0;
                 });
-                
+               
                 const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), where("createdAt", ">=", start));
                 let novosLeads = 0;
                 const prospectsSnapshot = await getDocs(prospectsQuery);
-                novosLeads = prospectsSnapshot.size; 
-
+                novosLeads = prospectsSnapshot.size;
                 // Atualiza UI (Página Minha Empresa)
                 const fLabel = document.getElementById('faturamento-label');
                 const fProgress = document.getElementById('faturamento-progress');
                 const pLabel = document.getElementById('prospeccao-label');
                 const pProgress = document.getElementById('prospeccao-progress');
-
                 if (fLabel && fProgress && pLabel && pProgress) {
                     const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
                     fLabel.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
                     fProgress.style.width = `${Math.min(fPercent, 100)}%`;
-                    
+                   
                     const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
                     pLabel.textContent = `${novosLeads} / ${metaProspeccao}`;
                     pProgress.style.width = `${Math.min(pPercent, 100)}%`;
                 }
-
                 // Atualiza UI (Dashboard)
                 const fLabelDash = document.getElementById('faturamento-label-dash');
                 const fProgressDash = document.getElementById('faturamento-progress-dash');
                 const pLabelDash = document.getElementById('prospeccao-label-dash');
                 const pProgressDash = document.getElementById('prospeccao-progress-dash');
-
                 if (fLabelDash && fProgressDash && pLabelDash && pProgressDash) {
                     const fPercent = metaFaturamento > 0 ? (faturamentoAtual / metaFaturamento) * 100 : 0;
                     fLabelDash.textContent = `${formatCurrency(faturamentoAtual)} / ${formatCurrency(metaFaturamento)}`;
                     fProgressDash.style.width = `${Math.min(fPercent, 100)}%`;
-                    
+                   
                     const pPercent = metaProspeccao > 0 ? (novosLeads / metaProspeccao) * 100 : 0;
                     pLabelDash.textContent = `${novosLeads} / ${metaProspeccao}`;
                     pProgressDash.style.width = `${Math.min(pPercent, 100)}%`;
@@ -1372,7 +1387,6 @@
                 handleFriendlyError("Erro ao carregar dados de vendas/prospects", e.message, e);
             }
         };
-
         const loadCompanyGoalsPage = async () => {
             if (!userId) return;
             try {
@@ -1382,20 +1396,15 @@
                     document.getElementById('goal-faturamento').value = goals.faturamento || 0;
                     document.getElementById('goal-prospeccao').value = goals.prospeccao || 0;
                 }
-            } catch (e) { 
+            } catch (e) {
                 handleFriendlyError("Erro ao carregar página de metas", e.message, e);
             }
             loadCompanyGoalsData();
         };
-
-
         // --- DASHBOARD ---
-
         const loadDashboardData = () => {
             if (!userId || !db) return;
-
             const { start } = getCurrentMonthRange();
-
             const clientsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(clientsQuery, (snapshot) => {
                 let ativos = 0;
@@ -1403,7 +1412,6 @@
                 const kpiAtivosEl = document.getElementById('kpi-ativos');
                 if (kpiAtivosEl) { kpiAtivosEl.textContent = ativos; }
             }, (e) => { handleFriendlyError("Erro no Dashboard (Clientes)", e.message, e); });
-
             const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start));
             onSnapshot(salesQuery, (snapshot) => {
                 let faturamentoTotalMes = 0;
@@ -1414,7 +1422,7 @@
                 const kpiBrutoEl = document.getElementById('kpi-faturamento-bruto');
                 if (kpiBrutoEl) { kpiBrutoEl.textContent = formatCurrency(faturamentoTotalMes); }
             }, (e) => { handleFriendlyError("Erro no Dashboard (Vendas)", e.message, e); });
-            
+           
             const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("data", ">=", start));
             onSnapshot(expensesQuery, (snapshot) => {
                 let totalExpenses = 0;
@@ -1424,16 +1432,15 @@
                 if (kpiDespesasEl) { kpiDespesasEl.textContent = formatCurrency(totalExpenses); }
                 calculateNetRevenue();
             }, (e) => { handleFriendlyError("Erro no Dashboard (Despesas)", e.message, e); });
-            
-            const paidPaymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
+           
+            const paidPaymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`),
                 where("status", "==", "Pago")
             );
             onSnapshot(paidPaymentsQuery, (snapshot) => {
                 let totalRecebido = 0;
-                const { start: currentMonthStart } = getCurrentMonthRange(); 
+                const { start: currentMonthStart } = getCurrentMonthRange();
                 const currentMonth = new Date(currentMonthStart + "T12:00:00").getMonth();
                 const currentYear = new Date(currentMonthStart + "T12:00:00").getFullYear();
-
                 snapshot.forEach(doc => {
                     const payment = doc.data();
                     const paymentDate = new Date(payment.dataVencimento + "T12:00:00");
@@ -1444,12 +1451,11 @@
                 dashTotals.recebido = totalRecebido;
                 calculateNetRevenue();
             }, (e) => { handleFriendlyError("Erro no Dashboard (Recebidos)", e.message, e); });
-
-            
+           
             const calculateNetRevenue = () => {
                 try {
                     const liquidoEl = document.getElementById('kpi-faturamento-liquido');
-                    if (liquidoEl) { 
+                    if (liquidoEl) {
                         const liquido = dashTotals.recebido - dashTotals.despesas;
                         liquidoEl.textContent = formatCurrency(liquido);
                     }
@@ -1459,11 +1465,10 @@
                     if (liquidoEl) { liquidoEl.textContent = "Erro"; }
                 }
             };
-
             const contractsQuery = query(collection(db, `/artifacts/${appId}/public/data/clients`), where("status", "==", "Ativo"));
             onSnapshot(contractsQuery, (snapshot) => {
                 const container = document.getElementById('alertas-contratos');
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
                 let hasAlert = false;
                 snapshot.forEach(doc => {
@@ -1486,32 +1491,32 @@
                     container.innerHTML = '<p class="text-gray-500">Nenhum contrato a vencer.</p>';
                 }
             }, (e) => { handleFriendlyError("Erro no Dashboard (Contratos)", e.message, e); });
-            
-            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`), 
+           
+            const paymentsQuery = query(collection(db, `/artifacts/${appId}/public/data/payments`),
                 where("status", "==", "Pendente")
             );
             onSnapshot(paymentsQuery, async (snapshot) => {
                 const container = document.getElementById('alertas-pagamentos');
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
-                let hasAlert = false; 
-                
+                let hasAlert = false;
+               
                 const today = new Date().toISOString().split('T')[0];
                 const nextWeek = new Date();
                 nextWeek.setDate(nextWeek.getDate() + 7);
                 const nextWeekStr = nextWeek.toISOString().split('T')[0];
-                
+               
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhum pagamento pendente registado.</p>';
                     return;
                 }
-                
+               
                 for (const docSnap of snapshot.docs) {
                     const payment = docSnap.data();
                     const dueDate = payment.dataVencimento;
-                    
+                   
                     if (dueDate >= today && dueDate <= nextWeekStr) {
-                        hasAlert = true; 
+                        hasAlert = true;
                         const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
                         container.innerHTML += `
                             <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-md">
@@ -1524,28 +1529,26 @@
                         `;
                     }
                 }
-                
+               
                 if (!hasAlert) {
                     container.innerHTML = '<p class="text-gray-500">Nenhum pagamento a vencer esta semana.</p>';
                 }
             }, (e) => { handleFriendlyError("Erro no Dashboard (Pagamentos)", e.message, e); });
-
             loadCompanyGoalsData();
         };
-        
+       
         // --- CLIENTES (CRUD) ---
-        
+       
         const loadAllClientsToCache = async () => {
             if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
             onSnapshot(q, (snapshot) => {
-                allClientsData = {}; 
+                allClientsData = {};
                 snapshot.forEach(doc => {
                     allClientsData[doc.id] = { id: doc.id, ...doc.data() };
                 });
             }, (e) => { handleFriendlyError("Erro Crítico: Falha ao carregar cache de clientes.", e.message, e); });
         };
-
         const loadClientsList = () => {
             if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/public/data/clients`));
@@ -1579,7 +1582,7 @@
                 });
             }, (e) => { handleFriendlyError("Erro ao carregar lista de clientes.", e.message, e); });
         };
-        
+       
         const openClientModal = async (clientId = null, initialData = null) => {
             const form = document.getElementById('clientForm');
             form.reset();
@@ -1588,13 +1591,12 @@
             document.getElementById('clientPaymentTypeInput').disabled = false;
             document.getElementById('clientInstallmentsInput').disabled = true;
             document.getElementById('clientInstallmentsInput').required = false;
-
             if (clientId) {
                 // Modo Edição
                 document.getElementById('clientModalTitle').textContent = 'Editar Cliente';
                 try {
                     const clientDoc = await getDoc(doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`));
-                    const data = clientDoc.data(); 
+                    const data = clientDoc.data();
                     if (clientDoc.exists()) {
                         document.getElementById('clientId').value = clientId;
                         document.getElementById('clientNameInput').value = data.nome || '';
@@ -1608,9 +1610,8 @@
                     document.getElementById('clientPaymentTypeInput').disabled = true;
                     document.getElementById('clientInstallmentsInput').value = '';
                     document.getElementById('clientInstallmentsInput').disabled = true;
-
-                } catch(e) { 
-                    console.error("Erro ao abrir modal de cliente:", e); 
+                } catch(e) {
+                    console.error("Erro ao abrir modal de cliente:", e);
                     handleFriendlyError("Erro ao carregar dados do cliente.", e.message, e);
                 }
             } else {
@@ -1618,20 +1619,18 @@
                 document.getElementById('clientModalTitle').textContent = 'Novo Cliente';
                 if (initialData) {
                     document.getElementById('clientNameInput').value = initialData.nome || '';
-                    document.getElementById('clientPhoneInput').value = initialData.telefone || ''; 
+                    document.getElementById('clientPhoneInput').value = initialData.telefone || '';
                 }
             }
             showModal('clientModal');
         };
-
         const handleClientFormSubmit = async (e) => {
             e.preventDefault();
             if (!userId) return;
-
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = "A salvar...";
-            
+           
             const clientId = document.getElementById('clientId').value;
             const clientData = {
                 nome: document.getElementById('clientNameInput').value,
@@ -1643,22 +1642,20 @@
                 ownerId: userId
             };
             const valorVenda = clientData.valorTotal;
-
             let monthlyValue = 0;
             const paymentType = document.getElementById('clientPaymentTypeInput').value;
             const installments = parseInt(document.getElementById('clientInstallmentsInput').value) || 0;
-            
+           
             if (paymentType === 'parcelado' && installments > 0) {
                 monthlyValue = parseFloat((clientData.valorTotal / installments).toFixed(2));
             }
             clientData.monthlyValue = monthlyValue;
-            
+           
             const conversionSource = document.getElementById('conversionSource').value;
-            document.getElementById('conversionSource').value = ''; 
-
+            document.getElementById('conversionSource').value = '';
             try {
-                let savedClientId = clientId; 
-                
+                let savedClientId = clientId;
+               
                 if (clientId) {
                     // Atualiza
                     const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
@@ -1668,52 +1665,51 @@
                 } else {
                     // Cria
                     const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/clients`), clientData);
-                    savedClientId = docRef.id; 
-                    
+                    savedClientId = docRef.id;
+                   
                     const saleType = (conversionSource === 'prospect') ? 'Prospecção Fechada' : 'Novo Contrato Manual';
-                    
+                   
                     await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
                         tipo: saleType,
                         valor: valorVenda,
-                        data: new Date().toISOString().split('T')[0], 
+                        data: new Date().toISOString().split('T')[0],
                         clientId: savedClientId,
                         ownerId: userId
                     });
-                    
+                   
                     if (paymentType === 'parcelado' && installments > 0) {
                         const totalValue = clientData.valorTotal;
-                        const installmentValue = monthlyValue; 
-                        const startDate = new Date(clientData.dataInicio + "T12:00:00"); 
-                        
+                        const installmentValue = monthlyValue;
+                        const startDate = new Date(clientData.dataInicio + "T12:00:00");
+                       
                         const batch = writeBatch(db);
-                        
+                       
                         for (let i = 1; i <= installments; i++) {
                             const dueDate = new Date(startDate);
-                            dueDate.setMonth(startDate.getMonth() + (i - 1)); 
-                            
+                            dueDate.setMonth(startDate.getMonth() + (i - 1));
+                           
                             const paymentData = {
                                 clientId: savedClientId,
                                 descricao: `Parcela ${i} de ${installments}`,
                                 valor: installmentValue,
-                                dataVencimento: dueDate.toISOString().split('T')[0], 
+                                dataVencimento: dueDate.toISOString().split('T')[0],
                                 status: 'Pendente',
                                 ownerId: userId
                             };
-                            
+                           
                             const newPaymentRef = doc(collection(db, `/artifacts/${appId}/public/data/payments`));
                             batch.set(newPaymentRef, paymentData);
                         }
-                        
-                        await batch.commit(); 
+                       
+                        await batch.commit();
                     }
                 }
-                
+               
                 hideModal('clientModal');
-                
-                if(currentClientId === savedClientId) { 
-                    loadClientDetail(savedClientId); 
+               
+                if(currentClientId === savedClientId) {
+                    loadClientDetail(savedClientId);
                 }
-
             } catch (e) {
                 console.error("Erro ao salvar cliente:", e);
             } finally {
@@ -1721,19 +1717,18 @@
                 submitButton.textContent = "Salvar Cliente";
             }
         };
-
         // --- DETALHE DO CLIENTE ---
-        
+       
         window.handleViewClient = (clientId) => {
             currentClientId = clientId;
             loadClientDetail(clientId);
             showPage('clientDetailPage');
-            switchTab('financial', '.tab-link', '.tab-content'); 
+            switchTab('financial', '.tab-link', '.tab-content');
         };
-        
+       
         const loadClientDetail = (clientId) => {
             if (!userId || !clientId || !db) return;
-            
+           
             const clientRef = doc(db, `/artifacts/${appId}/public/data/clients/${clientId}`);
             onSnapshot(clientRef, (doc) => {
                 if (doc.exists()) {
@@ -1745,30 +1740,30 @@
                     document.getElementById('detail-client-days').textContent = getDaysRemaining(data.dataTermino) + ' dias';
                 } else {
                     console.error("Cliente não encontrado");
-                    showPage('clientsPage'); 
+                    showPage('clientsPage');
                 }
             }, (e) => { handleFriendlyError("Erro ao carregar detalhe do cliente.", e.message, e); });
-            
+           
             loadClientPayments(clientId);
             loadClientTasks(clientId);
             loadClientCredentials(clientId);
         };
-        
+       
         // --- Financeiro (Detalhe Cliente) ---
-        
+       
         // ******************************************************
         // ***** ATENÇÃO: CORREÇÃO DO BUG DAS PARCELAS (PONTO 1) *****
         // ******************************************************
         const loadClientPayments = (clientId) => {
             if (!userId || !db) return;
-            
+           
             // CORREÇÃO: Adicionado 'orderBy("dataVencimento")' para ordenar pela data
             const q = query(
-                collection(db, `/artifacts/${appId}/public/data/payments`), 
+                collection(db, `/artifacts/${appId}/public/data/payments`),
                 where("clientId", "==", clientId),
                 orderBy("dataVencimento", "asc") // "asc" = ascendente (mais antigo primeiro)
             );
-            
+           
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('payments-list');
                 container.innerHTML = '';
@@ -1776,19 +1771,19 @@
                     container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum pagamento registado.</p>';
                     return;
                 }
-                
+               
                 // O 'snapshot.forEach' agora já virá ordenado do Firebase
                 snapshot.forEach(doc => {
                     const p = doc.data();
                     const statusColor = p.status === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
-                    
+                   
                     let actionButton = '';
                     if (p.status === 'Pendente') {
                         actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pago')" class="text-sm font-medium text-green-600 hover:text-green-800">Marcar como Pago</button>`;
                     } else {
                         actionButton = `<button onclick="window.markPaymentStatus('${doc.id}', 'Pendente')" class="text-sm font-medium text-gray-500 hover:text-gray-700">Desfazer</button>`;
                     }
-                    
+                   
                     container.innerHTML += `
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border rounded-md hover:bg-gray-50">
                             <div>
@@ -1800,22 +1795,23 @@
                                     ${p.status}
                                 </span>
                                 ${actionButton}
+                                <button onclick="window.openEditPaymentModal('${doc.id}')" class="text-blue-600 hover:text-blue-800"><i data-lucide="edit"></i></button>
                                 <button onclick="window.handleDeleteClick('payments', '${doc.id}')" class="text-red-600 hover:text-red-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </div>
                     `;
                 });
                 renderIcons();
-            }, (e) => { 
+            }, (e) => {
                 // NOTA: Se esta função falhar, pode ser porque o índice do Firestore não foi criado.
                 // O Firebase geralmente fornece um link de erro no console para criar o índice com um clique.
-                handleFriendlyError("Erro ao carregar pagamentos (Verifique o console para criar o índice no Firebase se necessário).", e.message, e); 
+                handleFriendlyError("Erro ao carregar pagamentos (Verifique o console para criar o índice no Firebase se necessário).", e.message, e);
             });
         };
         // ******************************************************
         // ***** FIM DA CORREÇÃO *****
         // ******************************************************
-        
+       
         window.markPaymentStatus = async (paymentId, newStatus) => {
             if (!userId || !db) return;
             try {
@@ -1825,15 +1821,14 @@
                 console.error("Erro ao atualizar status:", e);
             }
         };
-        
+       
         const handleAddPaymentSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-            
+           
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = "A salvar...";
-
             const data = {
                 clientId: currentClientId,
                 descricao: document.getElementById('paymentDesc').value,
@@ -1842,10 +1837,10 @@
                 status: 'Pendente',
                 ownerId: userId
             };
-            
+           
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/payments`), data);
-                
+               
                 const isUpsell = document.getElementById('paymentIsUpsell').checked;
                 if (isUpsell) {
                     await addDoc(collection(db, `/artifacts/${appId}/public/data/sales`), {
@@ -1856,25 +1851,24 @@
                         ownerId: userId
                     });
                 }
-                
+               
                 document.getElementById('addPaymentForm').reset();
                 document.getElementById('paymentIsUpsell').checked = true;
-            } catch(e) { 
+            } catch(e) {
                 console.error("Erro ao adicionar pagamento:", e);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = "Adicionar Serviço";
             }
         };
-        
+       
         // --- Tarefas (Detalhe Cliente) ---
-
         const loadClientTasks = (clientId) => {
              if (!userId || !db) return;
              const q = query(collection(db, `/artifacts/${appId}/public/data/tasks`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('tasks-list');
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
                 if(snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma tarefa registada.</p>';
@@ -1896,20 +1890,19 @@
                 renderIcons();
              }, (e) => { handleFriendlyError("Erro ao carregar tarefas.", e.message, e); });
         };
-        
+       
         const handleAddTaskSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-            
+           
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             const desc = document.getElementById('taskDesc').value;
             if(!desc) {
                 submitButton.disabled = false;
                 return;
             }
-            
+           
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/tasks`), {
                     clientId: currentClientId,
@@ -1924,21 +1917,21 @@
                 submitButton.disabled = false;
             }
         };
-        
+       
         window.toggleTaskStatus = async (taskId, isDone) => {
             if (!userId || !db) return;
             const newStatus = isDone ? 'A Fazer' : 'Feito';
             await updateDoc(doc(db, `/artifacts/${appId}/public/data/tasks/${taskId}`), { status: newStatus });
         };
-        
+       
         // --- Senhas (Detalhe Cliente) ---
-        
+       
         const loadClientCredentials = (clientId) => {
             if (!userId || !db) return;
             const q = query(collection(db, `/artifacts/${appId}/public/data/credentials`), where("clientId", "==", clientId));
              onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('credentials-list');
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
                 if(snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma credencial registada.</p>';
@@ -1954,7 +1947,7 @@
                             </div>
                             <div class="text-sm text-gray-600 mt-2">
                                 <p><strong>Login:</strong> ${cred.login}</p>
-                                <p><strong>Senha:</strong> <span id="pass-${doc.id}" data-pass="${cred.senha}">••••••••</span> 
+                                <p><strong>Senha:</strong> <span id="pass-${doc.id}" data-pass="${cred.senha}">••••••••</span>
                                     <button onclick="window.togglePassword('pass-${doc.id}')" class="ml-2 text-rocket-yellow-600 text-xs">(Mostrar)</button>
                                 </p>
                             </div>
@@ -1964,14 +1957,12 @@
                 renderIcons();
              }, (e) => { handleFriendlyError("Erro ao carregar credenciais.", e.message, e); });
         };
-        
+       
         const handleAddCredentialSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/credentials`), {
                     clientId: currentClientId,
@@ -1987,7 +1978,7 @@
                  submitButton.disabled = false;
             }
         };
-        
+       
         window.togglePassword = (elementId) => {
             const el = document.getElementById(elementId);
             const btn = el.nextElementSibling;
@@ -1999,48 +1990,43 @@
                 btn.textContent = "(Mostrar)";
             }
         };
-
         // --- PROSPECÇÃO (VISÃO KANBAN) ---
-        
-        const KANBAN_COLUMNS = [ 
+       
+        const KANBAN_COLUMNS = [
             { id: 'prospeccao', title: 'Prospecção' },
             { id: 'contato', title: 'Contato Feito' },
             { id: 'negociando', title: 'Negociando' },
             { id: 'fechado', title: 'Fechado' },
             { id: 'perdido', title: 'Perdido' }
         ];
-
         // ATUALIZAÇÃO: Carrega o KANBAN com os novos dados (Nível e Próxima Ação)
         const loadProspects = () => {
             if (!userId || !db) return;
-            
+           
             const colProspeccao = document.getElementById('kanban-col-prospeccao');
             const colContato = document.getElementById('kanban-col-contato');
             const colNegociando = document.getElementById('kanban-col-negociando');
-
             if (!colProspeccao || !colContato || !colNegociando) return;
-
             const loadingHtml = '<p class="text-sm text-gray-500 p-2">A carregar...</p>';
             colProspeccao.innerHTML = loadingHtml;
             colContato.innerHTML = loadingHtml;
             colNegociando.innerHTML = loadingHtml;
-
             const q = query(
-                collection(db, `/artifacts/${appId}/public/data/prospects`), 
+                collection(db, `/artifacts/${appId}/public/data/prospects`),
                 where("status", "in", ["prospeccao", "contato", "negociando"])
             );
-
             onSnapshot(q, (snapshot) => {
                 let htmlP = '', htmlC = '', htmlN = '';
                 let countP = 0, countC = 0, countN = 0;
-
+                const roteiroContainer = document.getElementById('roteiro-list');
+                roteiroContainer.innerHTML = '';
                 snapshot.forEach(doc => {
                     const prospect = { id: doc.id, ...doc.data() };
-                    
-                    const labelHtml = prospect.label 
-                        ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>` 
+                   
+                    const labelHtml = prospect.label
+                        ? `<span class="text-xs font-semibold px-2 py-0.5 bg-rocket-yellow-300 text-rocket-dark rounded-full">${prospect.label}</span>`
                         : '';
-                    
+                   
                     // NOVO: Define Nível de Interesse (Quente/Morno/Frio)
                     let interestHtml = '';
                     switch (prospect.interestLevel) {
@@ -2048,18 +2034,17 @@
                         case 'Morno': interestHtml = '<span title="Morno" class="text-xs">🔥</span>'; break;
                         case 'Frio': interestHtml = '<span title="Frio" class="text-xs">❄️</span>'; break;
                     }
-
                     // NOVO: Define Próxima Ação Agendada
                     let nextActionHtml = '';
                     if (prospect.nextActionDate) {
                         const actionDate = new Date(prospect.nextActionDate + "T12:00:00");
                         const today = new Date();
                         today.setHours(0,0,0,0);
-                        
+                       
                         let dateColor = 'text-gray-500'; // Futuro
                         if (actionDate < today) dateColor = 'text-red-500'; // Atrasado
                         else if (actionDate.getTime() === today.getTime()) dateColor = 'text-blue-600'; // Hoje
-                        
+                       
                         nextActionHtml = `
                             <div class="mt-2 flex items-center gap-2 ${dateColor}" title="${prospect.nextAction || 'Ação agendada'}">
                                 <i data-lucide="calendar" class="w-3 h-3"></i>
@@ -2067,10 +2052,9 @@
                             </div>
                         `;
                     }
-
                     // Monta o Card HTML Atualizado
                     const cardHtml = `
-                        <div class="bg-white p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg" onclick="window.openProspectDetailModal('${prospect.id}')">
+                        <div class="bg-white p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg draggable kanban-card" data-id="${prospect.id}" draggable="true" onclick="window.openProspectDetailModal('${prospect.id}')">
                             <div class="flex justify-between items-start">
                                 <h4 class="font-bold text-gray-900">${prospect.nome}</h4>
                                 <div class="flex items-center gap-2">
@@ -2082,55 +2066,57 @@
                             ${nextActionHtml}
                         </div>
                     `;
-
                     switch (prospect.status) {
                         case 'prospeccao': htmlP += cardHtml; countP++; break;
                         case 'contato': htmlC += cardHtml; countC++; break;
                         case 'negociando': htmlN += cardHtml; countN++; break;
                     }
+                    if (prospect.address) {
+                        roteiroContainer.innerHTML += `
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" class="roteiro-checkbox" data-id="${doc.id}" data-address="${prospect.address}">
+                                <span>${prospect.nome} - ${prospect.address}</span>
+                            </div>
+                        `;
+                    }
                 });
-
                 colProspeccao.innerHTML = htmlP || '<p class="text-sm text-gray-500 p-2">Nenhum prospect aqui.</p>';
                 colContato.innerHTML = htmlC || '<p class="text-sm text-gray-500 p-2">Nenhum prospect aqui.</p>';
                 colNegociando.innerHTML = htmlN || '<p class="text-sm text-gray-500 p-2">Nenhum prospect aqui.</p>';
-
                 document.getElementById('kanban-count-prospeccao').textContent = countP;
                 document.getElementById('kanban-count-contato').textContent = countC;
                 document.getElementById('kanban-count-negociando').textContent = countN;
-                
+               
                 renderIcons();
-
-            }, (e) => { 
+                applyProspectFilters();
+            }, (e) => {
                 handleFriendlyError("Erro ao carregar funil de prospecção.", e.message, e);
             });
         };
-        
+       
         const handleAddProspectFormSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/prospects`), {
                     nome: document.getElementById('prospectNameInput').value,
-                    telefone: document.getElementById('prospectPhoneInput').value,
-                    segmento: document.getElementById('prospectSegmentInput').value, // NOVO: Segmento
-                    faturamentoEstimado: parseFloat(document.getElementById('prospectEstimatedValueInput').value) || 0, // NOVO: Faturamento Estimado
-                    observacoes: document.getElementById('prospectNotesInput').value,
+                    email: document.getElementById('prospectEmailInput').value,
                     origem: document.getElementById('prospectOriginInput').value,
                     services: getSelectedServices('prospectServicesCheckboxes'),
-                    status: 'prospeccao', 
-                    createdAt: new Date().toISOString(), 
-                    label: '', 
-                    // Campos do Super-Modal
-                    notes: [], 
+                    status: 'prospeccao',
+                    createdAt: new Date().toISOString(),
+                    label: '',
+                    // NOVO: Adiciona campos do Super-Modal como vazios
+                    notes: [], // Agora é um array para o histórico
                     interestLevel: 'Nenhum',
                     nextAction: '',
                     nextActionDate: '',
                     instaLink: '',
                     gmnLink: '',
+                    address: '',
+                    insights: '',
                     ownerId: userId
                 });
                 hideModal('prospectModal');
@@ -2141,33 +2127,30 @@
                 submitButton.disabled = false;
             }
         };
-        
+       
         // ATUALIZAÇÃO: Abre o "Super-Modal"
         window.openProspectDetailModal = async (prospectId) => {
             if (!prospectId) return;
-            currentProspectId = prospectId; 
-            
+            currentProspectId = prospectId;
+           
             // Reseta o formulário e as abas
             const form = document.getElementById('prospectDetailForm');
             form.reset();
             document.getElementById('addProspectNoteForm').reset();
-            document.getElementById('geminiAnalysisResult').innerHTML = '<p class="text-gray-500 text-sm">A análise da IA aparecerá aqui...</p>';
             // Ativa a primeira aba (Detalhes) por padrão
             switchTab('details', '.modal-tab-link', '.modal-tab-content');
-            
+           
             try {
                 const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
                 const docSnap = await getDoc(prospectRef);
-                
+               
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     // Aba 1: Detalhes
                     document.getElementById('prospectDetailId').value = prospectId;
                     document.getElementById('prospectDetailModalTitle').textContent = data.nome || 'Detalhes do Prospect';
                     document.getElementById('prospectDetailName').value = data.nome || '';
-                    document.getElementById('prospectDetailPhone').value = data.telefone || '';
-                    document.getElementById('prospectDetailSegment').value = data.segmento || ''; // NOVO: Segmento
-                    document.getElementById('prospectDetailEstimatedValue').value = data.faturamentoEstimado || 0; // NOVO: Faturamento Estimado
+                    document.getElementById('prospectDetailEmail').value = data.email || '';
                     document.getElementById('prospectDetailOrigin').value = data.origem || '';
                     document.getElementById('prospectDetailLabel').value = data.label || '';
                     document.getElementById('prospectDetailStatus').value = data.status || 'prospeccao';
@@ -2177,20 +2160,17 @@
                     document.getElementById('prospectDetailActionDate').value = data.nextActionDate || '';
                     document.getElementById('prospectDetailInstaLink').value = data.instaLink || '';
                     document.getElementById('prospectDetailGMNLink').value = data.gmnLink || '';
-                    document.getElementById('prospectDetailNotes').value = data.observacoes || '';
-                    
+                    document.getElementById('prospectDetailAddress').value = data.address || '';
+                    document.getElementById('prospectDetailInsights').value = data.insights || '';
+                   
                     renderServicesCheckboxes('prospectDetailServicesCheckboxes', data.services || []);
-                    
+                   
                     // Aba 2: Histórico
                     loadProspectNotes(data.notes || []); // Carrega os comentários
-
-                    // Aba 3: IA (Carrega API Key salva localmente)
-                    document.getElementById('geminiApiKeyInput').value = localStorage.getItem('geminiApiKey') || '';
-
                     // Botão de Converter
                     const convertBtn = document.getElementById('convertProspectBtn');
                     convertBtn.classList.toggle('hidden', data.status !== 'fechado');
-                    
+                   
                     showModal('prospectDetailModal');
                 } else {
                     console.error("Prospect não encontrado");
@@ -2199,22 +2179,19 @@
                  handleFriendlyError("Erro ao carregar prospect.", e.message, e);
             }
         };
-
         // ATUALIZAÇÃO: Salva os dados do "Super-Modal"
         const handleProspectDetailFormSubmit = async (e) => {
             e.preventDefault();
             if (!currentProspectId) return;
-            
+           
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-            
+           
             const newStatus = document.getElementById('prospectDetailStatus').value;
-            
+           
             const dataToUpdate = {
                 nome: document.getElementById('prospectDetailName').value,
-                telefone: document.getElementById('prospectDetailPhone').value,
-                segmento: document.getElementById('prospectDetailSegment').value, // NOVO: Segmento
-                faturamentoEstimado: parseFloat(document.getElementById('prospectDetailEstimatedValue').value) || 0, // NOVO: Faturamento Estimado
+                email: document.getElementById('prospectDetailEmail').value,
                 origem: document.getElementById('prospectDetailOrigin').value,
                 label: document.getElementById('prospectDetailLabel').value,
                 status: newStatus,
@@ -2225,16 +2202,17 @@
                 nextActionDate: document.getElementById('prospectDetailActionDate').value,
                 instaLink: document.getElementById('prospectDetailInstaLink').value,
                 gmnLink: document.getElementById('prospectDetailGMNLink').value,
-                observacoes: document.getElementById('prospectDetailNotes').value,
+                address: document.getElementById('prospectDetailAddress').value,
+                insights: document.getElementById('prospectDetailInsights').value
             };
-            
+           
             try {
                 const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
                 await updateDoc(prospectRef, dataToUpdate);
-                
+               
                 const convertBtn = document.getElementById('convertProspectBtn');
                 convertBtn.classList.toggle('hidden', newStatus !== 'fechado');
-                
+               
                 hideModal('prospectDetailModal');
                 currentProspectId = null;
             } catch (e) {
@@ -2243,21 +2221,20 @@
                 submitButton.disabled = false;
             }
         };
-
         // NOVO: Carrega o histórico de comentários
         const loadProspectNotes = (notesArray) => {
             const container = document.getElementById('prospectDetailNotesList');
             if (!container) return;
             container.innerHTML = '';
-            
+           
             if (!notesArray || notesArray.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum comentário adicionado.</p>';
                 return;
             }
-            
+           
             // Ordena do mais novo para o mais antigo
             notesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
+           
             notesArray.forEach(note => {
                 container.innerHTML += `
                     <div class="comment-item">
@@ -2267,34 +2244,28 @@
                 `;
             });
         };
-
         // NOVO: Adiciona um novo comentário ao histórico
         const handleAddProspectNoteSubmit = async (e) => {
             e.preventDefault();
             if (!currentProspectId) return;
-
             const newNoteText = document.getElementById('prospectDetailNewNote').value;
             if (!newNoteText.trim()) return;
-
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             const note = {
                 text: newNoteText,
                 date: new Date().toISOString()
             };
-
             try {
                 const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${currentProspectId}`);
                 const docSnap = await getDoc(prospectRef);
-
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const existingNotes = data.notes || [];
                     const updatedNotes = [...existingNotes, note];
-                    
+                   
                     await updateDoc(prospectRef, { notes: updatedNotes });
-                    
+                   
                     // Atualiza a UI
                     loadProspectNotes(updatedNotes);
                     document.getElementById('addProspectNoteForm').reset();
@@ -2306,156 +2277,65 @@
                 submitButton.disabled = false;
             }
         };
-
-        
+       
         // Corrigido: Passa os dados do prospect para a função de conversão
         window.convertProspectToClient = async (prospectId) => {
              if (!userId || !db) return;
-             
+            
              try {
                  const prospectRef = doc(db, `/artifacts/${appId}/public/data/prospects/${prospectId}`);
                  const prospectDoc = await getDoc(prospectRef);
-                
+               
                  if (!prospectDoc.exists()) {
                      console.error("Prospect não encontrado para conversão");
                      return;
                  }
-                
+               
                  const prospect = prospectDoc.data();
                  const prospectName = prospect.nome;
                  const prospectContact = prospect.telefone || prospect.email || '';
-
                  document.getElementById('deleteModalText').textContent = `Deseja realmente converter o prospect "${prospectName}" em um novo cliente? O prospect será removido do funil.`;
-                 currentDeleteInfo = { 
-                     collectionName: 'prospects-convert', 
-                     docId: prospectId, 
-                     data: { nome: prospectName, telefone: prospectContact } 
+                 currentDeleteInfo = {
+                     collectionName: 'prospects-convert',
+                     docId: prospectId,
+                     data: { nome: prospectName, telefone: prospectContact }
                  };
                  showModal('deleteModal');
-                
+               
              } catch(e) {
                  console.error("Erro ao buscar prospect para converter:", e);
              }
         };
-
-        // --- NOVO: LÓGICA DA IA (GEMINI) ---
-
-        // Salva a API Key no Local Storage (seguro apenas no navegador do usuário)
-        const handleApiKeySave = () => {
-            const apiKey = document.getElementById('geminiApiKeyInput').value;
-            if (apiKey) {
-                localStorage.setItem('geminiApiKey', apiKey);
-            }
-        };
-
-        // Função principal da IA
-        const handleGeminiAnalysis = async () => {
-            const apiKey = document.getElementById('geminiApiKeyInput').value;
-            if (!apiKey) {
-                alert("Por favor, insira a sua Chave da API do Gemini.");
-                return;
-            }
-            
-            // Salva a chave para uso futuro
-            handleApiKeySave();
-
-            // Verifica se a biblioteca foi importada
-            if (typeof GoogleGenerativeAI === 'undefined') {
-                alert("Erro: A biblioteca do GoogleGenerativeAI não foi carregada. Descomente a linha 'import' no início do <script>.");
-                return;
-            }
-            
-            const resultContainer = document.getElementById('geminiAnalysisResult');
-            const generateBtn = document.getElementById('generateGeminiAnalysisBtn');
-            resultContainer.innerHTML = '<p class="text-gray-700 text-sm">A analisar... Por favor, aguarde. Isto pode demorar alguns segundos.</p>';
-            generateBtn.disabled = true;
-
-            // Pega os dados do prospect dos campos
-            const nome = document.getElementById('prospectDetailName').value;
-            const instaLink = document.getElementById('prospectDetailInstaLink').value;
-            const gmnLink = document.getElementById('prospectDetailGMNLink').value;
-
-            if (!instaLink && !gmnLink) {
-                 resultContainer.innerHTML = '<p class="text-red-500 text-sm">Erro: Preencha pelo menos o Link do Instagram ou do Google Meu Negócio na aba "Detalhes" para a análise.</p>';
-                 generateBtn.disabled = false;
-                 return;
-            }
-
-            const prompt = `
-                Você é um especialista em marketing digital para pizzarias (Rocket for Eat).
-                Analise o posicionamento digital do prospect abaixo e gere uma breve análise (máximo 3 parágrafos) focada em PONTOS DE MELHORIA e OPORTUNIDADES que a Rocket for Eat pode vender.
-
-                Seja direto e acionável.
-
-                Prospect: ${nome}
-                Instagram: ${instaLink || 'Não fornecido'}
-                Google Meu Negócio: ${gmnLink || 'Não fornecido'}
-
-                Estruture a resposta:
-                1.  **Análise Rápida:** (O que você vê de bom ou ruim)
-                2.  **Pontos de Melhoria:** (O que está faltando)
-                3.  **Oportunidades (Serviços):** (O que a Rocket for Eat pode oferecer)
-            `;
-
-            try {
-                const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-                
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const text = response.text();
-                
-                // Formata o texto da IA para HTML (substitui quebras de linha e negrito)
-                let htmlText = text
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negrito
-                    .replace(/\n/g, '<br>'); // Quebra de linha
-
-                resultContainer.innerHTML = `<div class="text-sm text-gray-800 space-y-2">${htmlText}</div>`;
-
-            } catch (e) {
-                console.error("Erro na API do Gemini:", e);
-                resultContainer.innerHTML = `<p class="text-red-500 text-sm">Erro ao gerar análise: ${e.message}. Verifique sua API Key ou o console.</p>`;
-            } finally {
-                generateBtn.disabled = false;
-            }
-        };
-
-        
         // --- CONTAS A RECEBER ---
-        
+       
         const loadReceivablesReport = () => {
             if (!userId || !db) return;
-
             // ATENÇÃO: Também aplica a ordenação por data aqui
             const paymentsQuery = query(
                 collection(db, `/artifacts/${appId}/public/data/payments`),
-                orderBy("dataVencimento", "asc") 
+                orderBy("dataVencimento", "asc")
             );
-            
+           
             onSnapshot(paymentsQuery, (snapshot) => {
                 const lateContainer = document.getElementById('late-payments-list');
                 const upcomingContainer = document.getElementById('upcoming-payments-list');
                 const paidThisMonthContainer = document.getElementById('paid-this-month-list');
-                
-                if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return; 
-
+               
+                if (!lateContainer || !upcomingContainer || !paidThisMonthContainer) return;
                 lateContainer.innerHTML = '';
                 upcomingContainer.innerHTML = '';
                 paidThisMonthContainer.innerHTML = '';
-
                 let hasLate = false, hasUpcoming = false, hasPaidThisMonth = false;
-
                 const today = new Date();
-                today.setHours(0, 0, 0, 0); 
+                today.setHours(0, 0, 0, 0);
                 const currentMonth = today.getMonth();
                 const currentYear = today.getFullYear();
-                
+               
                 snapshot.forEach(doc => {
                     const payment = doc.data();
-                    const dueDate = new Date(payment.dataVencimento + "T12:00:00"); 
-                    dueDate.setHours(0, 0, 0, 0); 
+                    const dueDate = new Date(payment.dataVencimento + "T12:00:00");
+                    dueDate.setHours(0, 0, 0, 0);
                     const clientName = allClientsData[payment.clientId]?.nome || "Cliente...";
-
                     const paymentHtml = `
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center p-3 border rounded-md hover:bg-gray-50">
                             <div>
@@ -2465,7 +2345,6 @@
                             <button onclick="window.handleViewClient('${payment.clientId}')" class="text-sm text-rocket-yellow-600 hover:underline mt-2 sm:mt-0">Ver Cliente</button>
                         </div>
                     `;
-
                     if (payment.status === 'Pendente') {
                         if (dueDate < today) {
                             lateContainer.innerHTML += `<div class="bg-red-50">${paymentHtml}</div>`;
@@ -2482,33 +2361,32 @@
                         }
                     }
                 });
-
                 if (!hasLate) lateContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento atrasado.</p>';
                 if (!hasUpcoming) upcomingContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento previsto.</p>';
                 if (!hasPaidThisMonth) paidThisMonthContainer.innerHTML = '<p class="text-gray-500">Nenhum pagamento registado como pago este mês.</p>';
-                
+               
                 renderIcons();
             }, (e) => { handleFriendlyError("Erro ao carregar relatório financeiro (Verifique o índice no Firebase).", e.message, e); });
         };
-        
+       
         // --- DESPESAS ---
-        
+       
         const loadExpensesPage = () => {
             if (!userId || !db) return;
-            
+           
             const { start } = getCurrentMonthRange();
             const q = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("data", ">=", start));
-            
+           
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('expenses-list');
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
-                
+               
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma despesa registada este mês.</p>';
                     return;
                 }
-                
+               
                 snapshot.forEach(doc => {
                     const expense = doc.data();
                     container.innerHTML += `
@@ -2527,21 +2405,19 @@
                 renderIcons();
             }, (e) => { handleFriendlyError("Erro ao carregar despesas.", e.message, e); });
         };
-
         const handleExpenseFormSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-            
+           
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             const data = {
                 descricao: document.getElementById('expenseDesc').value,
                 valor: parseFloat(document.getElementById('expenseValue').value),
-                data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0], 
+                data: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0],
                 ownerId: userId
             };
-            
+           
             try {
                 await addDoc(collection(db, `/artifacts/${appId}/public/data/expenses`), data);
                 document.getElementById('addExpenseForm').reset();
@@ -2551,72 +2427,63 @@
                 submitButton.disabled = false;
             }
         };
-
-        
+       
         // --- TAREFAS GLOBAIS ---
-        
+       
         const loadGlobalTasks = () => {
             if (!userId || !db) return;
-
             const clientFilterSelect = document.getElementById('globalTaskClientFilter');
-            const currentValue = clientFilterSelect.value; 
+            const currentValue = clientFilterSelect.value;
             clientFilterSelect.innerHTML = '<option value="all">Todos os Clientes</option>';
-            
+           
             const sortedClients = Object.values(allClientsData).sort((a, b) => a.nome.localeCompare(b.nome));
-            
+           
             sortedClients.forEach(client => {
                  clientFilterSelect.innerHTML += `<option value="${client.id}">${client.nome}</option>`;
             });
-            
-            clientFilterSelect.value = currentValue; 
-            
-            applyGlobalTaskFilters(); 
+           
+            clientFilterSelect.value = currentValue;
+           
+            applyGlobalTaskFilters();
         };
-
         const applyGlobalTaskFilters = () => {
             if (!userId || !db) return;
-
             const selectedClient = document.getElementById('globalTaskClientFilter').value;
             const selectedStatus = document.getElementById('globalTaskStatusFilter').value;
             const container = document.getElementById('global-tasks-list');
-            if (!container) return; 
-            container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>'; 
-
+            if (!container) return;
+            container.innerHTML = '<p class="text-gray-500">A carregar tarefas...</p>';
             let q = collection(db, `/artifacts/${appId}/public/data/tasks`);
             let filters = [];
-
             if (selectedClient !== 'all') {
                 filters.push(where("clientId", "==", selectedClient));
             }
             if (selectedStatus !== 'all') {
                 filters.push(where("status", "==", selectedStatus));
             }
-            
+           
             const filteredQuery = query(q, ...filters);
-
             onSnapshot(filteredQuery, (snapshot) => {
-                if (!container) return; 
+                if (!container) return;
                 container.innerHTML = '';
                 if (snapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
                     return;
                 }
-                
+               
                 const tasksData = [];
                 snapshot.forEach(doc => {
                     tasksData.push({ id: doc.id, ...doc.data() });
                 });
-                
+               
                 tasksData.sort((a, b) => {
                     const clientNameA = allClientsData[a.clientId]?.nome || 'ZZZ';
                     const clientNameB = allClientsData[b.clientId]?.nome || 'ZZZ';
                     return clientNameA.localeCompare(clientNameB);
                 });
-
                 tasksData.forEach(task => {
                     const isDone = task.status === 'Feito';
                     const clientName = allClientsData[task.clientId]?.nome || "Cliente...";
-
                     container.innerHTML += `
                         <div class="flex justify-between items-center p-4 border rounded-md ${isDone ? 'bg-gray-50' : ''}">
                             <div class="flex items-center gap-3 w-full min-w-0">
@@ -2630,45 +2497,45 @@
                 renderIcons();
             }, (e) => { handleFriendlyError("Erro ao filtrar tarefas.", e.message, e); });
         };
-        
+       
         // --- RELATÓRIOS (MÊS ANTERIOR) ---
-        
+       
         const loadHistoricalReport = async () => {
             if (!userId || !db) return;
-            
+           
             const loadingMsg = document.getElementById('report-loading-msg');
-            if (!loadingMsg) return; 
-            
+            if (!loadingMsg) return;
+           
             loadingMsg.classList.remove('hidden');
-            
+           
             const { start, end } = getLastMonthRange();
-            
+           
             let bruto = 0, despesas = 0, novosLeads = 0;
-            
+           
             try {
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`),
                     where("data", ">=", start), where("data", "<=", end)
                 );
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
-                
-                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
+               
+                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`),
                     where("data", ">=", start), where("data", "<=", end)
                 );
                 const expensesSnapshot = await getDocs(expensesQuery);
                 expensesSnapshot.forEach(doc => { despesas += doc.data().valor || 0; });
-                
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+               
+                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`),
                     where("createdAt", ">=", start), where("createdAt", "<=", end)
                 );
                 const prospectsSnapshot = await getDocs(prospectsQuery);
                 novosLeads = prospectsSnapshot.size;
-                
+               
                 document.getElementById('report-faturamento-bruto').textContent = formatCurrency(bruto);
                 document.getElementById('report-despesas').textContent = formatCurrency(despesas);
                 document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto - despesas);
-                document.getElementById('report-novos-leads').textContent = novosLeads; 
-                
+                document.getElementById('report-novos-leads').textContent = novosLeads;
+               
             } catch (e) {
                 handleFriendlyError("Erro ao carregar relatório histórico", e.message, e);
                 document.getElementById('report-faturamento-bruto').textContent = "Erro";
@@ -2676,31 +2543,27 @@
                 loadingMsg.classList.add('hidden');
             }
         };
-
-        
+       
         // --- RELATÓRIO DE FATURAMENTO POR CLIENTE ---
-        
+       
         const loadClientRevenueReport = async () => {
             if (!userId || !db) return;
-
             const container = document.getElementById('client-revenue-list');
             const loadingMsg = document.getElementById('client-revenue-loading');
-            
-            if (!container || !loadingMsg) return; 
-
+           
+            if (!container || !loadingMsg) return;
             loadingMsg.classList.remove('hidden');
-            container.innerHTML = ''; 
-
+            container.innerHTML = '';
             try {
                 const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`));
                 const salesSnapshot = await getDocs(salesQuery);
-                
+               
                 if (salesSnapshot.empty) {
                     container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
                     loadingMsg.classList.add('hidden');
                     return;
                 }
-                
+               
                 const revenueMap = {};
                 salesSnapshot.forEach(doc => {
                     const sale = doc.data();
@@ -2708,15 +2571,12 @@
                         revenueMap[sale.clientId] = (revenueMap[sale.clientId] || 0) + sale.valor;
                     }
                 });
-
                 if (Object.keys(revenueMap).length === 0) {
                      container.innerHTML = '<p class="text-gray-500">Nenhuma faturação registada ainda.</p>';
                      loadingMsg.classList.add('hidden');
                      return;
                 }
-
-                const sortedRevenue = Object.entries(revenueMap).sort((a, b) => b[1] - a[1]); 
-
+                const sortedRevenue = Object.entries(revenueMap).sort((a, b) => b[1] - a[1]);
                 sortedRevenue.forEach(([clientId, total]) => {
                     const clientName = allClientsData[clientId]?.nome || 'Cliente Excluído';
                     container.innerHTML += `
@@ -2726,7 +2586,6 @@
                         </div>
                     `;
                 });
-
             } catch (e) {
                  handleFriendlyError("Erro ao carregar faturação por cliente", e.message, e);
                  container.innerHTML = '<p class="text-red-500">Erro ao carregar relatório.</p>';
@@ -2734,160 +2593,153 @@
                 loadingMsg.classList.add('hidden');
             }
         };
-        
+       
         // Gera o relatório de faturação personalizado
         const handleGenerateCustomReport = async () => {
             if (!userId || !db) return;
-            
+           
             const period = document.getElementById('reportPeriodSelect').value;
             const dateRange = getReportDateRange(period);
-            
+           
             if (period === 'custom' && !dateRange) {
                 alert("Por favor, selecione as datas de início e fim.");
                 return;
             }
-            
+           
             const loadingMsg = document.getElementById('custom-report-loading');
             const resultsContainer = document.getElementById('customReportResults');
             loadingMsg.classList.remove('hidden');
             resultsContainer.classList.add('hidden');
-            
+           
             const { start, end } = dateRange;
-            
+           
             let bruto = 0, despesas = 0, novosLeads = 0;
-
             try {
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), 
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`),
                     where("data", ">=", start), where("data", "<=", end)
                 );
                 const salesSnapshot = await getDocs(salesQuery);
                 salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
-                
-                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), 
+               
+                const expensesQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`),
                     where("data", ">=", start), where("data", "<=", end)
                 );
                 const expensesSnapshot = await getDocs(expensesQuery);
                 expensesSnapshot.forEach(doc => { despesas += doc.data().valor || 0; });
-                
-                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`), 
+               
+                const prospectsQuery = query(collection(db, `/artifacts/${appId}/public/data/prospects`),
                     where("createdAt", ">=", start), where("createdAt", "<=", end)
                 );
                 const prospectsSnapshot = await getDocs(prospectsQuery);
                 novosLeads = prospectsSnapshot.size;
-                
+               
                 document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
                 document.getElementById('custom-report-despesas').textContent = formatCurrency(despesas);
                 document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto - despesas);
                 document.getElementById('custom-report-leads').textContent = novosLeads;
-                
+               
                 resultsContainer.classList.remove('hidden');
-
             } catch (e) {
                 handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
             } finally {
                 loadingMsg.classList.add('hidden');
             }
         };
-
         // --- MINHA EMPRESA (METAS) ---
-        
+       
         const handleGoalsFormSubmit = async (e) => {
             e.preventDefault();
             if (!userId || !db) return;
-
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-
             const data = {
                 faturamento: parseFloat(document.getElementById('goal-faturamento').value) || 0,
                 prospeccao: parseInt(document.getElementById('goal-prospeccao').value) || 0,
-                ownerId: userId 
+                ownerId: userId
             };
-            
+           
             try {
                 await setDoc(goalsDocRef(), data, { merge: true });
-                loadCompanyGoalsPage(); 
+                loadCompanyGoalsPage();
             } catch(e) {
                 console.error("Erro ao salvar metas:", e);
             } finally {
                 submitButton.disabled = false;
             }
         };
-
         // --- EXCLUSÃO GENÉRICA (MODAL) ---
-        
+       
         window.handleDeleteClick = (collectionName, docId) => {
-            let data = null; 
+            let data = null;
             if (collectionName === 'clients') {
                  document.getElementById('deleteModalText').textContent = "Tem certeza? Excluir um cliente também excluirá TODOS os seus pagamentos, tarefas e senhas associados. Esta ação é irreversível.";
             } else {
                  document.getElementById('deleteModalText').textContent = "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.";
             }
-            
+           
             if (collectionName !== 'prospects-convert') {
                  currentDeleteInfo = { collectionName, docId, data: null };
                  showModal('deleteModal');
             }
         };
-        
+       
         const handleConfirmDelete = async () => {
             if (!currentDeleteInfo || !userId || !db) return;
-            
+           
             const { collectionName, docId, data } = currentDeleteInfo;
-            
+           
             try {
                 if (collectionName === 'clients') {
                     // Excluir Cliente e todos os sub-dados
                     const batch = writeBatch(db);
-                    
+                   
                     batch.delete(doc(db, `/artifacts/${appId}/public/data/clients/${docId}`));
-                    
-                    const subCollections = ['payments', 'tasks', 'credentials', 'sales', 'expenses']; 
+                   
+                    const subCollections = ['payments', 'tasks', 'credentials', 'sales', 'expenses'];
                     for (const subCol of subCollections) {
                         let subColPath = `/artifacts/${appId}/public/data/${subCol}`;
                         const q = query(collection(db, subColPath), where("clientId", "==", docId));
                         const snapshot = await getDocs(q);
                         snapshot.forEach(doc => batch.delete(doc.ref));
                     }
-                    
+                   
                     await batch.commit();
-                    
+                   
                     if (currentClientId === docId) {
                         showPage('clientsPage');
                     }
                 } else if (collectionName === 'prospects-convert') {
                     // Converter Prospect para Cliente
                     document.getElementById('conversionSource').value = 'prospect';
-                    hideModal('prospectDetailModal'); 
-                    await openClientModal(null, data); 
-                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`)); 
-                
+                    hideModal('prospectDetailModal');
+                    await openClientModal(null, data);
+                    await deleteDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${docId}`));
+               
                 } else {
                     // Exclusão simples (payments, tasks, credentials, prospects, expenses)
                     let docPath = `/artifacts/${appId}/public/data/${collectionName}/${docId}`;
                     await deleteDoc(doc(db, docPath));
                 }
-                
+               
                 hideModal('deleteModal');
                 currentDeleteInfo = null;
-                
+               
             } catch (e) {
                 console.error("Erro ao excluir/converter:", e);
                 hideModal('deleteModal');
                 currentDeleteInfo = null;
             }
         };
-        
-
+       
         // --- INICIALIZAÇÃO DOS EVENT LISTENERS ---
-        
+       
         const initEventListeners = () => {
-            
+           
             if (document.body.dataset.listenersAttached === 'true') {
                 return;
             }
             document.body.dataset.listenersAttached = 'true';
-            
+           
             // Navegação (Sidebar e Voltar)
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -2898,7 +2750,6 @@
                     showPage(pageId);
                 });
             });
-
             // Modais de Cliente
             document.getElementById('showAddClientModalBtn').addEventListener('click', () => openClientModal());
             document.getElementById('editClientBtn').addEventListener('click', () => openClientModal(currentClientId));
@@ -2911,7 +2762,6 @@
                 installmentsInput.required = isParcelado;
                 if (!isParcelado) installmentsInput.value = '';
             });
-
             // Modais de Prospect (Adicionar)
             document.getElementById('showAddProspectModalBtn').addEventListener('click', () => {
                 renderServicesCheckboxes('prospectServicesCheckboxes');
@@ -2919,7 +2769,7 @@
             });
             document.getElementById('closeProspectModalBtn').addEventListener('click', () => hideModal('prospectModal'));
             document.getElementById('prospectForm').addEventListener('submit', handleAddProspectFormSubmit);
-            
+           
             // NOVO: Listeners do "Super-Modal" de Prospect (Detalhes)
             document.getElementById('prospectDetailForm').addEventListener('submit', handleProspectDetailFormSubmit);
             document.getElementById('closeProspectDetailModalBtn').addEventListener('click', () => hideModal('prospectDetailModal'));
@@ -2930,7 +2780,7 @@
             document.getElementById('convertProspectBtn').addEventListener('click', () => {
                  window.convertProspectToClient(currentProspectId);
             });
-            
+           
             // NOVO: Listeners das Abas do Super-Modal
             document.querySelectorAll('.modal-tab-link').forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -2938,47 +2788,36 @@
                     renderIcons(); // Renderiza ícones caso a aba de IA os tenha
                 });
             });
-            
+           
             // NOVO: Listener do Form de Comentários
             document.getElementById('addProspectNoteForm').addEventListener('submit', handleAddProspectNoteSubmit);
-
-            // NOVO: Listeners da IA (Gemini)
-            document.getElementById('generateGeminiAnalysisBtn').addEventListener('click', handleGeminiAnalysis);
-            document.getElementById('geminiApiKeyInput').addEventListener('change', handleApiKeySave);
-
-
             // Abas (Detalhe Cliente)
             document.querySelectorAll('.tab-link').forEach(link => {
                 link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.tab-link', '.tab-content'));
             });
-
             // Abas (Contas a Receber)
             document.querySelectorAll('.finance-tab-link').forEach(link => {
                 link.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab, '.finance-tab-link', '.finance-tab-content'));
             });
-
             // Forms de Detalhe Cliente
             document.getElementById('addPaymentForm').addEventListener('submit', handleAddPaymentSubmit);
             document.getElementById('addTaskForm').addEventListener('submit', handleAddTaskSubmit);
             document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredentialSubmit);
-            
+           
             // Form de Despesa
             document.getElementById('addExpenseForm').addEventListener('submit', handleExpenseFormSubmit);
-
             // Filtros de Tarefas Globais
             document.getElementById('globalTaskClientFilter').addEventListener('change', applyGlobalTaskFilters);
             document.getElementById('globalTaskStatusFilter').addEventListener('change', applyGlobalTaskFilters);
-
             // Form de Metas
             document.getElementById('goalsForm').addEventListener('submit', handleGoalsFormSubmit);
-
             // Modal de Exclusão
             document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
                 currentDeleteInfo = null;
                 hideModal('deleteModal');
             });
             document.getElementById('confirmDeleteBtn').addEventListener('click', handleConfirmDelete);
-            
+           
             // Listeners do Filtro de Relatório
             document.getElementById('reportPeriodSelect').addEventListener('change', (e) => {
                 const customRange = document.getElementById('customDateRange');
@@ -2987,12 +2826,106 @@
             });
             document.getElementById('generateCustomReportBtn').addEventListener('click', handleGenerateCustomReport);
 
+            // Prospect filters
+            document.getElementById('prospectSearchInput').addEventListener('input', applyProspectFilters);
+            document.getElementById('prospectFilterLabel').addEventListener('change', applyProspectFilters);
+            document.getElementById('prospectFilterInterest').addEventListener('change', applyProspectFilters);
+            document.getElementById('prospectFilterAction').addEventListener('change', applyProspectFilters);
+
+            // Drag-and-Drop com Touch Support
+            let touchStartX = 0, touchStartY = 0;
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.kanban-card').forEach(card => {
+                    card.draggable = true;
+                    card.addEventListener('dragstart', () => card.classList.add('dragging'));
+                    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+                    
+                    // Touch events
+                    card.addEventListener('touchstart', e => {
+                        touchStartX = e.touches[0].clientX;
+                        touchStartY = e.touches[0].clientY;
+                        card.classList.add('dragging');
+                    });
+                    card.addEventListener('touchmove', e => {
+                        if (Math.abs(e.touches[0].clientX - touchStartX) > 10 || Math.abs(e.touches[0].clientY - touchStartY) > 10) {
+                            // Simule drag
+                        }
+                    });
+                    card.addEventListener('touchend', e => {
+                        card.classList.remove('dragging');
+                        const targetColumn = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY)?.closest('.kanban-column');
+                        if (targetColumn) {
+                            targetColumn.appendChild(card);
+                            updateProspectStatus(card.dataset.id, targetColumn.dataset.status);
+                        }
+                    });
+                });
+            });
+            document.querySelectorAll('.kanban-column').forEach(column => {
+                column.addEventListener('dragover', e => e.preventDefault());
+                column.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const card = document.querySelector('.dragging');
+                    if (card) {
+                        column.appendChild(card);
+                        const newStatus = column.dataset.status;
+                        updateProspectStatus(card.dataset.id, newStatus);
+                    }
+                });
+            });
+
+            // Botão Gerar Roteiro
+            document.getElementById('generateRoteiroBtn').addEventListener('click', () => {
+                const selected = Array.from(document.querySelectorAll('.roteiro-checkbox:checked')).map(cb => cb.dataset.address);
+                if (selected.length < 2) return alert('Selecione pelo menos 2 prospects com endereços.');
+                
+                // Gere URL Google Maps com waypoints (origem = seu endereço fixo, ex: sua empresa)
+                const origin = 'Seu Endereço Empresa, Indaiatuba, BR'; // Substitua pelo seu
+                const destination = selected.pop(); // Último como destino
+                const waypoints = selected.join('|');
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`;
+                window.open(mapsUrl, '_blank');
+            });
+
+            // Edit Payment Modal
+            document.getElementById('closeEditPaymentModalBtn').addEventListener('click', () => hideModal('editPaymentModal'));
+            document.getElementById('editPaymentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const paymentId = document.getElementById('editPaymentId').value;
+                const data = {
+                    descricao: document.getElementById('editPaymentDesc').value,
+                    valor: parseFloat(document.getElementById('editPaymentValue').value),
+                    dataVencimento: document.getElementById('editPaymentDueDate').value,
+                    status: document.getElementById('editPaymentStatus').value
+                };
+                try {
+                    await updateDoc(doc(db, `/artifacts/${appId}/public/data/payments/${paymentId}`), data);
+                    hideModal('editPaymentModal');
+                } catch(e) {
+                    console.error("Erro ao editar pagamento:", e);
+                }
+            });
+
+            window.openEditPaymentModal = async (paymentId) => {
+                try {
+                    const paymentDoc = await getDoc(doc(db, `/artifacts/${appId}/public/data/payments/${paymentId}`));
+                    const data = paymentDoc.data();
+                    document.getElementById('editPaymentId').value = paymentId;
+                    document.getElementById('editPaymentDesc').value = data.descricao;
+                    document.getElementById('editPaymentValue').value = data.valor;
+                    document.getElementById('editPaymentDueDate').value = data.dataVencimento;
+                    document.getElementById('editPaymentStatus').value = data.status;
+                    showModal('editPaymentModal');
+                } catch(e) {
+                    console.error("Erro ao abrir edit pagamento:", e);
+                }
+            };
         };
-        
+       
         // --- INICIALIZAÇÃO DA PÁGINA ---
         window.addEventListener('load', () => {
-            renderIcons(); 
-            
+            renderIcons();
+           
             // Listeners do Menu Mobile (Delegação)
             document.addEventListener('click', (e) => {
                 if (e.target.closest('#mobileMenuBtn')) {
@@ -3003,8 +2936,15 @@
                     document.getElementById('mobileMenu').classList.add('hidden');
                 }
             });
-        }); 
-        
+        });
+       
+        const applyProspectFilters = () => {
+            // Implemente lógica de filtro aqui (client-side hide/show cards)
+        };
+
+        const updateProspectStatus = async (id, newStatus) => {
+            await updateDoc(doc(db, `/artifacts/${appId}/public/data/prospects/${id}`), { status: newStatus });
+        };
     </script>
 </body>
 </html>
