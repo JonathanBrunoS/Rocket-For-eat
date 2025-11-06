@@ -1074,30 +1074,7 @@
             });
         };
         
-        const loadHistoricalReport = async () => {
-            const loadingMsg = document.getElementById('report-loading-msg');
-            if (!loadingMsg) return; 
-            loadingMsg.classList.remove('hidden');
-            
-            const { start, end } = getLastMonthRange();
-            let bruto = 0;
-            
-            try {
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start), where("data", "<=", end));
-                const salesSnapshot = await getDocs(salesQuery);
-                salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
-                
-                document.getElementById('report-faturamento-bruto').textContent = formatCurrency(bruto);
-                document.getElementById('report-despesas').textContent = formatCurrency(0); 
-                document.getElementById('report-faturamento-liquido').textContent = formatCurrency(bruto); 
-                document.getElementById('report-novos-leads').textContent = 0; 
-                
-            } catch (e) {
-                handleFriendlyError("Erro ao carregar relatório histórico", e.message, e);
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        };
+        loadHistoricalReport
         
         const loadClientRevenueReport = async () => {
             const container = document.getElementById('client-revenue-list');
@@ -1145,35 +1122,35 @@
             }
         };
         
-        const handleGenerateCustomReport = async () => {
-            const period = document.getElementById('reportPeriodSelect').value;
-            const dateRange = getReportDateRange(period);
-            if (period === 'custom' && !dateRange) { return; }
-            
-            const loadingMsg = document.getElementById('custom-report-loading');
-            const resultsContainer = document.getElementById('customReportResults');
-            loadingMsg.classList.remove('hidden'); resultsContainer.classList.add('hidden');
-            
-            const { start, end } = dateRange;
-            let bruto = 0;
+      const handleGenerateCustomReport = async () => {
+            const period = document.getElementById('reportPeriodSelect').value;
+            const dateRange = getReportDateRange(period);
+            if (period === 'custom' && !dateRange) { return; }
+            
+            const loadingMsg = document.getElementById('custom-report-loading');
+            const resultsContainer = document.getElementById('customReportResults');
+      0         loadingMsg.classList.remove('hidden'); resultsContainer.classList.add('hidden');
+            
+            const { start, end } = dateRange;
+            let bruto = 0;
 
-            try {
-                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start), where("data", "<=", end));
-                const salesSnapshot = await getDocs(salesQuery);
-                salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
-                
-                document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
-                document.getElementById('custom-report-despesas').textContent = formatCurrency(0); 
-                document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto); 
-                document.getElementById('custom-report-leads').textContent = 0; 
-                
-                resultsContainer.classList.remove('hidden');
-            } catch (e) {
-                handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        };
+            try {
+                const salesQuery = query(collection(db, `/artifacts/${appId}/public/data/sales`), where("data", ">=", start), where("data", "<=", end));
+                const salesSnapshot = await getDocs(salesQuery);
+                salesSnapshot.forEach(doc => { bruto += doc.data().valor || 0; });
+                
+                document.getElementById('custom-report-bruto').textContent = formatCurrency(bruto);
+                // document.getElementById('custom-report-despesas').textContent = formatCurrency(0); // <--- CORRIGIDO
+                document.getElementById('custom-report-liquido').textContent = formatCurrency(bruto); 
+                // document.getElementById('custom-report-leads').textContent = 0; // <--- CORRIGIDO
+                
+                resultsContainer.classList.remove('hidden');
+            } catch (e) {
+                handleFriendlyError("Erro ao gerar relatório personalizado", e.message, e);
+            } finally {
+                loadingMsg.classList.add('hidden');
+            }
+        };
 
 
         // --- DELETAR (Função Centralizada) ---
